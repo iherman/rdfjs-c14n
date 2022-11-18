@@ -8,6 +8,10 @@ export const DataFactory = rdf_impl.DataFactory;
 /** An RDF graph is a set of triples/quads, says the spec... */
 export type Graph = Set<rdf.Quad>;
 
+export function quad_to_nquad(quad: rdf.Quad): string {
+    return rdf_impl.write_nquads([quad])[0];
+}
+
 /* ****************** Convenience types to make the implementation more readable *********** */
 type CURIE = (arg: string) => rdf.NamedNode;
 interface prefix_item {

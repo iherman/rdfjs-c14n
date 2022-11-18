@@ -4,7 +4,7 @@
   "description": "Attempt to implement the rdf-canon algorithm in TypeScript",
   "main": "index.js",
   "scripts": {
-    "rdf-test": "./node_modules/.bin/ts-node rdf_test.ts"
+    "test": "./node_modules/.bin/ts-node test.ts"
   },
   "keywords": [
     "RDF",
