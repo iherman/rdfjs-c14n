@@ -1,16 +1,18 @@
-import * as rdf from "rdf-js";
-import { C14nState, BNodeId, Hash, IdIssuer, hash,  } from './common';
-import { DataFactory, Graph, GraphContainer, quad_to_nquad } from './rdfjs';
+import * as rdf                                      from 'rdf-js';
+import { C14nState, BNodeId, Hash, Graph, RDF_Impl } from './types';
+import { hash, IdIssuer }                            from './utils';
 
 export class URDNA2015 {
     state: C14nState;
+    rdf_impl: RDF_Impl;
 
-    constructor() {
+    constructor(rdf_impl: RDF_Impl) {
         this.state = {
             bnode_to_quads: {},
             hash_to_bnodes: {},
             canonical_issuer: new IdIssuer(),
         }
+        this.rdf_impl = rdf_impl;
     }
 
     /**
@@ -27,18 +29,18 @@ export class URDNA2015 {
             const map_term = (t: rdf.Term): rdf.Term => {
                 if (t.termType === "BlankNode") {
                     const bid = `_:${t.value}`;
-                    return (bid === reference_id) ? DataFactory.blankNode('a') : DataFactory.blankNode('z');
+                    return (bid === reference_id) ? this.rdf_impl.data_factory.blankNode('a') : this.rdf_impl.data_factory.blankNode('z');
                 } else {
                     return t
                 }
             }
-            const new_term = DataFactory.quad(
+            const new_term = this.rdf_impl.data_factory.quad(
                 map_term(quad.subject) as rdf.Quad_Subject, 
                 quad.predicate, 
                 map_term(quad.object) as rdf.Quad_Object,
                 map_term(quad.graph) as rdf.Quad_Graph
             );
-            nquads.push(quad_to_nquad(new_term))
+            nquads.push(this.rdf_impl.quad_to_nquad(new_term))
         })
         // Step 4 (hopefully javascript does the right thing in terms of unicode)
         nquads.sort();
@@ -46,10 +48,7 @@ export class URDNA2015 {
         return hash(nquads.join())
     }
 
-    label_unique_nodes() {}
     compute_n_degree_hashes() {}
-    label_remaining_nodes() {}
-    finish() {}
 
     canonicalize(input_dataset: Graph): Graph {
         const retval: Graph = new Set();
@@ -147,8 +146,6 @@ export class URDNA2015 {
             }
         }
 
-        console.log(this.state.canonical_issuer.issued_id_list);
-
         // Step 6
         {
             const hashes: Hash[] = Object.keys(this.state.hash_to_bnodes).sort();
@@ -163,9 +160,8 @@ export class URDNA2015 {
             const replace_bnode = (term: rdf.Term): rdf.Term => {
                 if (term.termType === "BlankNode") {
                     const canonical = this.state.canonical_issuer.map_to_canonical(`_:${term.value}`);
-                    console.log(canonical)
                     // Remove the `_:` before creating the new bnode...
-                    return DataFactory.blankNode(canonical.slice(2))
+                    return this.rdf_impl.data_factory.blankNode(canonical.slice(2))
                 } else {
                     return term;
                 }
@@ -175,7 +171,7 @@ export class URDNA2015 {
                 const subject_copy = replace_bnode(quad.subject) as rdf.Quad_Subject;
                 const object_copy  = replace_bnode(quad.object) as rdf.Quad_Object;
                 const graph_copy   = replace_bnode(quad.graph) as rdf.Quad_Graph;
-                retval.add(DataFactory.quad(subject_copy,quad.predicate,object_copy,graph_copy))
+                retval.add(this.rdf_impl.data_factory.quad(subject_copy,quad.predicate,object_copy,graph_copy))
             }
         }
         return retval;
