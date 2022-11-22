@@ -45,7 +45,10 @@ export class URDNA2015 {
         // Step 4 (hopefully javascript does the right thing in terms of unicode)
         nquads.sort();
         // Step 5 (hopefully the join() means what is required in the spec)
-        return hash(nquads.join())
+        console.log(nquads);
+        const the_hash: Hash = hash(nquads.join());
+        console.log(the_hash);
+        return the_hash
     }
 
     compute_n_degree_hashes() {}

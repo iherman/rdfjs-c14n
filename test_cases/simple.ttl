@@ -1,4 +1,5 @@
-@prefix : <http://www.example.org/> .
+BASE <http://example.com/>
+PREFIX : <#>
 
 :p :q _:b0 .
 :p :r _:b1 .
