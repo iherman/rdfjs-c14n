@@ -44,15 +44,27 @@ export class URDNA2015 {
         })
         // Step 4 (hopefully javascript does the right thing in terms of unicode)
         nquads.sort();
-        // Step 5 (hopefully the join() means what is required in the spec)
+        // Step 5
         console.log(nquads);
-        const the_hash: Hash = hash(nquads.join());
+        // Depending on the final version of the discussion on EOL, this should be finalized
+        const final_to_be_hashed_eol: string = nquads.map((q:string): string => `${q}\n`).join('');
+        const final_to_be_hashed_no_eol: string = nquads.join('');
+        const final: string = (true) ? final_to_be_hashed_eol : final_to_be_hashed_no_eol;
+
+        const the_hash: Hash = hash(final);
         console.log(the_hash);
+
         return the_hash
     }
 
     compute_n_degree_hashes() {}
 
+    /**
+     * Implementation of the main algorithmic steps
+     * 
+     * @param input_dataset 
+     * @returns 
+     */
     canonicalize(input_dataset: Graph): Graph {
         const retval: Graph = new Set();
 
@@ -87,33 +99,27 @@ export class URDNA2015 {
         let non_normalized_ids: BNodeId[] = Object.keys(this.state.bnode_to_quads);
 
         // Step 4
-        // --- in FPWD: let simple: boolean = true;
+        this.state.hash_to_bnodes = {};
 
         // Step 5
-        // --- in FPWD: while(simple) {
         {
-            // Step 5.1
-            // --- in FPWD: simple = false;
-
-            // Step 5.2 
-            this.state.hash_to_bnodes = {};
-
-            // Step 5.3
             // Compute a hash value for each bnode (depending on the quads it appear in)
             // In simple cases a hash value refers to one bnode only; in unlucky cases there
             // may be more. Hence the usage of the hash_to_bnodes map.
             non_normalized_ids.forEach((n: BNodeId): void => {
-                // Step 5.3.1
+                // Step 5.1
                 const hfn: Hash = this.compute_first_degree_hashes(n)
-                // Step 5.3.2
+                // Step 5.2
                 if (this.state.hash_to_bnodes[hfn] === undefined) {
                     this.state.hash_to_bnodes[hfn] = [n];
                 } else {
                     this.state.hash_to_bnodes[hfn].push(n);
                 }
             });
+        }
 
-            // Step 5.4
+        // Step 6
+        {
             // For each hash take the corresponding bnode, and issue a new, canonical id in a sequence.
             // This works only for those hashes where there is one associated bnode; for the ones
             // where this is not the case, step 6 will kick in later.
@@ -122,34 +128,31 @@ export class URDNA2015 {
             const hashes: Hash[] = Object.keys(this.state.hash_to_bnodes).sort();
             for (const hash of hashes) {
                 const identifier_list: BNodeId[] = this.state.hash_to_bnodes[hash];
-                // Step 5.4.1
+                // Step 6.1
                 // Filter out the nasty cases
                 if (identifier_list.length > 1) continue;
 
-                // Step 5.4.2
+                // Step 6.2
                 // Here is the essential part: issue the canonical identifier.
                 // Note that the IdIssuer automatically stores the (existing, issued) pairs for the
                 // bnode identifier.
                 const existing_id = identifier_list[0];
                 const issued_id: BNodeId = this.state.canonical_issuer.issue_id(existing_id);
 
-                // Step 5.4.3
+                // Step 6.3
                 // Remove the bnode from the list of those that still need to be normalized
                 //
                 // Not sure this is the most efficient thing to do, but I go
                 // for clarity rather than efficiency at this point.
                 non_normalized_ids = non_normalized_ids.filter((key: BNodeId): boolean => key !== existing_id);
 
-                // Step 5.4.4
+                // Step 6.4
                 // Also remove the corresponding hash
                 delete this.state.hash_to_bnodes[hash];
-
-                // Step 5.4.5
-                // --- in FPWD: simple = true;
             }
         }
 
-        // Step 6
+        // Step 7
         {
             const hashes: Hash[] = Object.keys(this.state.hash_to_bnodes).sort();
             if (hashes.length > 0) {
@@ -157,7 +160,7 @@ export class URDNA2015 {
             }
         }
 
-        // Step 7
+        // Step 8
         {
             // This function replaces the term with its canonical equivalent, if applicable
             const replace_bnode = (term: rdf.Term): rdf.Term => {
@@ -170,13 +173,15 @@ export class URDNA2015 {
                 }
             };
             for (const quad of input_dataset) {
-                // Step 7.1 & 7.2
+                // Step 8.1 & 8.2
                 const subject_copy = replace_bnode(quad.subject) as rdf.Quad_Subject;
                 const object_copy  = replace_bnode(quad.object) as rdf.Quad_Object;
                 const graph_copy   = replace_bnode(quad.graph) as rdf.Quad_Graph;
                 retval.add(this.rdf_impl.data_factory.quad(subject_copy,quad.predicate,object_copy,graph_copy))
             }
         }
+
+        // Step 9
         return retval;
     }
 

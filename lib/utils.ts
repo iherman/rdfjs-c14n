@@ -18,17 +18,53 @@ interface IdListItem {
 }
 
 /**
+ * To simulate the notion of an ordered map of infra for Issued Identifier Map.
+ * 
+ * (This is not a generic implementation of an ordered map, just what is needed...)
+ */
+class IssuedIdMap {
+    private _keys: string[];
+    private _values: { [index: BNodeId]: BNodeId };
+    constructor() {
+        this._keys = [];
+        this._values = {};
+    }
+
+    add(key: BNodeId, value:BNodeId) {
+        if (this._keys.indexOf(key) === -1) {
+            this._keys.push(key);
+        }
+        this._values[key] = value;
+    }
+
+    retrieve(key: BNodeId): BNodeId|undefined {
+        if (this._keys.indexOf(key) === -1) {
+            return undefined;
+        } else {
+            return this._values[key];
+        }
+    }
+
+    *[Symbol.iterator](): IterableIterator<BNodeId> {
+        for (const key of this._keys) {
+            yield this._values[key]
+        }
+    }
+}
+
+
+/**
  * Issue Identifier
  */
 export class IdIssuer {
     private _prefix: string;
     private _counter: number;
-    private _issued_id_list: IdListItem[];
+    private _issued_id_map: IssuedIdMap;
 
     constructor() {
         this._prefix         = Constants.BNODE_PREFIX;
         this._counter        = 0;
-        this._issued_id_list = [];
+        this._issued_id_map  = new IssuedIdMap();
     }
 
     /**
@@ -38,32 +74,25 @@ export class IdIssuer {
      * @returns 
      */
     issue_id(existing: BNodeId): BNodeId {
-        const list_item = this._issued_id_list.find((item: IdListItem): boolean => item.existing === existing)
-        if (list_item !== undefined) {
-            return list_item.issued
+        const issued = this._issued_id_map.retrieve(existing);
+        if (issued !== undefined) {
+            return issued
         } else {
-            const issued: BNodeId = `${this._prefix}${this._counter}`;
-            this._issued_id_list.push({existing, issued});
+            const newly_issued: BNodeId = `${this._prefix}${this._counter}`;
+            this._issued_id_map.add(existing,newly_issued)
             this._counter++;
-            return issued;
+            return newly_issued;
         }
     }
 
     /**
-     * Map the identifier to its canonical equivalent
+     * Map an identifier to its canonical equivalent
      * 
      * @param existing 
      * @returns 
      */
     map_to_canonical(existing: BNodeId): BNodeId {
-        const item: IdListItem = this._issued_id_list.find((value: IdListItem): boolean => value.existing === existing)
-        return (item) ? item.issued : existing;
-    }
-
-    /**
-     * Return the list of existing/canonical identity pairs
-     */
-    get issued_id_list() : IdListItem[] {
-        return this._issued_id_list;
+        const issued = this._issued_id_map.retrieve(existing);
+        return (issued) ? issued : existing;
     }
 }
