@@ -20,23 +20,28 @@ export type QuadToNquad = (quad: rdf.Quad) => string;
  * The c14n code itself uses the low level abstract RDF JS datatypes only
  */
 export interface RDF_Impl {
-    data_factory: rdf.DataFactory;
-    quad_to_nquad: QuadToNquad;
+    data_factory  : rdf.DataFactory;
+    quad_to_nquad : QuadToNquad;
 } 
 
-interface BNodeToQuads {
-    [index: BNodeId]: rdf.Quad[];
+export interface BNodeToQuads {
+    [index: BNodeId] : rdf.Quad[];
 }
 
-interface HashToBNodes {
-    [index: Hash]: BNodeId[];
+export interface HashToBNodes {
+    [index: Hash] : BNodeId[];
 }
 
 /**
  * This is the Canonicalization State, as defined in the spec.
  */
 export interface C14nState {
-    bnode_to_quads:   BNodeToQuads;
-    hash_to_bnodes:   HashToBNodes;
-    canonical_issuer: IdIssuer;
+    bnode_to_quads   : BNodeToQuads;
+    hash_to_bnodes   : HashToBNodes;
+    canonical_issuer : IdIssuer;
+}
+
+export interface NDegreeHashResult {
+    hash: Hash;
+    issuer: IdIssuer
 }
