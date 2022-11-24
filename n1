@@ -1,0 +1,5 @@
+
+> rdf-c14n@1.0.0 test
+> ./node_modules/.bin/ts-node tester/main.ts
+
+[info] ???sdfsf
