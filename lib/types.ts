@@ -15,6 +15,7 @@ export type BNodeId     = string;
 export type Hash        = string;
 export type QuadToNquad = (quad: rdf.Quad) => string;
 
+// Relates a bnode to those quads in which it appears
 export interface BNodeToQuads {
     [index: BNodeId] : rdf.Quad[];
 }
