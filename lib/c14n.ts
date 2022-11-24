@@ -1,18 +1,30 @@
-import * as rdf                                      from 'rdf-js';
-import { C14nState, BNodeId, Hash, Graph, RDF_Impl, NDegreeHashResult } from './types';
-import { IdIssuer, compute_n_degree_hashes, compute_first_degree_hashes }  from './utils';
+import * as rdf from 'rdf-js';
+import { GlobalState, BNodeId, Hash, Graph, NDegreeHashResult, QuadToNquad } from './types';
+import { IdIssuer, compute_n_degree_hashes, compute_first_degree_hashes } from './utils';
+import { DataFactory } from '../Attic/rdfjs';
 
 export class URDNA2015 {
-    private _state:    C14nState;
-    private _rdf_impl: RDF_Impl;
+    private _state:    GlobalState;
 
-    constructor(rdf_impl: RDF_Impl) {
+    /**
+     * 
+     * @param data_factory  An implementation of the generic RDF DataFactory interface, see http://rdf.js.org/data-model-spec/#datafactory-interface
+     * @param quad_to_nquad A function that converts an rdf.Quad into a bona fide nquad string
+     */
+    constructor(data_factory: rdf.DataFactory, quad_to_nquad: QuadToNquad) {
         this._state = {
-            bnode_to_quads: {},
-            hash_to_bnodes: {},
-            canonical_issuer: new IdIssuer(),
+            bnode_to_quads   : {},
+            hash_to_bnodes   : {},
+            canonical_issuer : new IdIssuer(),
+            data_factory     : data_factory,
+            quad_to_nquad    : quad_to_nquad
         }
-        this._rdf_impl = rdf_impl;
+    }
+
+    private initialize() {
+        this._state.bnode_to_quads   = {};
+        this._state.hash_to_bnodes   = {};
+        this._state.canonical_issuer = new IdIssuer();
     }
 
     /**
@@ -22,6 +34,9 @@ export class URDNA2015 {
      * @returns 
      */
     canonicalize(input_dataset: Graph): Graph {
+        // Re-initialize the state information: canonicalization should always start with a clean state
+        this.initialize();
+
         const retval: Graph = new Set();
 
         // Step 2
@@ -64,7 +79,7 @@ export class URDNA2015 {
             // may be more. Hence the usage of the hash_to_bnodes map.
             non_normalized_ids.forEach((n: BNodeId): void => {
                 // Step 5.1
-                const hfn: Hash = compute_first_degree_hashes(n, this._state, this._rdf_impl)
+                const hfn: Hash = compute_first_degree_hashes(n, this._state)
                 // Step 5.2
                 if (this._state.hash_to_bnodes[hfn] === undefined) {
                     this._state.hash_to_bnodes[hfn] = [n];
@@ -126,9 +141,7 @@ export class URDNA2015 {
                         // Step 7.2.3
                         const bn = temporary_issuer.issue_id(bnodeid);
                         // Step 7.2.4
-                        hash_path_list.push(compute_n_degree_hashes(
-                            bn, this._state, temporary_issuer, this._rdf_impl
-                        ));
+                        hash_path_list.push(compute_n_degree_hashes(bn, this._state, temporary_issuer));
                     }
                 }
 
@@ -155,7 +168,7 @@ export class URDNA2015 {
                 if (term.termType === "BlankNode") {
                     const canonical = this._state.canonical_issuer.issue_id(`_:${term.value}`);
                     // Remove the `_:` before creating the new bnode...
-                    return this._rdf_impl.data_factory.blankNode(canonical.slice(2))
+                    return this._state.data_factory.blankNode(canonical.slice(2))
                 } else {
                     return term;
                 }
@@ -165,7 +178,7 @@ export class URDNA2015 {
                 const subject_copy = replace_bnode(quad.subject) as rdf.Quad_Subject;
                 const object_copy  = replace_bnode(quad.object) as rdf.Quad_Object;
                 const graph_copy   = replace_bnode(quad.graph) as rdf.Quad_Graph;
-                retval.add(this._rdf_impl.data_factory.quad(subject_copy,quad.predicate,object_copy,graph_copy))
+                retval.add(this._state.data_factory.quad(subject_copy,quad.predicate,object_copy,graph_copy))
             }
         }
 

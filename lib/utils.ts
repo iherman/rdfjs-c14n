@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
 import * as rdf       from 'rdf-js';
-import { Constants, BNodeId, C14nState, Hash, RDF_Impl, NDegreeHashResult, HashToBNodes } from './types';
+import { Constants, BNodeId, Hash, NDegreeHashResult, HashToBNodes, GlobalState } from './types';
 
 /**
  * Return the hash of a string.
@@ -8,9 +8,22 @@ import { Constants, BNodeId, C14nState, Hash, RDF_Impl, NDegreeHashResult, HashT
  * @param data 
  * @returns 
  */
- export function compute_hash(data: string): string {
+ export function compute_hash(data: string): Hash {
     return createHash(Constants.HASH_ALGORITHM).update(data).digest('hex');
 }
+
+/**
+ * Return the hash of an array of nquad statements
+ * 
+ */
+export function hash_nquads(nquads: string[]): Hash {
+    // Care should be taken that the final data to be hashed include a single `/n`
+    // for every quad, before joining the quads into a string that must be hashed
+    const data: string = nquads.map((q:string): string => q.endsWith('\n') ? q : `${q}\n`).join('');
+    return compute_hash(data);
+}
+
+
 
 /**
  * To simulate the notion of an ordered map of infra for Issued Identifier Map.
@@ -162,10 +175,9 @@ export class IdIssuer {
  * 
  * @param state 
  * @param identifier 
- * @param rdf_impl 
  * @returns 
  */
-export function compute_first_degree_hashes(identifier: BNodeId, state: C14nState, rdf_impl: RDF_Impl): Hash {
+export function compute_first_degree_hashes(identifier: BNodeId, state: GlobalState): Hash {
     // Step 1
     const nquads: string[] = [];
     // Step 2,3
@@ -174,32 +186,26 @@ export function compute_first_degree_hashes(identifier: BNodeId, state: C14nStat
         const map_term = (t: rdf.Term): rdf.Term => {
             if (t.termType === "BlankNode") {
                 const bid = `_:${t.value}`;
-                return (bid === identifier) ? rdf_impl.data_factory.blankNode('a') : rdf_impl.data_factory.blankNode('z');
+                return (bid === identifier) ? state.data_factory.blankNode('a') : state.data_factory.blankNode('z');
             } else {
                 return t
             }
         }
-        const new_term = rdf_impl.data_factory.quad(
+        const new_term = state.data_factory.quad(
             map_term(quad.subject) as rdf.Quad_Subject, 
             quad.predicate, 
             map_term(quad.object) as rdf.Quad_Object,
             map_term(quad.graph) as rdf.Quad_Graph
         );
-        nquads.push(rdf_impl.quad_to_nquad(new_term))
+        nquads.push(state.quad_to_nquad(new_term))
     })
     // Step 4 (hopefully javascript does the right thing in terms of unicode)
     nquads.sort();
     // Step 5
     console.log(nquads);
-    // Depending on the final version of the discussion on EOL, this should be finalized
-    const final_to_be_hashed_eol: string = nquads.map((q:string): string => `${q}\n`).join('');
-    const final_to_be_hashed_no_eol: string = nquads.join('');
-    const final: string = (true) ? final_to_be_hashed_eol : final_to_be_hashed_no_eol;
-
-    const the_hash: Hash = compute_hash(final);
+    const the_hash: Hash = hash_nquads(nquads)
     console.log(the_hash);
-
-    return the_hash
+    return the_hash;
 }
 
 
@@ -216,7 +222,7 @@ export function compute_first_degree_hashes(identifier: BNodeId, state: C14nStat
  * @param rdf_impl 
  * @returns 
  */
-function hash_related_blank_node(related: BNodeId, quad: rdf.Quad, state: C14nState, issuer: IdIssuer, position: string, rdf_impl: RDF_Impl): Hash {
+function hash_related_blank_node(related: BNodeId, quad: rdf.Quad, state: GlobalState, issuer: IdIssuer, position: string): Hash {
 
     // Step 1
     let identifier: BNodeId;
@@ -225,7 +231,7 @@ function hash_related_blank_node(related: BNodeId, quad: rdf.Quad, state: C14nSt
     } else if (issuer.is_set(related)) {
         identifier = issuer.issue_id(related);
     } else {
-        identifier = compute_first_degree_hashes(identifier, state, rdf_impl)
+        identifier = compute_first_degree_hashes(identifier, state)
     }
 
     // Step 2
@@ -255,7 +261,7 @@ function hash_related_blank_node(related: BNodeId, quad: rdf.Quad, state: C14nSt
  * @returns 
  */
 
-export function compute_n_degree_hashes(identifier: BNodeId, state: C14nState,  issuer: IdIssuer, rdf_impl: RDF_Impl): NDegreeHashResult {
+export function compute_n_degree_hashes(identifier: BNodeId, state: GlobalState,  issuer: IdIssuer): NDegreeHashResult {
     // Step 1
     const hash_to_bnodes: HashToBNodes = {};
 
@@ -265,7 +271,7 @@ export function compute_n_degree_hashes(identifier: BNodeId, state: C14nState,  
         const per_component = (t: rdf.Term, position: string): void => {
             if (t.termType === "BlankNode" && `_:${t.value}` !== identifier) {
                 // Step 3.1.1
-                const hash = hash_related_blank_node(`_:${t.value}`, quad, state, issuer, position, rdf_impl);
+                const hash = hash_related_blank_node(`_:${t.value}`, quad, state, issuer, position);
                 // Step 3.1.2
                 if (hash_to_bnodes[hash] === undefined) {
                     hash_to_bnodes[hash] = [`_:${t.value}`];
