@@ -1,5 +1,5 @@
 import * as rdf from 'rdf-js';
-import { GlobalState, BNodeId, Hash, Graph, NDegreeHashResult, QuadToNquad } from './types';
+import { GlobalState, BNodeId, Hash, Graph, NDegreeHashResult, QuadToNquad, Logger, NopLogger } from './types';
 import { IdIssuer, compute_n_degree_hashes, compute_first_degree_hashes, get_bnodeid } from './utils';
 
 export class URDNA2015 {
@@ -10,7 +10,7 @@ export class URDNA2015 {
      * @param data_factory  An implementation of the generic RDF DataFactory interface, see http://rdf.js.org/data-model-spec/#datafactory-interface
      * @param quad_to_nquad A function that converts an rdf.Quad into a bona fide nquad string
      */
-    constructor(data_factory: rdf.DataFactory, quad_to_nquad: QuadToNquad) {
+    constructor(data_factory: rdf.DataFactory, quad_to_nquad: QuadToNquad, logger: Logger = new NopLogger() ) {
         this._state = {
             bnode_to_quads   : {},
             // This will map a calculated hash value to the bnodes it characterizes. In
@@ -19,7 +19,8 @@ export class URDNA2015 {
             hash_to_bnodes   : {},
             canonical_issuer : new IdIssuer(),
             data_factory     : data_factory,
-            quad_to_nquad    : quad_to_nquad
+            quad_to_nquad    : quad_to_nquad,
+            logger           : logger
         }
     }
 
@@ -191,6 +192,6 @@ export class URDNA2015 {
     }
 
     debug() {
-        console.log(JSON.stringify(this._state,null,4));
+        this._state.logger.debug(JSON.stringify(this._state,null,4));
     }
 }

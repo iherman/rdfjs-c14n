@@ -225,9 +225,9 @@ export function compute_first_degree_hashes(identifier: BNodeId, state: GlobalSt
     // Step 4 (hopefully javascript does the right thing in terms of unicode)
     nquads.sort();
     // Step 5
-    console.log(nquads);
+    state.logger.info(`${nquads}`);
     const the_hash: Hash = hash_nquads(nquads)
-    console.log(the_hash);
+    state.logger.info(the_hash);
     return the_hash;
 }
 

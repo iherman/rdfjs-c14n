@@ -1,6 +1,5 @@
 import * as rdf     from 'rdf-js';
 import { IdIssuer } from './utils';
-import { quad_to_nquad } from '../Attic/rdfjs';
 
 export namespace Constants {
     /** The hashing algorithm's name used in the module */
@@ -40,6 +39,7 @@ export interface C14nState {
 export interface GlobalState extends C14nState {
     data_factory  : rdf.DataFactory;
     quad_to_nquad : QuadToNquad; 
+    logger        : Logger;
 }
 
 
@@ -47,3 +47,19 @@ export interface NDegreeHashResult {
     hash: Hash;
     issuer: IdIssuer
 }
+
+export interface Logger {
+    debug(message: string, ...otherData: any[]): void;
+    warn(message: string, ...otherData: any[]): void;
+    error(message: string, ...otherData: any[]): void;
+    info(message: string, ...otherData: any[]): void;
+}
+
+export class NopLogger implements Logger {
+    debug(message: string, ...otherData: any[]): void {};
+    warn(message: string, ...otherData: any[]): void {};
+    error(message: string, ...otherData: any[]): void {};
+    info(message: string, ...otherData: any[]): void {};
+}
+
+
