@@ -1,6 +1,6 @@
 import * as rdf from 'rdf-js';
 import { GlobalState, BNodeId, Hash, Graph, NDegreeHashResult, QuadToNquad, Logger, NopLogger } from './types';
-import { IdIssuer, compute_n_degree_hashes, compute_first_degree_hashes, get_bnodeid } from './utils';
+import { IdIssuer, compute_n_degree_hash, compute_first_degree_hash, get_bnodeid } from './utils';
 
 export class URDNA2015 {
     private _state:    GlobalState;
@@ -58,107 +58,101 @@ export class URDNA2015 {
                     }
                 }
                 bnode_map(quad.subject);
-                // If this was a generalized graph: bnode_maps(quad.predicate);
                 bnode_map(quad.object);
                 bnode_map(quad.graph);
             }
         }
 
-        // Step 3
-        // Collect the list of bnodes in a separate list for easier reference...
-        // This will store the list of bnodes that have not yet received a canonical id.
-        // Obviously, it initializes to the full list of bnodes in the input
-        let non_normalized_ids: BNodeId[] = Object.keys(this._state.bnode_to_quads);
+        this._state.logger.debug(`§4.5.3 (2) bnode to quads: ${JSON.stringify(this._state.bnode_to_quads,null,4)}`);
 
-        // Step 4
+        // Step 3
         {
             // Compute a hash value for each bnode (depending on the quads it appear in)
             // In simple cases a hash value refers to one bnode only; in unlucky cases there
             // may be more. Hence the usage of the hash_to_bnodes map.
-            non_normalized_ids.forEach((n: BNodeId): void => {
-                // Step 4.1
-                const hfn: Hash = compute_first_degree_hashes(n, this._state)
-                // Step 4.2
+            Object.keys(this._state.bnode_to_quads).forEach((n: BNodeId): void => {
+                // Step 3.1
+                const hfn: Hash = compute_first_degree_hash(this._state, n)
+                // Step 3.2
                 if (this._state.hash_to_bnodes[hfn] === undefined) {
                     this._state.hash_to_bnodes[hfn] = [n];
                 } else {
                     this._state.hash_to_bnodes[hfn].push(n);
                 }
             });
+            this._state.logger.info(`§4.5.3 (3) hash to bnodes: \n${this._state.hash_to_bnodes}`)
         }
 
-        // Step 5
+        // Step 4
         {
             // For each hash take the corresponding bnode, and issue a new, canonical id in a sequence.
             // This works only for those hashes where there is one associated bnode; for the ones
-            // where this is not the case, step 6 will kick in later.
-            // It is important to order the hashes, because the order of issuing the canonical id is
-            // important.
+            // where this is not the case, step 5 will kick in later.
+            // It is important to order the hashes, because it influences the order of issuing the canonical ids.
             // If a bnode is "handled", ie, it does have a canonical ID, it is removed from the
-            // state structure on hash->bnodes as well as the list of not-yet-normalized bnodes. 
+            // state structure on hash->bnodes. 
             const hashes: Hash[] = Object.keys(this._state.hash_to_bnodes).sort();
             for (const hash of hashes) {
                 const identifier_list: BNodeId[] = this._state.hash_to_bnodes[hash];
-                // Step 5.1
+                // Step 4.1
                 // Filter out the nasty cases
                 if (identifier_list.length > 1) continue;
 
-                // Step 5.2
+                // Step 4.2
                 // Here is the essential part: issue the canonical identifier.
                 // Note that the IdIssuer automatically stores the (existing, issued) pairs for the
                 // bnode identifier; these are retrieved in the last step when a new, normalized
                 // graph is created.
-                const existing_id = identifier_list[0];
-                this._state.canonical_issuer.issue_id(existing_id);
+                const canon_id = this._state.canonical_issuer.issue_id(identifier_list[0]);
+                this._state.logger.info(`§4.5.3 (4) canonicalization of ${identifier_list[0]} -> ${canon_id}`);
 
-                // Step 5.3
-                // Remove the bnode from the list of those that still need to be normalized
-                //
-                // Not sure this is the most efficient thing to do, but I go
-                // for clarity rather than efficiency at this point.
-                non_normalized_ids = non_normalized_ids.filter((key: BNodeId): boolean => key !== existing_id);
-
-                // Step 5.4
-                // Also remove the corresponding hash
+                // Step 4.3
+                // Remove the corresponding hash
                 delete this._state.hash_to_bnodes[hash];
             }
         }
 
-        // Step 6
+        // Step 5
         // This step takes care of the bnodes that do not have been canonicalized in the previous step,
         // because their simple, first degree hashes are not unique.
         {
             const hashes: Hash[] = Object.keys(this._state.hash_to_bnodes).sort();
             for (const hash of hashes) {
+                const identifier_list: BNodeId[] = this._state.hash_to_bnodes[hash];
+                this._state.logger.info(`§4.5.3 (5) identifier list with shared hashes: ${identifier_list} for hash: ${hash}`);
                 // This cycle takes care of all problematic cases that share the same hash
-                // Step 6.1
+                // Step 5.1
                 // This stores a calculated hash and its relates identifier issuer for each
                 // bnode related to this particular hash value
                 const hash_path_list: NDegreeHashResult[] = [];
 
-                // Step 6.2
-                for (const bnodeid of this._state.hash_to_bnodes[hash]) {
-                    if (this._state.canonical_issuer.is_set(bnodeid)) {
-                        // Step 6.2.1
+                // Step 5.2
+                for (const n of identifier_list) {
+                    if (this._state.canonical_issuer.is_set(n)) {
+                        // Step 5.2.1
                         continue;
                     } else {
-                        // Step 6.2.2
+                        // Step 5.2.2
                         const temporary_issuer = new IdIssuer('_:b');
-                        // Step 6.2.3
-                        const bn = temporary_issuer.issue_id(bnodeid);
-                        // Step 6.2.4
-                        hash_path_list.push(compute_n_degree_hashes(bnodeid, this._state, temporary_issuer));
+                        // Step 5.2.3
+                        const bn = temporary_issuer.issue_id(n);
+                        // Step 5.2.4
+                        const result: NDegreeHashResult = compute_n_degree_hash(this._state, n, temporary_issuer);
+                        this._state.logger.debug(`§4.5.3 (5.2.4) computed n-degree hash: ${JSON.stringify(result,null,4)}`);
+                        hash_path_list.push(result);
                     }
                 }
 
-                // 6.3
+                this._state.logger.info(`§4.5.3 (5.2) hash path list: ${JSON.stringify(hash_path_list,null,4)}`);
+
+                // Step 5.3
                 const ordered_hash_path_list = hash_path_list.sort((a,b): number => {
                     if (a.hash < b.hash)      return -1;
                     else if (a.hash > b.hash) return 1;
                     else                      return 0;
                 });
                 for (const result of ordered_hash_path_list) {
-                    // 6.3.1
+                    // Step 5.3.1
                     for(const existing_identifier of result.issuer.existing_identifiers()) {
                         this._state.canonical_issuer.issue_id(existing_identifier);
                     }
@@ -171,7 +165,7 @@ export class URDNA2015 {
             // This function replaces the term with its canonical equivalent, if applicable
             const replace_bnode = (term: rdf.Term): rdf.Term => {
                 if (term.termType === "BlankNode") {
-                    const canonical = this._state.canonical_issuer.issue_id(`_:${term.value}`);
+                    const canonical = this._state.canonical_issuer.issue_id(get_bnodeid(term));
                     // Remove the `_:` before creating the new bnode...
                     return this._state.data_factory.blankNode(canonical.slice(2))
                 } else {
@@ -187,11 +181,8 @@ export class URDNA2015 {
             }
         }
 
-        // Step 8
+        // Step 7
+        this._state.logger.debug(`§4.5.3 Leaving function\n${JSON.stringify(this._state,null,4)}`);
         return retval;
-    }
-
-    debug() {
-        this._state.logger.debug(JSON.stringify(this._state,null,4));
     }
 }

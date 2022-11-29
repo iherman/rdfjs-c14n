@@ -196,7 +196,8 @@ export class IdIssuer {
  * @param identifier 
  * @returns 
  */
-export function compute_first_degree_hashes(identifier: BNodeId, state: GlobalState): Hash {
+export function compute_first_degree_hash(state: GlobalState, identifier: BNodeId): Hash {
+    state.logger.info(`§4.7.3 entering function:\n  identifier: ${identifier}`);
     // Step 1
     const nquads: string[] = [];
     // Step 2,3: Collect all quads that includes the blank node that we are talking about.
@@ -222,12 +223,14 @@ export function compute_first_degree_hashes(identifier: BNodeId, state: GlobalSt
         );
         nquads.push(state.quad_to_nquad(new_term))
     })
+
     // Step 4 (hopefully javascript does the right thing in terms of unicode)
     nquads.sort();
+
     // Step 5
-    state.logger.info(`${nquads}`);
     const the_hash: Hash = hash_nquads(nquads)
-    state.logger.info(the_hash);
+
+    state.logger.info(`§4.7.3 First degree quads:\n  quads: {${nquads}\n  hash: ${the_hash}`);
     return the_hash;
 }
 
@@ -246,14 +249,14 @@ export function compute_first_degree_hashes(identifier: BNodeId, state: GlobalSt
  * @param position 
  * @returns 
  */
-function compute_hash_related_blank_node(related: BNodeId, quad: rdf.Quad, state: GlobalState, issuer: IdIssuer, position: string): Hash {
+function compute_hash_related_blank_node(state: GlobalState, related: BNodeId, quad: rdf.Quad, issuer: IdIssuer, position: string): Hash {
     const get_identifier = (): BNodeId => {
         if (state.canonical_issuer.is_set(related)) {
             return state.canonical_issuer.issue_id(related);
         } else if (issuer.is_set(related)) {
             return issuer.issue_id(related);
         } else {
-            return compute_first_degree_hashes(identifier, state)
+            return compute_first_degree_hash(state, related)
         }    
     };
 
@@ -287,23 +290,25 @@ function compute_hash_related_blank_node(related: BNodeId, quad: rdf.Quad, state
  * @returns 
  */
 
-export function compute_n_degree_hashes(identifier: BNodeId, state: GlobalState,  issuer: IdIssuer): NDegreeHashResult {
+export function compute_n_degree_hash(state: GlobalState, identifier: BNodeId, issuer: IdIssuer): NDegreeHashResult {
+    state.logger.info(`§4.9.3 entering function, identifier: ${identifier}, issuer: ${JSON.stringify(issuer,null,4)}`);
     // Step 1
-    const hash_to_bnodes: HashToBNodes = {};
+    const Hn: HashToBNodes = {};
 
     // Step 2, 3
     // Calculate a unique hash for all other bnodes that are immediately connected to 'identifier'
+    // Note that this step will, in possible recursive calls, create additional steps for the "gossips"
     for (const quad of state.bnode_to_quads[identifier]) {
         // Step 3.1
         const per_component = (t: rdf.Term, position: string): void => {
             if (t.termType === "BlankNode" &&  get_bnodeid(t) !== identifier) {
                 // Step 3.1.1
-                const hash = compute_hash_related_blank_node(get_bnodeid(t), quad, state, issuer, position);
+                const hash = compute_hash_related_blank_node(state, get_bnodeid(t), quad,  issuer, position);
                 // Step 3.1.2
-                if (hash_to_bnodes[hash] === undefined) {
-                    hash_to_bnodes[hash] = [get_bnodeid(t)];
+                if (Hn[hash] === undefined) {
+                    Hn[hash] = [get_bnodeid(t)];
                 } else {
-                    hash_to_bnodes[hash].push(get_bnodeid(t))
+                    Hn[hash].push(get_bnodeid(t))
                 }
             }
         }
@@ -312,11 +317,13 @@ export function compute_n_degree_hashes(identifier: BNodeId, state: GlobalState,
         per_component(quad.graph,  'g');
     }
 
+    state.logger.info(`§4.9.3, (3) Hn: ${JSON.stringify(Hn,null,4)}`);
+
     // Step 4
     let data_to_hash: string = '';
 
     // Step 5
-    const hashes: Hash[] = Object.keys(hash_to_bnodes).sort();
+    const hashes: Hash[] = Object.keys(Hn).sort();
     for (const hash of hashes) {
         // Step 5.1
         data_to_hash = `${data_to_hash}${hash}`;
@@ -328,18 +335,23 @@ export function compute_n_degree_hashes(identifier: BNodeId, state: GlobalState,
         let chosen_issuer: IdIssuer;
 
         // Step 5.4
-        perms: for (const perm of permutation(hash_to_bnodes[hash])) {
+        // This is a bit unnecessarily complicated, because the
+        // 'permutation' package has a strange bug: if the array to be handled
+        // has, in fact, one element, then the result of permutations is empty...
+        //
+        const perms: BNodeId[][] = Hn[hash].length === 1 ? [Hn[hash]] : Array.from(permutation(Hn[hash]));
+        perms: for (const p of perms) {
             // Step 5.4.1
             let issuer_copy: IdIssuer = issuer.copy();
 
             // Step 5.4.2
-            let path: string;
+            let path: string = '';
 
             // Step 5.4.3
             const recursion_list: BNodeId[] = [];
 
             // Step 5.4.4
-            for (const related of perm) {
+            for (const related of p) {
                 if (state.canonical_issuer.is_set(related)) {
                     // Step 5.4.4.1
                     path = `${path}${state.canonical_issuer.issue_id(related)}`;
@@ -359,7 +371,7 @@ export function compute_n_degree_hashes(identifier: BNodeId, state: GlobalState,
             // Step 5.4.5
             for (const related of recursion_list) {
                 // Step 5.4.5.1
-                const result: NDegreeHashResult = compute_n_degree_hashes(related, state, issuer_copy);
+                const result: NDegreeHashResult = compute_n_degree_hash(state, related, issuer_copy);
 
                 // Step 5.4.5.2
                 path = `${path}${issuer_copy.issue_id(related)}`;
@@ -385,13 +397,17 @@ export function compute_n_degree_hashes(identifier: BNodeId, state: GlobalState,
 
         // Step 5.5.
         data_to_hash = `${data_to_hash}${chosen_path}`;
+        state.logger.info(`§4.9.3 \n  chosen path: ${chosen_path}, \n  data to hash: ${data_to_hash}`);
 
         // Step 5.6
         issuer = chosen_issuer;
     }
 
-    return {
-        hash: compute_hash(data_to_hash),
+    // Step 6
+    const retval: NDegreeHashResult = {
+        hash:   compute_hash(data_to_hash),
         issuer: issuer
-    };
+    }
+    state.logger.info(`§4.9.3 leaving function: ${JSON.stringify(retval,null,4)}`);
+    return retval;
 }
