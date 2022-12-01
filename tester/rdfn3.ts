@@ -9,7 +9,7 @@
 import {promises as fs} from 'fs';
 import * as n3          from 'n3';
 import * as rdf         from 'rdf-js';
-import { Graph }        from '../lib/types';
+import { Graph }        from '../index';
 
 export const DataFactory = n3.DataFactory;
 
