@@ -1,6 +1,6 @@
 import * as rdf from 'rdf-js';
 import { Command }              from 'commander';
-import { URDNA2015, Graph }     from '../index';
+import { RDFCanon, Graph }     from '../index';
 import { SimpleLogger, Levels } from './logger';
 import * as rdfn3               from './rdfn3';
 
@@ -28,7 +28,7 @@ async function main(): Promise<void> {
 
     logger.info(`Original graph: \n${rdfn3.graph_to_nquads(input).join('\n')}`);
 
-    const canonicalizer = new URDNA2015(rdfn3.DataFactory, rdfn3.quad_to_nquad, logger);
+    const canonicalizer = new RDFCanon(rdfn3.DataFactory, rdfn3.quad_to_nquad, logger);
     const normalized: Graph = canonicalizer.canonicalize(input);
 
     const normalized_quads: string = rdfn3.graph_to_nquads(normalized).sort().join('\n');

@@ -1,3 +1,11 @@
+/**
+ * Top level entry point for the canonicalization algorithm.
+ * 
+ * @copyright Ivan Herman 2023
+ * 
+ * @packageDocumentation
+ */
+
 import * as rdf from 'rdf-js';
 import { GlobalState, BNodeId, Hash, Graph, NDegreeHashResult, get_bnodeid } from './common';
 import { compute_first_degree_hash }                                         from './hash_1_degree_quads';
@@ -6,8 +14,9 @@ import { IdIssuer }                                                          fro
 
 
 /**
- * Implementation of the main algorithmic steps
+ * Implementation of the main algorithmic [steps on the top level](https://www.w3.org/TR/rdf-canon/##canon-algo-algo) for the details.
  * 
+ * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input_dataset 
  * @returns 
  */
@@ -40,7 +49,7 @@ export function compute_canonicalized_graph(state: GlobalState, input_dataset: G
             }
         }
 
-        state.logger.debug(`§4.5.3 (2) bnode to quads: ${JSON.stringify(state.bnode_to_quads,null,4)}`);
+        /* @@@ */ state.logger.debug(`§4.5.3 (2) bnode to quads: ${JSON.stringify(state.bnode_to_quads,null,4)}`);
 
         // Step 3
         {
@@ -57,7 +66,7 @@ export function compute_canonicalized_graph(state: GlobalState, input_dataset: G
                     state.hash_to_bnodes[hfn].push(n);
                 }
             });
-            state.logger.info(`§4.5.3 (3) hash to bnodes: \n${state.hash_to_bnodes}`)
+            /* @@@ */ state.logger.info(`§4.5.3 (3) hash to bnodes: \n${state.hash_to_bnodes}`)
         }
 
         // Step 4
@@ -81,7 +90,7 @@ export function compute_canonicalized_graph(state: GlobalState, input_dataset: G
                 // bnode identifier; these are retrieved in the last step when a new, normalized
                 // graph is created.
                 const canon_id = state.canonical_issuer.issue_id(identifier_list[0]);
-                state.logger.info(`§4.5.3 (4) canonicalization of ${identifier_list[0]} -> ${canon_id}`);
+                /* @@@ */ state.logger.info(`§4.5.3 (4) canonicalization of ${identifier_list[0]} -> ${canon_id}`);
 
                 // Step 4.3
                 // Remove the corresponding hash
@@ -96,7 +105,7 @@ export function compute_canonicalized_graph(state: GlobalState, input_dataset: G
             const hashes: Hash[] = Object.keys(state.hash_to_bnodes).sort();
             for (const hash of hashes) {
                 const identifier_list: BNodeId[] = state.hash_to_bnodes[hash];
-                state.logger.info(`§4.5.3 (5) identifier list with shared hashes: ${identifier_list} for hash: ${hash}`);
+                /* @@@ */ state.logger.info(`§4.5.3 (5) identifier list with shared hashes: ${identifier_list} for hash: ${hash}`);
                 // This cycle takes care of all problematic cases that share the same hash
                 // Step 5.1
                 // This stores a calculated hash and its relates identifier issuer for each
@@ -115,12 +124,12 @@ export function compute_canonicalized_graph(state: GlobalState, input_dataset: G
                         const bn = temporary_issuer.issue_id(n);
                         // Step 5.2.4
                         const result: NDegreeHashResult = compute_n_degree_hash(state, n, temporary_issuer);
-                        state.logger.debug(`§4.5.3 (5.2.4) computed n-degree hash: ${JSON.stringify(result,null,4)}`);
+                        /* @@@ */ state.logger.debug(`§4.5.3 (5.2.4) computed n-degree hash: ${JSON.stringify(result,null,4)}`);
                         hash_path_list.push(result);
                     }
                 }
 
-                state.logger.info(`§4.5.3 (5.2) hash path list: ${JSON.stringify(hash_path_list,null,4)}`);
+                /* @@@ */ state.logger.info(`§4.5.3 (5.2) hash path list: ${JSON.stringify(hash_path_list,null,4)}`);
 
                 // Step 5.3
                 const ordered_hash_path_list = hash_path_list.sort((a,b): number => {
@@ -159,7 +168,7 @@ export function compute_canonicalized_graph(state: GlobalState, input_dataset: G
         }
 
         // Step 7
-        state.logger.debug(`§4.5.3 Leaving function\n${JSON.stringify(state,null,4)}`);
+        /* @@@ */ state.logger.debug(`§4.5.3 Leaving function\n${JSON.stringify(state,null,4)}`);
         return retval;
     }
 

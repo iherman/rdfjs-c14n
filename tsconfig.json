@@ -26,11 +26,12 @@
     ],
     "include": [
         "lib/**/*",
-        "main.ts",
         "index.ts"
     ],
     "exclude": [
-        "example/**/*"
+        "example/**/*",
+        "tester/**/*",
+        "Attic/**/*"
     ],
     "typedocOptions" : {
         "excludeExternals": true,
@@ -42,6 +43,6 @@
         "categorizeByGroup": true,
         "gitRemote": "origin",
         "hideGenerator": true,
-        "name" : "Converter of vocabulary in YAML format into Turtle/JSON-LD/HTML+RDFa"
+        "name" : "Implementation of the RDF Canonicalization algorithm URDNA2015"
     }
 }

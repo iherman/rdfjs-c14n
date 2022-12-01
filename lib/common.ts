@@ -1,3 +1,11 @@
+/**
+ * Common types and minor utilities.
+ * 
+ * @copyright Ivan Herman 2023
+ * 
+ * @packageDocumentation
+ */
+
 import * as rdf       from 'rdf-js';
 import { createHash } from 'crypto';
 import { IdIssuer }   from './issue_identifier';
@@ -15,17 +23,25 @@ export type BNodeId     = string;
 export type Hash        = string;
 export type QuadToNquad = (quad: rdf.Quad) => string;
 
-// Relates a bnode to those quads in which it appears
+/**
+ * Used in the canonicalization state: blank node to quad map. See
+ * the [specification](https://w3c.github.io/rdf-canon/spec/#canon-state).
+ */
 export interface BNodeToQuads {
     [index: BNodeId] : rdf.Quad[];
 }
 
+/**
+ * Used in the canonicalization state: hash to bnode map. See
+ * the [specification](https://w3c.github.io/rdf-canon/spec/#canon-state).
+ */
 export interface HashToBNodes {
     [index: Hash] : BNodeId[];
 }
 
 /**
- * This is the Canonicalization State, as defined in the spec.
+ * Canonicalization state. See
+ * the [specification](https://w3c.github.io/rdf-canon/spec/#canon-state).
  */
 export interface C14nState {
     bnode_to_quads   : BNodeToQuads;
@@ -34,20 +50,33 @@ export interface C14nState {
 }
 
 /**
+ * These extensions to the state are not defined by the specification, but are necessary to
+ * run.
  * These are the two functions/classes that must be implemented by a lower level RDF library. 
  * The c14n code itself uses the low level abstract RDF JS datatypes only
  */
 export interface GlobalState extends C14nState {
+    /** RDF data factory instance, to be used to create new bnodes and quads */
     data_factory  : rdf.DataFactory;
+
+    /** Function to serialize a single quad into its n-quads equivalent */
     quad_to_nquad : QuadToNquad; 
+
+    /** A logger instance */
     logger        : Logger;
 }
 
+/**
+ * Return structure from a N-degree quad's hash computation, see [the specification](https://www.w3.org/TR/rdf-canon/#hash-nd-quads-algorithm).
+ */
 export interface NDegreeHashResult {
     hash: Hash;
     issuer: IdIssuer
 }
 
+/**
+ * Very simple Logger interface, to be used in the code. Nothing fancy.
+ */
 export interface Logger {
     debug(message: string, ...otherData: any[]): void;
     warn(message: string, ...otherData: any[]): void;
@@ -55,6 +84,9 @@ export interface Logger {
     info(message: string, ...otherData: any[]): void;
 }
 
+/**
+ * A default, no-operation logger instance, used by default.
+ */
 export class NopLogger implements Logger {
     debug(message: string, ...otherData: any[]): void {};
     warn(message: string, ...otherData: any[]): void {};
@@ -63,7 +95,14 @@ export class NopLogger implements Logger {
 }
 
 
-/** Per spec, the BlankNode's "value" does not include the "_:", whereas it does in the C14 algorithm...  */
+/** 
+ * Per RDF Interface specification, the BlankNode's "value" does not include the "_:",
+ * whereas the C14 algorithm does. This function returns the value of a blank node's ID
+ * preceded by the `_:`
+ * 
+ * @param term
+ * @returns
+ */
 export function get_bnodeid(term: rdf.BlankNode): BNodeId {
     return `_:${term.value}`;
 }
@@ -72,7 +111,7 @@ export function get_bnodeid(term: rdf.BlankNode): BNodeId {
  * Return the hash of a string.
  * 
  * @param data 
- * @returns hash value
+ * @returns - hash value
  */
  export function compute_hash(data: string): Hash {
     return createHash(Constants.HASH_ALGORITHM).update(data).digest('hex');
@@ -84,7 +123,7 @@ export function get_bnodeid(term: rdf.BlankNode): BNodeId {
  * quad must end with a single `/n`.
  * 
  * @param nquads
- * @returns hash value
+ * @returns - hash value
  * 
  */
 export function hash_nquads(nquads: string[]): Hash {
