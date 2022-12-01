@@ -1,0 +1,8 @@
+BASE <http://example.com/>
+PREFIX : <#>
+
+:p :q _:b0 .
+:p :q _:b1 .
+_:b0 :p _:b2 .
+_:b1 :p _:b3 .
+_:b2 :r _:b3 .
