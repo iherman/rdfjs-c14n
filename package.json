@@ -1,15 +1,35 @@
 {
   "name": "rdf-c14n",
   "version": "1.0.0",
-  "description": "Attempt to implement the rdf-canon algorithm in TypeScript",
-  "main": "index.js",
+  "description": "URDNA2015 RDF Canonicalization Algorithm Implementation in TypeScript",
+  "homepage": "https://github.com/iherman/rdfjs-c14n",
+  "repository": {
+    "type": "git",
+    "url": "ttps://github.com/iherman/rdfjs-c14n"
+  },
+  "bugs": {
+    "url": "ttps://github.com/iherman/rdfjs-c14n/issues"
+  },
   "scripts": {
-    "test": "./node_modules/.bin/ts-node tester/main.ts"
+    "test": "./node_modules/.bin/ts-node tester/main.ts",
+    "doc" : "./node_modules/.bin/typedoc index.ts lib/*",
+    "dist": "tsc"
   },
   "keywords": [
     "RDF",
     "canonicalization"
   ],
+  "files": [
+    "LICENSE.md",
+    "README.md",
+    "CHANGES.md",
+    "dist/**/*"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "author": "Ivan Herman <ivan@w3.org> (https://www.w3.org/People/Ivan/)",
   "license": "W3C-20150513",
   "dependencies": {
@@ -27,6 +47,7 @@
     "@typescript-eslint/parser": "^5.42.1",
     "commander": "^9.4.1",
     "eslint": "^8.27.0",
-    "n3": "^1.16.3"
+    "n3": "^1.16.3",
+    "typedoc": "^0.23.21"
   }
 }
