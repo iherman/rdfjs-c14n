@@ -7,10 +7,10 @@
  */
 
 import * as rdf from 'rdf-js';
-import { GlobalState, BNodeId, Hash, Graph, NDegreeHashResult, get_bnodeid } from './common';
-import { compute_first_degree_hash }                                         from './hash_1_degree_quads';
-import { compute_n_degree_hash }                                             from './hash_n_degree_quads';
-import { IdIssuer }                                                          from './issue_identifier';
+import { GlobalState, BNodeId, Hash, Dataset, NDegreeHashResult, get_bnodeid } from './common';
+import { compute_first_degree_hash }                                           from './hash_1_degree_quads';
+import { compute_n_degree_hash }                                               from './hash_n_degree_quads';
+import { IdIssuer }                                                            from './issue_identifier';
 
 
 /**
@@ -20,13 +20,13 @@ import { IdIssuer }                                                          fro
  * @param input_dataset 
  * @returns 
  */
-export function compute_canonicalized_graph(state: GlobalState, input_dataset: Graph): Graph {
+export function compute_canonicalized_graph(state: GlobalState, input_dataset: Dataset): Dataset {
         // Re-initialize the state information: canonicalization should always start with a clean state
         state.bnode_to_quads   = {};
         state.hash_to_bnodes   = {};
         state.canonical_issuer = new IdIssuer();
 
-        const retval: Graph = new Set();
+        const retval: Dataset  = state.dataset_factory.dataset();
 
         // Step 2
         // All quads are 'classified' depending on what bnodes they contain
