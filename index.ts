@@ -9,10 +9,10 @@
 
 
 import * as rdf from 'rdf-js';
-import { GlobalState, Graph, QuadToNquad, Logger, NopLogger } from './lib/common';
+import { GlobalState, Dataset, QuadToNquad, Logger, NopLogger } from './lib/common';
 import { IdIssuer }                                           from './lib/issue_identifier';
 import { compute_canonicalized_graph }                        from './lib/canonicalization';
-export { Graph, QuadToNquad, Logger }                         from './lib/common';
+export { Dataset as Graph, QuadToNquad, Logger }              from './lib/common';
 
 /**
  * Just a shell around the algorithm, consisting of a state, and the call for the real implementation.
@@ -29,7 +29,7 @@ export class RDFCanon {
      * @param quad_to_nquad A function that converts an `rdf.Quad` into a bona fide nquad string
      * @param logger        A logger instance; defaults to an "empty" logger, ie, no logging happens
      */
-    constructor(data_factory: rdf.DataFactory, quad_to_nquad: QuadToNquad, logger: Logger = new NopLogger() ) {
+    constructor(data_factory: rdf.DataFactory, dataset_factory: rdf.DatasetCoreFactory, quad_to_nquad: QuadToNquad, logger: Logger = new NopLogger() ) {
         this._state = {
             bnode_to_quads   : {},
             // This will map a calculated hash value to the bnodes it characterizes. In
@@ -38,6 +38,7 @@ export class RDFCanon {
             hash_to_bnodes   : {},
             canonical_issuer : new IdIssuer(),
             data_factory     : data_factory,
+            dataset_factory  : dataset_factory,
             quad_to_nquad    : quad_to_nquad,
             logger           : logger
         }
@@ -50,7 +51,7 @@ export class RDFCanon {
      * @param input_dataset 
      * @returns 
      */
-    canonicalize(input_dataset: Graph): Graph {
+    canonicalize(input_dataset: Dataset): Dataset {
         return compute_canonicalized_graph(this._state, input_dataset);
     }
 }

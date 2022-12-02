@@ -27,7 +27,7 @@
     "include": [
         "lib/**/*",
         "index.ts"
-    ],
+, "Attic/toquad.ts"    ],
     "exclude": [
         "example/**/*",
         "tester/**/*",

@@ -9,9 +9,20 @@
 import {promises as fs} from 'fs';
 import * as n3          from 'n3';
 import * as rdf         from 'rdf-js';
-import { Graph }        from '../index';
 
-export const DataFactory = n3.DataFactory;
+type Dataset = rdf.DatasetCore<rdf.Quad,rdf.Quad>;
+
+class n3_DatasetCoreFactory implements rdf.DatasetCoreFactory {
+    dataset(quads?: rdf.Quad[]): Dataset {
+        const store = new n3.Store();
+        if (quads) {
+            store.addQuads(quads);
+        }
+        return store;
+    }
+}
+
+
 
 /**
  * Convert a Quad into its NQuad equivalent.
@@ -20,7 +31,7 @@ export const DataFactory = n3.DataFactory;
  * @returns 
  */
 export function quad_to_nquad(quad: rdf.Quad): string {
-    return graph_to_nquads([quad])[0];
+    return dataset_to_nquads([quad])[0];
 }
 
 /**
@@ -28,10 +39,12 @@ export function quad_to_nquad(quad: rdf.Quad): string {
  * @param quads 
  * @returns 
  */
-export function graph_to_nquads(quads: Graph|rdf.Quad[]): string[] {
+export function dataset_to_nquads(quads: Dataset|rdf.Quad[]): string[] {
     let retval: string[] = [];
     const writer = new n3.Writer({format: "application/n-quads" })
-    quads.forEach((quad) => writer.addQuad(quad.subject, quad.predicate, quad.object, quad.graph));
+    for (const quad of quads) {
+        writer.addQuad(quad.subject, quad.predicate, quad.object, quad.graph)
+    }
     writer.end( (error,result) => {
         retval = result.split('\n');
     })
@@ -45,7 +58,7 @@ export function graph_to_nquads(quads: Graph|rdf.Quad[]): string[] {
  * @param fname TriG file name
  * @returns 
  */
- export async function get_graph(fname: string): Promise<Graph> {
+export async function get_dataset(fname: string): Promise<Dataset> {
     // The function is called by the parser for each quad; it is used to store the data in the final set of quads.
     const add_quad = (error: Error, quad: rdf.Quad, prefixes: any): void => {
         if (error) {
@@ -55,10 +68,21 @@ export function graph_to_nquads(quads: Graph|rdf.Quad[]): string[] {
         } 
     };
     
-    const graph: Graph = new Set<rdf.Quad>();
+    const graph: Dataset = new n3.Store();
     const trig: string = await fs.readFile(fname, 'utf-8');
     const parser = new n3.Parser({format: "application/trig"});
     parser.parse(trig, add_quad);
     return graph;
 }
 
+export const DataFactory: rdf.DataFactory               = n3.DataFactory;
+export const DatasetCoreFactory: rdf.DatasetCoreFactory = new n3_DatasetCoreFactory();
+
+
+
+// async function test(): Promise<void> {
+//     const data = await get_graph('../test_cases/shared_hashes_example.ttl');
+//     console.log(graph_to_nquads(data))
+// }
+
+// test();

@@ -18,7 +18,7 @@ export namespace Constants {
     export const BNODE_PREFIX = "_:c14n";
 }
 
-export type Graph       = Set<rdf.Quad>;
+export type Dataset     = rdf.DatasetCore<rdf.Quad,rdf.Quad>;
 export type BNodeId     = string;
 export type Hash        = string;
 export type QuadToNquad = (quad: rdf.Quad) => string;
@@ -57,13 +57,16 @@ export interface C14nState {
  */
 export interface GlobalState extends C14nState {
     /** RDF data factory instance, to be used to create new bnodes and quads */
-    data_factory  : rdf.DataFactory;
+    data_factory    : rdf.DataFactory;
+
+    /** RDF DatasetCoreFactory, to be used to create new datasets */
+    dataset_factory : rdf.DatasetCoreFactory;
 
     /** Function to serialize a single quad into its n-quads equivalent */
-    quad_to_nquad : QuadToNquad; 
+    quad_to_nquad   : QuadToNquad; 
 
     /** A logger instance */
-    logger        : Logger;
+    logger          : Logger;
 }
 
 /**
