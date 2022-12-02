@@ -3,7 +3,6 @@ import { Command }              from 'commander';
 import { RDFCanon, Graph }      from '../index';
 import { SimpleLogger, Levels } from './logger';
 import * as rdfn3               from './rdfn3';
-import { DatasetCoreFactory } from './rdfn3';
 
 
 async function main(): Promise<void> {
