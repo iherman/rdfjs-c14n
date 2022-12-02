@@ -7,8 +7,9 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hash_nquads = exports.compute_hash = exports.get_bnodeid = exports.NopLogger = exports.Constants = void 0;
+exports.quad_to_nquad = exports.hash_nquads = exports.compute_hash = exports.get_bnodeid = exports.NopLogger = exports.Constants = void 0;
 const crypto_1 = require("crypto");
+const rdf_string_1 = require("@tpluscode/rdf-string");
 var Constants;
 (function (Constants) {
     /** The hashing algorithm's name used in the module */
@@ -70,3 +71,14 @@ function hash_nquads(nquads) {
     return compute_hash(data);
 }
 exports.hash_nquads = hash_nquads;
+/**
+ * Return an nquad version for a single quad.
+ *
+ * @param quad
+ * @returns
+ */
+function quad_to_nquad(quad) {
+    const retval = (0, rdf_string_1.nquads) `${quad}`.toString();
+    return retval.endsWith('  .') ? retval.replace(/  .$/, ' .') : retval;
+}
+exports.quad_to_nquad = quad_to_nquad;

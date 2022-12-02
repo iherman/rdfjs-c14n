@@ -41,7 +41,7 @@ function compute_first_degree_hash(state, identifier) {
             }
         };
         const new_term = state.data_factory.quad(map_term(quad.subject), quad.predicate, map_term(quad.object), map_term(quad.graph));
-        nquads.push(state.quad_to_nquad(new_term));
+        nquads.push((0, common_1.quad_to_nquad)(new_term));
     });
     // Step 4 (hopefully javascript does the right thing in terms of unicode)
     nquads.sort();

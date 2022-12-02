@@ -27,7 +27,7 @@ class RDFCanon {
      * @param quad_to_nquad A function that converts an `rdf.Quad` into a bona fide nquad string
      * @param logger        A logger instance; defaults to an "empty" logger, ie, no logging happens
      */
-    constructor(data_factory, quad_to_nquad, logger = new common_1.NopLogger()) {
+    constructor(data_factory, dataset_factory, logger = new common_1.NopLogger()) {
         this._state = {
             bnode_to_quads: {},
             // This will map a calculated hash value to the bnodes it characterizes. In
@@ -36,7 +36,7 @@ class RDFCanon {
             hash_to_bnodes: {},
             canonical_issuer: new issue_identifier_1.IdIssuer(),
             data_factory: data_factory,
-            quad_to_nquad: quad_to_nquad,
+            dataset_factory: dataset_factory,
             logger: logger
         };
     }

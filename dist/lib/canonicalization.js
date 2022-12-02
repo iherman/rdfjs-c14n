@@ -24,7 +24,7 @@ function compute_canonicalized_graph(state, input_dataset) {
     state.bnode_to_quads = {};
     state.hash_to_bnodes = {};
     state.canonical_issuer = new issue_identifier_1.IdIssuer();
-    const retval = new Set();
+    const retval = state.dataset_factory.dataset();
     // Step 2
     // All quads are 'classified' depending on what bnodes they contain
     // Results in a mapping from bnodes to all quads that they are part of.
