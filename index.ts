@@ -26,16 +26,13 @@ export class RDFCanon {
     private _state:    GlobalState;
     /**
      * @constructor
-     * @param data_factory  An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface)
-     * @param quad_to_nquad A function that converts an `rdf.Quad` into a bona fide nquad string
-     * @param logger        A logger instance; defaults to an "empty" logger, ie, no logging happens
+     * @param data_factory    An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface)
+     * @param dataset_factory An implementation of the generic RDF DatasetCoreFactory interface, see [the specification]https://rdf.js.org/dataset-spec/#datasetcorefactory-interface)
+     * @param logger          A logger instance; defaults to an "empty" logger, ie, no logging happens
      */
     constructor(data_factory: rdf.DataFactory, dataset_factory: rdf.DatasetCoreFactory, logger: Logger = new NopLogger() ) {
         this._state = {
             bnode_to_quads   : {},
-            // This will map a calculated hash value to the bnodes it characterizes. In
-            // simple cases it is a 1-1 mapping but, sometimes, it is a 1-many.
-            // This structure is filled in step 5
             hash_to_bnodes   : {},
             canonical_issuer : new IdIssuer(),
             data_factory     : data_factory,
