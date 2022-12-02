@@ -6,8 +6,8 @@
  * @packageDocumentation
  */
 
-import * as rdf                                                 from 'rdf-js';
-import { BNodeId, Hash, GlobalState, hash_nquads, get_bnodeid } from './common';
+import * as rdf from 'rdf-js';
+import { BNodeId, Hash, GlobalState, hash_nquads, quad_to_nquad, get_bnodeid } from './common';
 
 /**
  * Compute the first degree hash: a simple hash based on the immediate "surrounding" of a blank node, ie, quads that the
@@ -46,7 +46,7 @@ import { BNodeId, Hash, GlobalState, hash_nquads, get_bnodeid } from './common';
             map_term(quad.object) as rdf.Quad_Object,
             map_term(quad.graph) as rdf.Quad_Graph
         );
-        nquads.push(state.quad_to_nquad(new_term))
+        nquads.push(quad_to_nquad(new_term))
     })
 
     // Step 4 (hopefully javascript does the right thing in terms of unicode)

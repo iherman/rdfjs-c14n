@@ -12,7 +12,7 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/ts-node tester/main.ts",
-    "doc" : "./node_modules/.bin/typedoc index.ts lib/*",
+    "doc": "./node_modules/.bin/typedoc index.ts lib/*",
     "dist": "tsc"
   },
   "keywords": [
@@ -33,6 +33,7 @@
   "author": "Ivan Herman <ivan@w3.org> (https://www.w3.org/People/Ivan/)",
   "license": "W3C-20150513",
   "dependencies": {
+    "@tpluscode/rdf-string": "^0.2.26",
     "@types/node": "^18.11.9",
     "@types/rdf-js": "^4.0.2",
     "array-permutation": "^0.2.0",

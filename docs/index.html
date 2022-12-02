@@ -16,10 +16,9 @@
 <a href="#rdf-canonicalization-in-typescript" id="rdf-canonicalization-in-typescript" style="color: inherit; text-decoration: none;">
   <h1>RDF Canonicalization in TypeScript</h1>
 </a>
-<p>This is a proof-of-concept implementation (under development) of the <a href="https://www.w3.org/TR/rdf-canon/">RDF Dataset Canonicalization</a> algorithm.</p>
-<p>Note that the algorithm is being specified by the W3C <a href="https://www.w3.org/groups/wg/rch">RDF Dataset Canonicalization and Hash Working Group</a>, 
-and nothing is final…</p>
-<p>A proper documentation will come further when the code is complete.</p>
+<p>This is an implementation (under development) of the <a href="https://www.w3.org/TR/rdf-canon/">RDF Dataset Canonicalization</a> algorithm. (The algorithm is being specified by the W3C <a href="https://www.w3.org/groups/wg/rch">RDF Dataset Canonicalization and Hash Working Group</a>, and nothing is final…)</p>
+<p>The core library is (in TypeScript) in the <code>lib</code> directory, and &quot;indexed&quot; via the <code>index.ts</code> file. This library is only dependent on the generic RDF DataFactory interface, see <a href="http://rdf.js.org/data-model-spec/#datafactory-interface">the specification</a>. A separate <code>tester</code> library includes a small &quot;application&quot;, relying on the <a href="https://github.com/rdfjs/N3.js"><code>n3</code></a> library implementing the generic <code>rdf.js</code> interface to run the library on specific Turtle/TriG files.  </p>
+<p>A proper documentation will come further when the code ready to be published on npm.</p>
 <hr>
 <p>Maintainer: <a href="https://github.com/iherman">@iherman</a></p>
 </div></div>

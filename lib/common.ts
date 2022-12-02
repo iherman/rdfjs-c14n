@@ -9,6 +9,8 @@
 import * as rdf       from 'rdf-js';
 import { createHash } from 'crypto';
 import { IdIssuer }   from './issue_identifier';
+import {nquads}       from '@tpluscode/rdf-string';
+
 
 export namespace Constants {
     /** The hashing algorithm's name used in the module */
@@ -61,9 +63,6 @@ export interface GlobalState extends C14nState {
 
     /** RDF DatasetCoreFactory, to be used to create new datasets */
     dataset_factory : rdf.DatasetCoreFactory;
-
-    /** Function to serialize a single quad into its n-quads equivalent */
-    quad_to_nquad   : QuadToNquad; 
 
     /** A logger instance */
     logger          : Logger;
@@ -139,3 +138,13 @@ export function hash_nquads(nquads: string[]): Hash {
     return compute_hash(data);
 }
 
+/**
+ * Return an nquad version for a single quad.
+ * 
+ * @param quad 
+ * @returns 
+ */
+export function quad_to_nquad(quad: rdf.Quad): string {
+    const retval = nquads`${quad}`.toString();
+    return retval.endsWith('  .') ? retval.replace(/  .$/, ' .') : retval;
+}

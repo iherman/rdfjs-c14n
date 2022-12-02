@@ -23,17 +23,6 @@ class n3_DatasetCoreFactory implements rdf.DatasetCoreFactory {
 }
 
 
-
-/**
- * Convert a Quad into its NQuad equivalent.
- * 
- * @param quad 
- * @returns 
- */
-export function quad_to_nquad(quad: rdf.Quad): string {
-    return dataset_to_nquads([quad])[0];
-}
-
 /**
  * Convert the graph into NQuads, more exactly into an array of individual NQuad statement
  * @param quads 
@@ -77,12 +66,3 @@ export async function get_dataset(fname: string): Promise<Dataset> {
 
 export const DataFactory: rdf.DataFactory               = n3.DataFactory;
 export const DatasetCoreFactory: rdf.DatasetCoreFactory = new n3_DatasetCoreFactory();
-
-
-
-// async function test(): Promise<void> {
-//     const data = await get_graph('../test_cases/shared_hashes_example.ttl');
-//     console.log(graph_to_nquads(data))
-// }
-
-// test();
