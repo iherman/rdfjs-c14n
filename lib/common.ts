@@ -96,19 +96,6 @@ export class NopLogger implements Logger {
     info(message: string, ...otherData: any[]): void {};
 }
 
-
-/** 
- * Per RDF Interface specification, the BlankNode's "value" does not include the "_:",
- * whereas the C14 algorithm does. This function returns the value of a blank node's ID
- * preceded by the `_:`
- * 
- * @param term
- * @returns
- */
-// export function get_bnodeid(term: rdf.BlankNode): BNodeId {
-//     return `_:${term.value}`;
-// }
-
 /**
  * Return the hash of a string.
  * 
