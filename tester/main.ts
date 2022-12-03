@@ -1,4 +1,3 @@
-import * as rdf from 'rdf-js';
 import { Command }              from 'commander';
 import { RDFCanon, Dataset }    from '../index';
 import { SimpleLogger, Levels } from './logger';
