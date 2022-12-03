@@ -1,8 +1,8 @@
 BASE <http://example.com/>
 PREFIX : <#>
 
-:p :q _:b0 .
-:p :q _:b1 .
-_:b0 :p _:b2 .
-_:b1 :p _:b3 .
-_:b2 :r _:b3 .
+:p :q _:e0 .
+:p :q _:e1 .
+_:e0 :p _:e2 .
+_:e1 :p _:e3 .
+_:e2 :r _:e3 .

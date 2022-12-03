@@ -7,7 +7,7 @@
  */
 
 import * as rdf from 'rdf-js';
-import { BNodeId, Hash, GlobalState, hash_nquads, quad_to_nquad, get_bnodeid } from './common';
+import { BNodeId, Hash, GlobalState, hash_nquads, quad_to_nquad } from './common';
 
 /**
  * Compute the first degree hash: a simple hash based on the immediate "surrounding" of a blank node, ie, quads that the
@@ -34,8 +34,7 @@ import { BNodeId, Hash, GlobalState, hash_nquads, quad_to_nquad, get_bnodeid } f
         // Get the 'fake' quad term to be used for hashing.
         const map_term = (t: rdf.Term): rdf.Term => {
             if (t.termType === "BlankNode") {
-                const bid = get_bnodeid(t);
-                return (bid === identifier) ? state.data_factory.blankNode('a') : state.data_factory.blankNode('z');
+                return (t.value === identifier) ? state.data_factory.blankNode('a') : state.data_factory.blankNode('z');
             } else {
                 return t
             }

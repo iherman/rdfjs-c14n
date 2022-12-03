@@ -6,10 +6,10 @@
  * @packageDocumentation
  */
 
-import * as rdf                                                                                   from 'rdf-js';
-import { BNodeId, Hash, NDegreeHashResult, HashToBNodes, GlobalState, compute_hash, get_bnodeid } from './common';
-import { compute_first_degree_hash }                                                              from './hash_1_degree_quads';
-import { IdIssuer }                                                                               from './issue_identifier';
+import * as rdf                                                                      from 'rdf-js';
+import { BNodeId, Hash, NDegreeHashResult, HashToBNodes, GlobalState, compute_hash } from './common';
+import { compute_first_degree_hash }                                                 from './hash_1_degree_quads';
+import { IdIssuer }                                                                  from './issue_identifier';
 const permutation = require('array-permutation');
 
 /**
@@ -77,14 +77,14 @@ const permutation = require('array-permutation');
     for (const quad of state.bnode_to_quads[identifier]) {
         // Step 3.1
         const per_component = (t: rdf.Term, position: string): void => {
-            if (t.termType === "BlankNode" &&  get_bnodeid(t) !== identifier) {
+            if (t.termType === "BlankNode" &&  t.value !== identifier) {
                 // Step 3.1.1
-                const hash = compute_hash_related_blank_node(state, get_bnodeid(t), quad,  issuer, position);
+                const hash = compute_hash_related_blank_node(state, t.value, quad,  issuer, position);
                 // Step 3.1.2
                 if (Hn[hash] === undefined) {
-                    Hn[hash] = [get_bnodeid(t)];
+                    Hn[hash] = [t.value];
                 } else {
-                    Hn[hash].push(get_bnodeid(t))
+                    Hn[hash].push(t.value)
                 }
             }
         }
