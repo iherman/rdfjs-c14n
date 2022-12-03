@@ -9,7 +9,7 @@
 import * as rdf       from 'rdf-js';
 import { createHash } from 'crypto';
 import { IdIssuer }   from './issue_identifier';
-import {nquads}       from '@tpluscode/rdf-string';
+import { nquads }     from '@tpluscode/rdf-string';
 
 
 export namespace Constants {
@@ -17,7 +17,7 @@ export namespace Constants {
     export const HASH_ALGORITHM = "sha256";
 
     /** The prefix used for all generated canonical bnode IDs */
-    export const BNODE_PREFIX = "_:c14n";
+    export const BNODE_PREFIX = "c14n";
 }
 
 export type Dataset     = rdf.DatasetCore<rdf.Quad,rdf.Quad>;
@@ -94,19 +94,6 @@ export class NopLogger implements Logger {
     warn(message: string, ...otherData: any[]): void {};
     error(message: string, ...otherData: any[]): void {};
     info(message: string, ...otherData: any[]): void {};
-}
-
-
-/** 
- * Per RDF Interface specification, the BlankNode's "value" does not include the "_:",
- * whereas the C14 algorithm does. This function returns the value of a blank node's ID
- * preceded by the `_:`
- * 
- * @param term
- * @returns
- */
-export function get_bnodeid(term: rdf.BlankNode): BNodeId {
-    return `_:${term.value}`;
 }
 
 /**

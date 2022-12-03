@@ -7,10 +7,10 @@
  */
 
 import * as rdf from 'rdf-js';
-import { GlobalState, BNodeId, Hash, Dataset, NDegreeHashResult, get_bnodeid } from './common';
-import { compute_first_degree_hash }                                           from './hash_1_degree_quads';
-import { compute_n_degree_hash }                                               from './hash_n_degree_quads';
-import { IdIssuer }                                                            from './issue_identifier';
+import { GlobalState, BNodeId, Hash, Dataset, NDegreeHashResult } from './common';
+import { compute_first_degree_hash }                              from './hash_1_degree_quads';
+import { compute_n_degree_hash }                                  from './hash_n_degree_quads';
+import { IdIssuer }                                               from './issue_identifier';
 
 
 /**
@@ -35,7 +35,7 @@ export function compute_canonicalized_graph(state: GlobalState, input_dataset: D
             for (const quad of input_dataset) {
                 const bnode_map = (t: rdf.Term): void => {
                     if (t.termType === "BlankNode") {
-                        const bnode: BNodeId = get_bnodeid(t);
+                        const bnode: BNodeId = t.value;
                         if (state.bnode_to_quads[bnode] === undefined) {
                             state.bnode_to_quads[bnode] = [quad];
                         } else {
@@ -119,7 +119,7 @@ export function compute_canonicalized_graph(state: GlobalState, input_dataset: D
                         continue;
                     } else {
                         // Step 5.2.2
-                        const temporary_issuer = new IdIssuer('_:b');
+                        const temporary_issuer = new IdIssuer('b');
                         // Step 5.2.3
                         const bn = temporary_issuer.issue_id(n);
                         // Step 5.2.4
@@ -151,9 +151,8 @@ export function compute_canonicalized_graph(state: GlobalState, input_dataset: D
             // This function replaces the term with its canonical equivalent, if applicable
             const replace_bnode = (term: rdf.Term): rdf.Term => {
                 if (term.termType === "BlankNode") {
-                    const canonical = state.canonical_issuer.issue_id(get_bnodeid(term));
-                    // Remove the `_:` before creating the new bnode...
-                    return state.data_factory.blankNode(canonical.slice(2))
+                    const canonical = state.canonical_issuer.issue_id(term.value);
+                    return state.data_factory.blankNode(canonical)
                 } else {
                     return term;
                 }
