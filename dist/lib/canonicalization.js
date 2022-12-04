@@ -8,7 +8,6 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.compute_canonicalized_graph = void 0;
-const common_1 = require("./common");
 const hash_1_degree_quads_1 = require("./hash_1_degree_quads");
 const hash_n_degree_quads_1 = require("./hash_n_degree_quads");
 const issue_identifier_1 = require("./issue_identifier");
@@ -32,7 +31,7 @@ function compute_canonicalized_graph(state, input_dataset) {
         for (const quad of input_dataset) {
             const bnode_map = (t) => {
                 if (t.termType === "BlankNode") {
-                    const bnode = (0, common_1.get_bnodeid)(t);
+                    const bnode = t.value;
                     if (state.bnode_to_quads[bnode] === undefined) {
                         state.bnode_to_quads[bnode] = [quad];
                     }
@@ -113,7 +112,7 @@ function compute_canonicalized_graph(state, input_dataset) {
                 }
                 else {
                     // Step 5.2.2
-                    const temporary_issuer = new issue_identifier_1.IdIssuer('_:b');
+                    const temporary_issuer = new issue_identifier_1.IdIssuer('b');
                     // Step 5.2.3
                     const bn = temporary_issuer.issue_id(n);
                     // Step 5.2.4
@@ -145,9 +144,8 @@ function compute_canonicalized_graph(state, input_dataset) {
         // This function replaces the term with its canonical equivalent, if applicable
         const replace_bnode = (term) => {
             if (term.termType === "BlankNode") {
-                const canonical = state.canonical_issuer.issue_id((0, common_1.get_bnodeid)(term));
-                // Remove the `_:` before creating the new bnode...
-                return state.data_factory.blankNode(canonical.slice(2));
+                const canonical = state.canonical_issuer.issue_id(term.value);
+                return state.data_factory.blankNode(canonical);
             }
             else {
                 return term;

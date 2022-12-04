@@ -7,7 +7,7 @@
  */
 
 import * as rdf from 'rdf-js';
-import { BNodeId, Hash, GlobalState, hash_nquads, quad_to_nquad } from './common';
+import { BNodeId, Hash, GlobalState, sort_and_hash_nquads, quad_to_nquad } from './common';
 
 /**
  * Compute the first degree hash: a simple hash based on the immediate "surrounding" of a blank node, ie, quads that the
@@ -49,11 +49,9 @@ import { BNodeId, Hash, GlobalState, hash_nquads, quad_to_nquad } from './common
     })
 
     // Step 4 (hopefully javascript does the right thing in terms of unicode)
-    nquads.sort();
-
     // Step 5
-    const the_hash: Hash = hash_nquads(nquads)
+    const the_hash: Hash = sort_and_hash_nquads(nquads)
 
-    /* @@@ */ state.logger.info(`§4.7.3 First degree quads:\n  quads: {${nquads}\n  hash: ${the_hash}`);
+    /* @@@ */ state.logger.info(`§4.7.3 First degree quads (unsorted):\n  quads: {${nquads}\n  hash: ${the_hash}`);
     return the_hash;
 }
