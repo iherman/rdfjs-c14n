@@ -70,15 +70,15 @@ function compute_n_degree_hash(state, identifier, issuer) {
     for (const quad of state.bnode_to_quads[identifier]) {
         // Step 3.1
         const per_component = (t, position) => {
-            if (t.termType === "BlankNode" && (0, common_1.get_bnodeid)(t) !== identifier) {
+            if (t.termType === "BlankNode" && t.value !== identifier) {
                 // Step 3.1.1
-                const hash = compute_hash_related_blank_node(state, (0, common_1.get_bnodeid)(t), quad, issuer, position);
+                const hash = compute_hash_related_blank_node(state, t.value, quad, issuer, position);
                 // Step 3.1.2
                 if (Hn[hash] === undefined) {
-                    Hn[hash] = [(0, common_1.get_bnodeid)(t)];
+                    Hn[hash] = [t.value];
                 }
                 else {
-                    Hn[hash].push((0, common_1.get_bnodeid)(t));
+                    Hn[hash].push(t.value);
                 }
             }
         };

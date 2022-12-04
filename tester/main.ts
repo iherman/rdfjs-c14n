@@ -31,7 +31,7 @@ async function main(): Promise<void> {
     const normalized: Dataset = canonicalizer.canonicalize(input);
 
     const normalized_quads: string = rdfn3.dataset_to_nquads(normalized).sort().join('\n');
-    const hash: Hash = hash_dataset(normalized, true);
+    const hash: Hash               = hash_dataset(normalized, true);
 
     console.log(`Canonicalized graph:\n${normalized_quads}`);
     console.log(`\nHash: ${hash}`)

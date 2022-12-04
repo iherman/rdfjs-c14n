@@ -44,6 +44,8 @@ export class RDFCanon {
     }
 
     /**
+     * Canonicalize a Dataset.
+     * 
      * Implementation of the main algorithmic steps, see [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
      * real work is done in [separate](../functions/lib_canonicalization.compute_canonicalized_graph.html) function.
      * 
@@ -62,7 +64,7 @@ export class RDFCanon {
      * 3. Compute the hash of the concatenated nquads.
      * 
      * @param input_dataset 
-     * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
+     * @param algorithm - Hash algorithm to use. The value can be anything that the underlying openssl environment accepts, defaults to sha256.
      * @returns 
      */
     hash(input_dataset: Dataset, algorithm: string = Constants.HASH_ALGORITHM): Hash {

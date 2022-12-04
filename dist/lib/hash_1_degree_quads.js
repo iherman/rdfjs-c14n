@@ -33,8 +33,7 @@ function compute_first_degree_hash(state, identifier) {
         // Get the 'fake' quad term to be used for hashing.
         const map_term = (t) => {
             if (t.termType === "BlankNode") {
-                const bid = (0, common_1.get_bnodeid)(t);
-                return (bid === identifier) ? state.data_factory.blankNode('a') : state.data_factory.blankNode('z');
+                return (t.value === identifier) ? state.data_factory.blankNode('a') : state.data_factory.blankNode('z');
             }
             else {
                 return t;
@@ -44,10 +43,9 @@ function compute_first_degree_hash(state, identifier) {
         nquads.push((0, common_1.quad_to_nquad)(new_term));
     });
     // Step 4 (hopefully javascript does the right thing in terms of unicode)
-    nquads.sort();
     // Step 5
-    const the_hash = (0, common_1.hash_nquads)(nquads);
-    /* @@@ */ state.logger.info(`§4.7.3 First degree quads:\n  quads: {${nquads}\n  hash: ${the_hash}`);
+    const the_hash = (0, common_1.sort_and_hash_nquads)(nquads);
+    /* @@@ */ state.logger.info(`§4.7.3 First degree quads (unsorted):\n  quads: {${nquads}\n  hash: ${the_hash}`);
     return the_hash;
 }
 exports.compute_first_degree_hash = compute_first_degree_hash;
