@@ -1,5 +1,6 @@
 import * as rdf from 'rdf-js';
 export type Dataset     = rdf.DatasetCore<rdf.Quad,rdf.Quad>;
+export type Hash        = string;
 
 export interface Logger {
     debug(message: string, ...otherData: any[]): void;
@@ -8,7 +9,9 @@ export interface Logger {
     info(message: string, ...otherData: any[]): void;
 }
 
-export class URDNA2015 {
+export function hash_dataset(quads: Dataset, sort: boolean, algorithm: string): Hash;
+
+export class RDFCanon {
     /**
      * 
      * @param data_factory    An implementation of the generic RDF DataFactory interface, see http://rdf.js.org/data-model-spec/#datafactory-interface
@@ -24,4 +27,17 @@ export class URDNA2015 {
      * @returns 
      */
     canonicalize(input_dataset: Dataset): Dataset;
+
+    /**
+     * Hash a dataset:
+     * 
+     * 1. Compute a canonical version of the dataset
+     * 2. Serialize the dataset into nquads and sort the result
+     * 3. Compute the hash of the concatenated nquads.
+     * 
+     * @param input_dataset 
+     * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
+     * @returns 
+     */
+     hash(input_dataset: Dataset, algorithm: string): Hash;
 }

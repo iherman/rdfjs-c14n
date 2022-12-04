@@ -100,30 +100,61 @@ export class NopLogger implements Logger {
  * Return the hash of a string.
  * 
  * @param data 
+ * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
  * @returns - hash value
  */
- export function compute_hash(data: string): Hash {
-    return createHash(Constants.HASH_ALGORITHM).update(data).digest('hex');
+ export function compute_hash(data: string, algorithm: string = Constants.HASH_ALGORITHM): Hash {
+    return createHash(algorithm).update(data).digest('hex');
 }
 
 /**
  * Return the hash of an array of nquad statements; per spec, this means
- * concatenating all nquads into a long array. Care should be taken that each
+ * concatenating all nquads into a long string. Care should be taken that each
  * quad must end with a single `/n`.
  * 
  * @param nquads
+ * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
  * @returns - hash value
  * 
  */
-export function hash_nquads(nquads: string[]): Hash {
-    // It may be better to add to a hash the quads one by one and then make the calculation;
-    // this is a possible optimization for another day...
-
+export function hash_nquads(nquads: string[], algorithm: string = Constants.HASH_ALGORITHM): Hash {
     // Care should be taken that the final data to be hashed include a single `/n`
     // for every quad, before joining the quads into a string that must be hashed
     const data: string = nquads.map((q:string): string => q.endsWith('\n') ? q : `${q}\n`).join('');
-    return compute_hash(data);
+    return compute_hash(data, algorithm);
 }
+
+/**
+ * Return the hash of an array of nquad statements after being sorted. Per spec, this means
+ * concatenating all nquads into a long string. Care should be taken that each
+ * quad must end with a single `/n`.
+ * 
+ * @param nquads 
+ * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
+ * @returns 
+ */
+export function sort_and_hash_nquads(nquads: string[], algorithm: string = Constants.HASH_ALGORITHM): Hash {
+    nquads.sort();
+    return hash_nquads(nquads, algorithm)
+}
+
+/**
+ * Hash a dataset
+ * @param quads 
+ * @param sort - whether the quads must be sorted before hash. Defaults to `true`
+ * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
+ * @returns 
+ */
+export function hash_dataset(quads: Dataset, sort: boolean = true, algorithm: string = Constants.HASH_ALGORITHM): Hash {
+    const nquads: string[] = [];
+    for(const quad of quads) {
+        nquads.push(quad_to_nquad(quad))
+    }
+    if (sort) nquads.sort();
+    return hash_nquads(nquads, algorithm)
+}
+
+
 
 /**
  * Return an nquad version for a single quad.

@@ -1,7 +1,7 @@
-import { Command }              from 'commander';
-import { RDFCanon, Dataset }    from '../index';
-import { SimpleLogger, Levels } from './logger';
-import * as rdfn3               from './rdfn3';
+import { Command }                               from 'commander';
+import { RDFCanon, Dataset, hash_dataset, Hash } from '../index';
+import { SimpleLogger, Levels }                  from './logger';
+import * as rdfn3                                from './rdfn3';
 
 
 async function main(): Promise<void> {
@@ -31,10 +31,10 @@ async function main(): Promise<void> {
     const normalized: Dataset = canonicalizer.canonicalize(input);
 
     const normalized_quads: string = rdfn3.dataset_to_nquads(normalized).sort().join('\n');
-    console.log(`Canonicalized graph: \n${normalized_quads}`);
+    const hash: Hash = hash_dataset(normalized, true);
+
+    console.log(`Canonicalized graph:\n${normalized_quads}`);
+    console.log(`\nHash: ${hash}`)
 }
 
-main()
-
-
-
+main();
