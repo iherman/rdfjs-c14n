@@ -2,16 +2,16 @@ import * as rdf from 'rdf-js';
 export type Dataset     = rdf.DatasetCore<rdf.Quad,rdf.Quad>;
 export type Hash        = string;
 
-export interface Logger {
+declare interface Logger {
     debug(message: string, ...otherData: any[]): void;
     warn(message: string, ...otherData: any[]): void;
     error(message: string, ...otherData: any[]): void;
     info(message: string, ...otherData: any[]): void;
 }
 
-export function hash_dataset(quads: Dataset, sort: boolean, algorithm: string): Hash;
+declare function hash_dataset(quads: Dataset, sort: boolean, algorithm?: string): Hash;
 
-export class RDFCanon {
+declare class RDFCanon {
     /**
      * 
      * @param data_factory    An implementation of the generic RDF DataFactory interface, see http://rdf.js.org/data-model-spec/#datafactory-interface
