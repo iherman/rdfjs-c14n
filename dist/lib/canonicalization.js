@@ -133,8 +133,8 @@ function compute_canonicalized_graph(state, input_dataset) {
             });
             for (const result of ordered_hash_path_list) {
                 // Step 5.3.1
-                for (const existing_identifier of result.issuer.existing_identifiers()) {
-                    state.canonical_issuer.issue_id(existing_identifier);
+                for (const [existing, temporary] of result.issuer) {
+                    state.canonical_issuer.issue_id(existing);
                 }
             }
         }
