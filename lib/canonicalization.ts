@@ -7,26 +7,27 @@
  */
 
 import * as rdf from 'rdf-js';
-import { GlobalState, BNodeId, Hash, Dataset, NDegreeHashResult } from './common';
-import { compute_first_degree_hash }                              from './hash_1_degree_quads';
-import { compute_n_degree_hash }                                  from './hash_n_degree_quads';
-import { IdIssuer }                                               from './issue_identifier';
+import { GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, DatasetShell } from './common';
+import { compute_first_degree_hash }                                          from './hash_1_degree_quads';
+import { compute_n_degree_hash }                                              from './hash_n_degree_quads';
+import { IdIssuer }                                                           from './issue_identifier';
 
 
 /**
  * Implementation of the main algorithmic [steps on the top level](https://www.w3.org/TR/rdf-canon/##canon-algo-algo) for the details.
  * 
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
- * @param input_dataset 
- * @returns 
+ * @param input
+ * @returns - the exact type of the output depends on the type of the input. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the DatasetFactory is set, it will be a Dataset, otherwise a Set.
  */
-export function compute_canonicalized_graph(state: GlobalState, input_dataset: Dataset): Dataset {
+export function compute_canonicalized_graph(state: GlobalState, input: Quads): Quads {
         // Re-initialize the state information: canonicalization should always start with a clean state
         state.bnode_to_quads   = {};
         state.hash_to_bnodes   = {};
         state.canonical_issuer = new IdIssuer();
 
-        const retval: Dataset  = state.dataset_factory.dataset();
+        const input_dataset: DatasetShell = new DatasetShell(input);
+        const retval: DatasetShell        = input_dataset.new(state);
 
         // Step 2
         // All quads are 'classified' depending on what bnodes they contain
@@ -168,6 +169,6 @@ export function compute_canonicalized_graph(state: GlobalState, input_dataset: D
 
         // Step 7
         /* @@@ */ state.logger.debug(`§4.5.3 Leaving function\n${JSON.stringify(state,null,4)}`);
-        return retval;
+        return retval.data;
     }
 

@@ -20,7 +20,8 @@ export namespace Constants {
     export const BNODE_PREFIX = "c14n";
 }
 
-export type Dataset     = rdf.DatasetCore<rdf.Quad,rdf.Quad>;
+       type Dataset     = rdf.DatasetCore<rdf.Quad,rdf.Quad>;
+export type Quads       = Dataset | rdf.Quad[] | Set<rdf.Quad>;
 export type BNodeId     = string;
 export type Hash        = string;
 export type QuadToNquad = (quad: rdf.Quad) => string;
@@ -58,11 +59,11 @@ export interface C14nState {
  * The c14n code itself uses the low level abstract RDF JS datatypes only
  */
 export interface GlobalState extends C14nState {
-    /** RDF data factory instance, to be used to create new bnodes and quads */
+    /** RDF data factory instance, to be used to create new terms and quads */
     data_factory    : rdf.DataFactory;
 
-    /** RDF DatasetCoreFactory, to be used to create new datasets */
-    dataset_factory : rdf.DatasetCoreFactory;
+    /** RDF DatasetCoreFactory, to be used to create new datasets. If undefined, the return value of canonicalization is a set of quads. */
+    dataset_factory ?: rdf.DatasetCoreFactory;
 
     /** A logger instance */
     logger          : Logger;
@@ -145,7 +146,7 @@ export function sort_and_hash_nquads(nquads: string[], algorithm: string = Const
  * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
  * @returns 
  */
-export function hash_dataset(quads: Dataset, sort: boolean = true, algorithm: string = Constants.HASH_ALGORITHM): Hash {
+export function hash_dataset(quads: Quads, sort: boolean = true, algorithm: string = Constants.HASH_ALGORITHM): Hash {
     const nquads: string[] = [];
     for(const quad of quads) {
         nquads.push(quad_to_nquad(quad))
@@ -153,7 +154,6 @@ export function hash_dataset(quads: Dataset, sort: boolean = true, algorithm: st
     if (sort) nquads.sort();
     return hash_nquads(nquads, algorithm)
 }
-
 
 
 /**
@@ -165,4 +165,51 @@ export function hash_dataset(quads: Dataset, sort: boolean = true, algorithm: st
 export function quad_to_nquad(quad: rdf.Quad): string {
     const retval = nquads`${quad}`.toString();
     return retval.endsWith('  .') ? retval.replace(/  .$/, ' .') : retval;
+}
+
+/**
+ * A shell to provide a unified way of handling the various ways a graph can be represented: a full blown
+ * rdf.DatasetCore, or an array or a Set of Quads.
+ */
+export class DatasetShell {
+    private theGraph: Quads ;
+
+    constructor(theGraph: Quads) {
+        this.theGraph = theGraph;
+    }
+
+    add(quad: rdf.Quad) {
+        if (Array.isArray(this.theGraph)) {
+            this.theGraph.push(quad)
+        } else {
+            this.theGraph.add(quad);
+        }
+    }
+
+    new(state: GlobalState): DatasetShell {
+        if (Array.isArray(this.theGraph)) {
+            return new DatasetShell([]);
+        } else if(this.theGraph instanceof Set) {
+            return new DatasetShell(new Set<rdf.Quad>());
+        } else {
+            if (state.dataset_factory) {
+                return new DatasetShell(state.dataset_factory.dataset());    
+            } else {
+                return new DatasetShell(new Set<rdf.Quad>());
+            }
+        }
+    }
+
+    get data(): Quads {
+        return this.theGraph;
+    }
+
+    /**
+     * Iterate over the values in issuance order 
+     */
+     *[Symbol.iterator](): IterableIterator<rdf.Quad> {
+        for (const quad of this.theGraph) {
+            yield quad;
+        }
+    }
 }

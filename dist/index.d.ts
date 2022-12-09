@@ -1,6 +1,6 @@
 import * as rdf from 'rdf-js';
-export type Dataset     = rdf.DatasetCore<rdf.Quad,rdf.Quad>;
-export type Hash        = string;
+export type Quads = rdf.DatasetCore<rdf.Quad,rdf.Quad> | rdf.Quad[] | Set<rdf.Quad>;
+export type Hash  = string;
 
 declare interface Logger {
     debug(message: string, ...otherData: any[]): void;
@@ -9,24 +9,26 @@ declare interface Logger {
     info(message: string, ...otherData: any[]): void;
 }
 
-declare function hash_dataset(quads: Dataset, sort: boolean, algorithm?: string): Hash;
+declare function hash_dataset(quads: Quads, sort: boolean, algorithm?: string): Hash;
 
 declare class RDFCanon {
     /**
      * 
      * @param data_factory    An implementation of the generic RDF DataFactory interface, see http://rdf.js.org/data-model-spec/#datafactory-interface
-     * @param dataset_factory An implementation of the generic RDF DatasetCoreFactory interface, see https://rdf.js.org/dataset-spec/#datasetcorefactory-interface
-     * @param logger          A logger instance; defaults to an "empty" logger, ie, no logging happens
+     * @param dataset_factory An implementation of the generic RDF DatasetCoreFactory interface, see https://rdf.js.org/dataset-spec/#datasetcorefactory-interface. If undefined, the canonicalized graph will automatically be a Set of quads.
+     * @param logger          A logger instance; defaults to an "empty" logger, ie, no logging happens.
      */
-    constructor(data_factory: rdf.DataFactory, dataset_factory: rdf.DatasetCoreFactory, logger: Logger);
+    constructor(data_factory: rdf.DataFactory, dataset_factory?: rdf.DatasetCoreFactory, logger?: Logger);
+
+    set_logger(logger: Logger): void;
 
     /**
      * Implementation of the main algorithmic steps
      * 
      * @param input_dataset 
-     * @returns 
+     * @returns - the exact type of the output depends on the type of the input dataset. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the dataset_factory has been set set, it will be a Dataset, otherwise a Set.
      */
-    canonicalize(input_dataset: Dataset): Dataset;
+    canonicalize(input_dataset: Quads): Quads;
 
     /**
      * Hash a dataset:
@@ -39,5 +41,5 @@ declare class RDFCanon {
      * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
      * @returns 
      */
-     hash(input_dataset: Dataset, algorithm: string): Hash;
+     hash(input_dataset: Quads, algorithm: string): Hash;
 }

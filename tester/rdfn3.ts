@@ -12,6 +12,7 @@ import * as rdf         from 'rdf-js';
 
 type Dataset = rdf.DatasetCore<rdf.Quad,rdf.Quad>;
 
+// This has been defined as a possible way of simulating the Dataset Factory, which is not present in n3.
 class n3_DatasetCoreFactory implements rdf.DatasetCoreFactory {
     dataset(quads?: rdf.Quad[]): Dataset {
         const store = new n3.Store();
@@ -28,8 +29,8 @@ class n3_DatasetCoreFactory implements rdf.DatasetCoreFactory {
  * @param quads 
  * @returns 
  */
-export function dataset_to_nquads(quads: Dataset|rdf.Quad[]): string[] {
-    let retval: string[] = [];
+export function dataset_to_nquads(quads: Iterable<rdf.Quad>): string[] {
+        let retval: string[] = [];
     const writer = new n3.Writer({format: "application/n-quads" })
     for (const quad of quads) {
         writer.addQuad(quad.subject, quad.predicate, quad.object, quad.graph)
@@ -40,6 +41,8 @@ export function dataset_to_nquads(quads: Dataset|rdf.Quad[]): string[] {
     retval.filter( (item) => item !== '');
     return retval;
 }
+
+
 
 /**
  * Parse a turtle/trig file and return the result in a set of RDF Quads. The prefix declarations are also added to the list of prefixes.
@@ -63,6 +66,30 @@ export async function get_dataset(fname: string): Promise<Dataset> {
     parser.parse(trig, add_quad);
     return graph;
 }
+
+/**
+ * Parse a turtle/trig file and return the result in a set of RDF Quads. The prefix declarations are also added to the list of prefixes.
+ * 
+ * @param fname TriG file name
+ * @returns 
+ */
+export async function get_quads(fname: string): Promise<Set<rdf.Quad>> {
+    // The function is called by the parser for each quad; it is used to store the data in the final set of quads.
+    const add_quad = (error: Error, quad: rdf.Quad, prefixes: any): void => {
+        if (error) {
+            throw(error);
+        } else if( quad !== null) {
+            graph.add(quad);
+        } 
+    };
+    
+    const graph: Set<rdf.Quad> = new Set<rdf.Quad>;
+    const trig: string = await fs.readFile(fname, 'utf-8');
+    const parser = new n3.Parser({format: "application/trig"});
+    parser.parse(trig, add_quad);
+    return graph;
+}
+
 
 export const DataFactory: rdf.DataFactory               = n3.DataFactory;
 export const DatasetCoreFactory: rdf.DatasetCoreFactory = new n3_DatasetCoreFactory();

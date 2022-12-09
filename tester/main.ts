@@ -1,8 +1,7 @@
-import { Command }                               from 'commander';
-import { RDFCanon, Dataset, hash_dataset, Hash } from '../index';
-import { SimpleLogger, Levels }                  from './logger';
-import * as rdfn3                                from './rdfn3';
-
+import { Command }                             from 'commander';
+import { RDFCanon, Quads, hash_dataset, Hash } from '../index';
+import { SimpleLogger, Levels }                from './logger';
+import * as rdfn3                              from './rdfn3';
 
 async function main(): Promise<void> {
     const program = new Command();
@@ -23,12 +22,13 @@ async function main(): Promise<void> {
 
     const fname: string = options.input ? `test_cases/${options.input}` : 'test_cases/unique_hashes_example.ttl';
 
-    const input: Dataset = await rdfn3.get_dataset(fname);
+    const input: Quads = await rdfn3.get_quads(fname);
 
     logger.info(`Original graph: \n${rdfn3.dataset_to_nquads(input).join('\n')}`);
 
-    const canonicalizer = new RDFCanon(rdfn3.DataFactory, rdfn3.DatasetCoreFactory, logger);
-    const normalized: Dataset = canonicalizer.canonicalize(input);
+    const canonicalizer     = new RDFCanon(rdfn3.DataFactory);
+    canonicalizer.set_logger(logger);
+    const normalized: Quads = canonicalizer.canonicalize(input);
 
     const normalized_quads: string = rdfn3.dataset_to_nquads(normalized).sort().join('\n');
     const hash: Hash               = hash_dataset(normalized, true);
