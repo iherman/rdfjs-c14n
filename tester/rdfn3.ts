@@ -6,9 +6,10 @@
  * @packageDocumentation
  */
 
-import {promises as fs} from 'fs';
 import * as n3          from 'n3';
 import * as rdf         from 'rdf-js';
+import {promises as fs}          from 'fs';
+
 
 type Dataset = rdf.DatasetCore<rdf.Quad,rdf.Quad>;
 
@@ -40,31 +41,6 @@ export function dataset_to_nquads(quads: Iterable<rdf.Quad>): string[] {
     })
     retval.filter( (item) => item !== '');
     return retval;
-}
-
-
-
-/**
- * Parse a turtle/trig file and return the result in a set of RDF Quads. The prefix declarations are also added to the list of prefixes.
- * 
- * @param fname TriG file name
- * @returns 
- */
-export async function get_dataset(fname: string): Promise<Dataset> {
-    // The function is called by the parser for each quad; it is used to store the data in the final set of quads.
-    const add_quad = (error: Error, quad: rdf.Quad, prefixes: any): void => {
-        if (error) {
-            throw(error);
-        } else if( quad !== null) {
-            graph.add(quad);
-        } 
-    };
-    
-    const graph: Dataset = new n3.Store();
-    const trig: string = await fs.readFile(fname, 'utf-8');
-    const parser = new n3.Parser({format: "application/trig"});
-    parser.parse(trig, add_quad);
-    return graph;
 }
 
 /**
