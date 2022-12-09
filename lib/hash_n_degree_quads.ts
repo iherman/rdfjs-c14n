@@ -49,7 +49,7 @@ const permutation = require('array-permutation');
     }
 
     // Step 4
-    input = `${input}${identifier}`;
+    input = `${input}_:${identifier}`;
 
     // Step 5
     return compute_hash(input);
@@ -130,13 +130,13 @@ const permutation = require('array-permutation');
             for (const related of p) {
                 if (state.canonical_issuer.is_set(related)) {
                     // Step 5.4.4.1
-                    path = `${path}${state.canonical_issuer.issue_id(related)}`;
+                    path = `${path}_:${state.canonical_issuer.issue_id(related)}`;
                 } else {
                     // Step 5.4.4.2
                     if (!issuer_copy.is_set(related)) {
                         recursion_list.push(related);
                     }
-                    path = `${path}${issuer_copy.issue_id(related)}`;
+                    path = `${path}_:${issuer_copy.issue_id(related)}`;
                 }
                 // Step 5.4.4.3
                 if (chosen_path.length > 0 && path.length >= chosen_path.length &&  path > chosen_path) {
@@ -150,7 +150,7 @@ const permutation = require('array-permutation');
                 const result: NDegreeHashResult = compute_n_degree_hash(state, related, issuer_copy);
 
                 // Step 5.4.5.2
-                path = `${path}${issuer_copy.issue_id(related)}`;
+                path = `${path}_:${issuer_copy.issue_id(related)}`;
 
                 // Step 5.4.5.3
                 path = `${path}<${result.hash}>`;
