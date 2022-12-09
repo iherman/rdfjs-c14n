@@ -50,7 +50,7 @@ import { BNodeId, Hash, GlobalState, sort_and_hash_nquads, quad_to_nquad } from 
 
     // Step 4 (hopefully javascript does the right thing in terms of unicode)
     // Step 5
-    const the_hash: Hash = sort_and_hash_nquads(nquads)
+    const the_hash: Hash = sort_and_hash_nquads(state, nquads)
 
     /* @@@ */ state.logger.info(`§4.7.3 First degree quads (unsorted):\n  quads: {${nquads}\n  hash: ${the_hash}`);
     return the_hash;

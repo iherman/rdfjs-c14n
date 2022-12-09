@@ -14,7 +14,6 @@ import { IdIssuer }                                                             
 import { compute_canonicalized_graph }                                          from './lib/canonicalization';
 
 export { Quads }        from './lib/common';
-export { hash_dataset } from './lib/common';
 export { Hash }         from './lib/common';
 
 /**
@@ -32,14 +31,15 @@ export class RDFCanon {
      * @param dataset_factory An implementation of the generic RDF DatasetCoreFactory interface, see [the specification]https://rdf.js.org/dataset-spec/#datasetcorefactory-interface). If undefined, the canonicalized graph will automatically be a Set of quads.
      * @param logger          A logger instance; defaults to an "empty" logger, ie, no logging happens.
      */
-    constructor(data_factory: rdf.DataFactory, dataset_factory?: rdf.DatasetCoreFactory, logger?: Logger) {
+    constructor(data_factory: rdf.DataFactory, dataset_factory?: rdf.DatasetCoreFactory) {
         this._state = {
             bnode_to_quads   : {},
             hash_to_bnodes   : {},
             canonical_issuer : new IdIssuer(),
+            hash_algorithm   : Constants.HASH_ALGORITHM,
             data_factory     : data_factory,
             dataset_factory  : dataset_factory,
-            logger           : logger || new NopLogger(),
+            logger           : new NopLogger(),
         }
     }
 
@@ -49,6 +49,13 @@ export class RDFCanon {
      */
     set_logger(logger: Logger): void {
         this._state.logger = logger;
+    }
+
+    /**
+     * Set hash algorithm. The value can be anything that the underlying openssl environment accepts. The default is "sha256".
+     */
+    set_hash_algorithm(algorithm: string): void {
+        this._state.hash_algorithm = algorithm;
     }
 
     /**
@@ -72,12 +79,11 @@ export class RDFCanon {
      * 3. Compute the hash of the concatenated nquads.
      * 
      * @param input_dataset 
-     * @param algorithm - Hash algorithm to use. The value can be anything that the underlying openssl environment accepts, defaults to sha256.
      * @returns
      */
-    hash(input_dataset: Quads, algorithm: string = Constants.HASH_ALGORITHM): Hash {
+    hash(input_dataset: Quads): Hash {
         const canonicalized_dataset = this.canonicalize(input_dataset);
-        return hash_dataset(canonicalized_dataset, true, algorithm);
+        return hash_dataset(this._state, canonicalized_dataset, true);
     }
 }
 

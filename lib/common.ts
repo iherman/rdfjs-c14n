@@ -45,11 +45,14 @@ export interface HashToBNodes {
 /**
  * Canonicalization state. See
  * the [specification](https://w3c.github.io/rdf-canon/spec/#canon-state).
+ * The "algorithm" has been added to the state in anticipation of the evolution of the algorithm
+ * that makes this (possibly) parametrized.
  */
 export interface C14nState {
     bnode_to_quads   : BNodeToQuads;
     hash_to_bnodes   : HashToBNodes;
     canonical_issuer : IdIssuer;
+    hash_algorithm   : string;
 }
 
 /**
@@ -101,11 +104,10 @@ export class NopLogger implements Logger {
  * Return the hash of a string.
  * 
  * @param data 
- * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
  * @returns - hash value
  */
- export function compute_hash(data: string, algorithm: string = Constants.HASH_ALGORITHM): Hash {
-    return createHash(algorithm).update(data).digest('hex');
+ export function compute_hash(state: C14nState, data: string): Hash {
+    return createHash(state.hash_algorithm).update(data).digest('hex');
 }
 
 /**
@@ -114,15 +116,14 @@ export class NopLogger implements Logger {
  * quad must end with a single `/n`.
  * 
  * @param nquads
- * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
  * @returns - hash value
  * 
  */
-export function hash_nquads(nquads: string[], algorithm: string = Constants.HASH_ALGORITHM): Hash {
+export function hash_nquads(state: C14nState, nquads: string[]): Hash {
     // Care should be taken that the final data to be hashed include a single `/n`
     // for every quad, before joining the quads into a string that must be hashed
     const data: string = nquads.map((q:string): string => q.endsWith('\n') ? q : `${q}\n`).join('');
-    return compute_hash(data, algorithm);
+    return compute_hash(state, data);
 }
 
 /**
@@ -131,28 +132,27 @@ export function hash_nquads(nquads: string[], algorithm: string = Constants.HASH
  * quad must end with a single `/n`.
  * 
  * @param nquads 
- * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
  * @returns 
  */
-export function sort_and_hash_nquads(nquads: string[], algorithm: string = Constants.HASH_ALGORITHM): Hash {
+export function sort_and_hash_nquads(state: C14nState, nquads: string[]): Hash {
     nquads.sort();
-    return hash_nquads(nquads, algorithm)
+    return hash_nquads(state, nquads)
 }
 
 /**
  * Hash a dataset
+ * 
  * @param quads 
- * @param sort - whether the quads must be sorted before hash. Defaults to `true`
- * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
+ * @param sort - whether the quads must be sorted before hash. Defaults to `true`.
  * @returns 
  */
-export function hash_dataset(quads: Quads, sort: boolean = true, algorithm: string = Constants.HASH_ALGORITHM): Hash {
+export function hash_dataset(state: C14nState, quads: Iterable<rdf.Quad>, sort: boolean = true): Hash {
     const nquads: string[] = [];
     for(const quad of quads) {
         nquads.push(quad_to_nquad(quad))
     }
     if (sort) nquads.sort();
-    return hash_nquads(nquads, algorithm)
+    return hash_nquads(state, nquads)
 }
 
 
