@@ -1,7 +1,0 @@
-BASE <http://example.com/>
-PREFIX : <#>
-
-:p :q _:e0 .
-:p :r _:e1 .
-_:e0 :s :u .
-_:e1 :t :u .
