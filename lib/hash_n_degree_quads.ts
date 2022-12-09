@@ -52,7 +52,7 @@ const permutation = require('array-permutation');
     input = `${input}_:${identifier}`;
 
     // Step 5
-    return compute_hash(input);
+    return compute_hash(state,input);
 }
 
 
@@ -181,7 +181,7 @@ const permutation = require('array-permutation');
 
     // Step 6
     const retval: NDegreeHashResult = {
-        hash:   compute_hash(data_to_hash),
+        hash:   compute_hash(state, data_to_hash),
         issuer: issuer
     }
 

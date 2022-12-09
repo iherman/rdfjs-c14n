@@ -16,11 +16,19 @@ declare class RDFCanon {
      * 
      * @param data_factory    An implementation of the generic RDF DataFactory interface, see http://rdf.js.org/data-model-spec/#datafactory-interface
      * @param dataset_factory An implementation of the generic RDF DatasetCoreFactory interface, see https://rdf.js.org/dataset-spec/#datasetcorefactory-interface. If undefined, the canonicalized graph will automatically be a Set of quads.
-     * @param logger          A logger instance; defaults to an "empty" logger, ie, no logging happens.
      */
-    constructor(data_factory: rdf.DataFactory, dataset_factory?: rdf.DatasetCoreFactory, logger?: Logger);
+    constructor(data_factory: rdf.DataFactory, dataset_factory?: rdf.DatasetCoreFactory);
 
+    /**
+     * Set a logger instance. By default it is an "empty" logger, ie, no logging happens
+     * @param logger 
+     */
     set_logger(logger: Logger): void;
+
+    /**
+     * Set hash algorithm. The value can be anything that the underlying openssl environment accepts. The default is "sha256".
+     */
+    set_hash_algorithm(algorithm: string): void;
 
     /**
      * Implementation of the main algorithmic steps
