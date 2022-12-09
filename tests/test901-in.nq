@@ -1,0 +1,5 @@
+<http://example.com/#p> <http://example.com/#q> _:e0 .
+<http://example.com/#p> <http://example.com/#q> _:e1 .
+_:e0 <http://example.com/#p> _:e2 .
+_:e1 <http://example.com/#p> _:e3 .
+_:e2 <http://example.com/#r> _:e3 .
