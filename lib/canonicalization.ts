@@ -18,7 +18,7 @@ import { IdIssuer }                                                           fr
  * 
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
- * @returns 
+ * @returns - the exact type of the output depends on the type of the input. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the DatasetFactory is set, it will be a Dataset, otherwise a Set.
  */
 export function compute_canonicalized_graph(state: GlobalState, input: Quads): Quads {
         // Re-initialize the state information: canonicalization should always start with a clean state
@@ -27,7 +27,7 @@ export function compute_canonicalized_graph(state: GlobalState, input: Quads): Q
         state.canonical_issuer = new IdIssuer();
 
         const input_dataset: DatasetShell = new DatasetShell(input);
-        const retval: DatasetShell = input_dataset.new(state);
+        const retval: DatasetShell        = input_dataset.new(state);
 
         // Step 2
         // All quads are 'classified' depending on what bnodes they contain

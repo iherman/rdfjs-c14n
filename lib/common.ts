@@ -62,8 +62,8 @@ export interface GlobalState extends C14nState {
     /** RDF data factory instance, to be used to create new terms and quads */
     data_factory    : rdf.DataFactory;
 
-    /** RDF DatasetCoreFactory, to be used to create new datasets */
-    dataset_factory : rdf.DatasetCoreFactory;
+    /** RDF DatasetCoreFactory, to be used to create new datasets. If undefined, the return value of canonicalization is a set of quads. */
+    dataset_factory ?: rdf.DatasetCoreFactory;
 
     /** A logger instance */
     logger          : Logger;
@@ -190,11 +190,13 @@ export class DatasetShell {
         if (Array.isArray(this.theGraph)) {
             return new DatasetShell([]);
         } else if(this.theGraph instanceof Set) {
-            const quads = new Set<rdf.Quad>();
-            return new DatasetShell(quads);
+            return new DatasetShell(new Set<rdf.Quad>());
         } else {
-            const quads = state.dataset_factory.dataset();
-            return new DatasetShell(quads);
+            if (state.dataset_factory) {
+                return new DatasetShell(state.dataset_factory.dataset());    
+            } else {
+                return new DatasetShell(new Set<rdf.Quad>());
+            }
         }
     }
 
