@@ -1,5 +1,5 @@
 import * as rdf from 'rdf-js';
-export type Dataset     = rdf.DatasetCore<rdf.Quad,rdf.Quad>;
+export type Dataset     = rdf.DatasetCore<rdf.Quad,rdf.Quad> | rdf.Quad[] | Set<rdf.Quad>;
 export type Hash        = string;
 
 declare interface Logger {

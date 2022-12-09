@@ -9,11 +9,11 @@
 
 
 import * as rdf from 'rdf-js';
-import { GlobalState, Dataset, Logger, NopLogger, hash_dataset, Hash, Constants } from './lib/common';
-import { IdIssuer }                                                               from './lib/issue_identifier';
-import { compute_canonicalized_graph }                                            from './lib/canonicalization';
+import { GlobalState, Quads, Logger, NopLogger, hash_dataset, Hash, Constants } from './lib/common';
+import { IdIssuer }                                                             from './lib/issue_identifier';
+import { compute_canonicalized_graph }                                          from './lib/canonicalization';
 
-export { Dataset }      from './lib/common';
+export { Quads }        from './lib/common';
 export { hash_dataset } from './lib/common';
 export { Hash }         from './lib/common';
 
@@ -52,7 +52,7 @@ export class RDFCanon {
      * @param input_dataset 
      * @returns 
      */
-    canonicalize(input_dataset: Dataset): Dataset {
+    canonicalize(input_dataset: Quads): Quads {
         return compute_canonicalized_graph(this._state, input_dataset);
     }
 
@@ -67,7 +67,7 @@ export class RDFCanon {
      * @param algorithm - Hash algorithm to use. The value can be anything that the underlying openssl environment accepts, defaults to sha256.
      * @returns 
      */
-    hash(input_dataset: Dataset, algorithm: string = Constants.HASH_ALGORITHM): Hash {
+    hash(input_dataset: Quads, algorithm: string = Constants.HASH_ALGORITHM): Hash {
         const canonicalized_dataset = this.canonicalize(input_dataset);
         return hash_dataset(canonicalized_dataset, true, algorithm);
     }

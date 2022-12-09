@@ -28,7 +28,7 @@ class n3_DatasetCoreFactory implements rdf.DatasetCoreFactory {
  * @param quads 
  * @returns 
  */
-export function dataset_to_nquads(quads: Dataset|rdf.Quad[]): string[] {
+export function dataset_to_nquads(quads: Dataset|rdf.Quad[]|Set<rdf.Quad>): string[] {
     let retval: string[] = [];
     const writer = new n3.Writer({format: "application/n-quads" })
     for (const quad of quads) {
