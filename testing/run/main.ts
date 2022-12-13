@@ -19,6 +19,14 @@ function compare_nquads(left: string[], right: string[]): boolean {
     }
 }
 
+function print_quads(nquads: string[], label: string): void {
+    console.log(`=== ${label}:`);
+    for (const nquad of nquads) {
+        console.log(nquad);
+    }
+    console.log('\n');
+}
+
 async function main(): Promise<void> {
     const test_number = (num ?: string): string => {
         if (num) {
@@ -58,23 +66,27 @@ async function main(): Promise<void> {
     if (test_number_format.test(num)) {
         const input_fname    = `testing/tests/test${num}-in.nq`;
         const expected_fname = `testing/tests/test${num}-urdna2015.nq`
-        const [input, input_quads, expected] = await Promise.all([
-            fs.readFile(input_fname, 'utf-8'),
+        const [input, expected] = await Promise.all([
             rdfn3.get_quads(input_fname),
-            fs.readFile(expected_fname, 'utf-8'),
+            rdfn3.get_quads(expected_fname),
         ]);
 
         const canonicalizer    = new RDFCanon(rdfn3.DataFactory); 
         canonicalizer.set_logger(logger);
-        const c14n_input = canonicalizer.canonicalize(input_quads);
-        const c14n_nquads = rdfn3.dataset_to_nquads(c14n_input).sort().join('\n');
+        const c14n_input = canonicalizer.canonicalize(input);
 
-        console.log(`*********** Test number ${num} ***********`)
-        console.log(`Input quads:\n${input}`);
-        console.log(`Canonicalized quads:${c14n_nquads}\n`);
-        console.log(`Expected quads:\n${expected}\n`);
-        const test_passes = c14n_nquads.trim() === expected.trim() ? 'passes' : 'fails';
-        console.log(`Test ${test_passes}`);
+        const input_quads    = rdfn3.dataset_to_nquads(input).sort();
+        const c14_quads      = rdfn3.dataset_to_nquads(c14n_input).sort();
+        const expected_quads = rdfn3.dataset_to_nquads(expected).sort();
+
+        console.log(`*************** Test number ${num} *****************`);
+        print_quads(input_quads, 'Input quads');
+        print_quads(c14_quads,'Canonicalized quads');
+        print_quads(expected_quads,'Expected quads');
+
+        const test_passes = compare_nquads(c14_quads,expected_quads) ? 'passes' : 'fails';
+        console.log(`===> Test ${test_passes} <===`);
+
     } else {
         console.error('Invalid test number');
     }
