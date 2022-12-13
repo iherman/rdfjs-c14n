@@ -11,7 +11,7 @@
     "url": "ttps://github.com/iherman/rdfjs-c14n/issues"
   },
   "scripts": {
-    "test": "./node_modules/.bin/ts-node tester/main.ts",
+    "test": "./node_modules/.bin/ts-node testing/run/main.ts",
     "docs": "./node_modules/.bin/typedoc index.ts lib/*",
     "dist": "tsc"
   },

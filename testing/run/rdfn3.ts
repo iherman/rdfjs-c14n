@@ -8,7 +8,7 @@
 
 import * as n3          from 'n3';
 import * as rdf         from 'rdf-js';
-import {promises as fs}          from 'fs';
+import {promises as fs} from 'fs';
 
 
 type Dataset = rdf.DatasetCore<rdf.Quad,rdf.Quad>;
