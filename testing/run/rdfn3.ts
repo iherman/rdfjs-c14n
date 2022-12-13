@@ -45,10 +45,11 @@ export function dataset_to_nquads(quads: Iterable<rdf.Quad>): string[] {
 
 /**
  * Parse a turtle/trig file and return the result in a set of RDF Quads. The prefix declarations are also added to the list of prefixes.
+ * Input format is a permissive superset of Turtle, TriG, N-Triples, and N-Quads.
  * 
  * An extra option is used to re-use the blank node id-s in the input without modification. This helps debugging...
  * 
- * @param fname TriG file name
+ * @param fname - file name
  * @returns 
  */
 export async function get_quads(fname: string): Promise<Set<rdf.Quad>> {
@@ -63,7 +64,7 @@ export async function get_quads(fname: string): Promise<Set<rdf.Quad>> {
     
     const graph: Set<rdf.Quad> = new Set<rdf.Quad>;
     const trig: string = await fs.readFile(fname, 'utf-8');
-    const parser = new n3.Parser({format: "application/trig", blankNodePrefix: ''});
+    const parser = new n3.Parser({blankNodePrefix: ''});
     parser.parse(trig, add_quad);
     return graph;
 }
