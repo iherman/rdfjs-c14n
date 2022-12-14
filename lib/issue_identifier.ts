@@ -8,6 +8,7 @@
 
 import { Constants, BNodeId } from './common';
 
+let IssuIdentifierID = 1234;
 
 /**
  * Issue Identifier.
@@ -16,6 +17,7 @@ import { Constants, BNodeId } from './common';
  * functionalities are encapsulated in one class.
  */
 export class IdIssuer {
+    private _id            : number;
     private _prefix        : string;
     private _counter       : number;
     private _issued_id_map : Map<BNodeId,BNodeId>;
@@ -25,6 +27,7 @@ export class IdIssuer {
      * @param prefix - the prefix used for the generated IDs
      */
     constructor(prefix: string = Constants.BNODE_PREFIX) {
+        this._id             = IssuIdentifierID++;
         this._prefix         = prefix;
         this._counter        = 0;
         this._issued_id_map  = new Map();
@@ -82,8 +85,7 @@ export class IdIssuer {
      * Presentation for debug
      */
     toString(): string {
-        const values: [BNodeId,BNodeId][] = [];
-        for (const [key,value] of this._issued_id_map) { values.push([key,value]) };
-        return `counter: ${this._counter}, mappings: [${values}]`;
+        const values: string[] = [...this._issued_id_map].map( ([key, value]): string =>  `${key}=>${value}`);
+        return `\n  issuer ID: ${this._id}\n  prefix: ${this._prefix}\n  counter: ${this._counter}\n  mappings: [${values}]`;
     }
 }

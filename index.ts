@@ -9,12 +9,13 @@
 
 
 import * as rdf from 'rdf-js';
-import { GlobalState, Quads, Logger, NopLogger, hash_dataset, Hash, Constants } from './lib/common';
-import { IdIssuer }                                                             from './lib/issue_identifier';
-import { compute_canonicalized_graph }                                          from './lib/canonicalization';
+import { GlobalState, Quads, hash_dataset, Hash, Constants } from './lib/common';
+import { IdIssuer }                                          from './lib/issue_identifier';
+import { compute_canonicalized_graph }                       from './lib/canonicalization';
+import { Logger, NopLogger }                                 from './lib/logging';
 
-export { Quads }        from './lib/common';
-export { Hash }         from './lib/common';
+export { Quads } from './lib/common';
+export { Hash }  from './lib/common';
 
 /**
  * Just a shell around the algorithm, consisting of a state, and the call for the real implementation.

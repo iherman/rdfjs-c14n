@@ -11,6 +11,7 @@ import { GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, DatasetShell } fr
 import { compute_first_degree_hash }                                          from './hash_1_degree_quads';
 import { compute_n_degree_hash }                                              from './hash_n_degree_quads';
 import { IdIssuer }                                                           from './issue_identifier';
+import { bntq_to_string, ndhr_to_string }                                     from './logging';
 
 
 /**
@@ -50,7 +51,7 @@ export function compute_canonicalized_graph(state: GlobalState, input: Quads): Q
             }
         }
 
-        /* @@@ */ state.logger.debug(`§4.5.3 (2) bnode to quads: ${JSON.stringify(state.bnode_to_quads,null,4)}`);
+        /* @@@ */ state.logger.info(`Entering the canonicalization function (4.5.3 (2)). Bnode to quads: ${bntq_to_string(state.bnode_to_quads)}`);
 
         // Step 3
         {
@@ -67,7 +68,6 @@ export function compute_canonicalized_graph(state: GlobalState, input: Quads): Q
                     state.hash_to_bnodes[hfn].push(n);
                 }
             });
-            /* @@@ */ state.logger.info(`§4.5.3 (3) hash to bnodes: \n${state.hash_to_bnodes}`)
         }
 
         // Step 4
@@ -91,7 +91,7 @@ export function compute_canonicalized_graph(state: GlobalState, input: Quads): Q
                 // bnode identifier; these are retrieved in the last step when a new, normalized
                 // graph is created.
                 const canon_id = state.canonical_issuer.issue_id(identifier_list[0]);
-                /* @@@ */ state.logger.info(`§4.5.3 (4) canonicalization of ${identifier_list[0]} -> ${canon_id}`);
+                /* @@@ */ state.logger.info(`Canonicalization function (4.5.3 (4)). Generate identifier in the first pass for "${identifier_list[0]}=>${canon_id}"`);
 
                 // Step 4.3
                 // Remove the corresponding hash
@@ -106,7 +106,6 @@ export function compute_canonicalized_graph(state: GlobalState, input: Quads): Q
             const hashes: Hash[] = Object.keys(state.hash_to_bnodes).sort();
             for (const hash of hashes) {
                 const identifier_list: BNodeId[] = state.hash_to_bnodes[hash];
-                /* @@@ */ state.logger.info(`§4.5.3 (5) identifier list with shared hashes: ${identifier_list} for hash: ${hash}`);
                 // This cycle takes care of all problematic cases that share the same hash
                 // Step 5.1
                 // This stores a calculated hash and its relates identifier issuer for each
@@ -125,12 +124,11 @@ export function compute_canonicalized_graph(state: GlobalState, input: Quads): Q
                         const bn = temporary_issuer.issue_id(n);
                         // Step 5.2.4
                         const result: NDegreeHashResult = compute_n_degree_hash(state, n, temporary_issuer);
-                        /* @@@ */ state.logger.debug(`§4.5.3 (5.2.4) computed n-degree hashwith hash: ${result.hash} and issuer: ${result.issuer.toString()}`);
                         hash_path_list.push(result);
                     }
                 }
 
-                /* @@@ */ state.logger.info(`§4.5.3 (5.2) hash path list: ${JSON.stringify(hash_path_list,null,4)}`);
+                /* @@@ */ state.logger.info(`Canonicalization function, after (4.5.3 (5.2)) after computing N-Degree Hash for "${hash}":\n${ndhr_to_string(hash_path_list)}`);
 
                 // Step 5.3
                 const ordered_hash_path_list = hash_path_list.sort((a,b): number => {
@@ -159,17 +157,16 @@ export function compute_canonicalized_graph(state: GlobalState, input: Quads): Q
                 }
             };
             for (const quad of input_dataset) {
-                /* @@@ */state.logger.debug(`Last round on quads ${JSON.stringify(quad,null,4)}`);
                 // Step 6.1 & 6.2
                 const subject_copy = replace_bnode(quad.subject) as rdf.Quad_Subject;
                 const object_copy  = replace_bnode(quad.object) as rdf.Quad_Object;
                 const graph_copy   = replace_bnode(quad.graph) as rdf.Quad_Graph;
-                retval.add(state.data_factory.quad(subject_copy,quad.predicate,object_copy,graph_copy))
+                retval.add(state.data_factory.quad(subject_copy, quad.predicate, object_copy, graph_copy))
             }
         }
 
         // Step 7
-        /* @@@ */ state.logger.debug(`§4.5.3 Leaving function\n${JSON.stringify(state,null,4)}`);
+        /* @@@ */ state.logger.info(`Leaving the canonicalization function (4.5.3). The canonical ID issuer is: ${state.canonical_issuer.toString()}`);
         return retval.data;
     }
 

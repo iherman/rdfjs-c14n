@@ -7,7 +7,7 @@
  */
 
 import * as rdf from 'rdf-js';
-import { BNodeId, Hash, GlobalState, sort_and_hash_nquads, quad_to_nquad } from './common';
+import { BNodeId, Hash, GlobalState, quad_to_nquad, hash_nquads } from './common';
 
 /**
  * Compute the first degree hash: a simple hash based on the immediate "surrounding" of a blank node, ie, quads that the
@@ -21,7 +21,7 @@ import { BNodeId, Hash, GlobalState, sort_and_hash_nquads, quad_to_nquad } from 
  * @returns 
  */
  export function compute_first_degree_hash(state: GlobalState, identifier: BNodeId): Hash {
-    /* @@@ */ state.logger.info(`§4.7.3 entering function:\n  identifier: ${identifier}`);
+    /* @@@ */ state.logger.info(`Entering Hash First Degree Quads function (4.7.3) with identifier: "${identifier}"`);
 
     // Step 1
     const nquads: string[] = [];
@@ -49,9 +49,10 @@ import { BNodeId, Hash, GlobalState, sort_and_hash_nquads, quad_to_nquad } from 
     })
 
     // Step 4 (hopefully javascript does the right thing in terms of unicode)
+    nquads.sort();
     // Step 5
-    const the_hash: Hash = sort_and_hash_nquads(state, nquads)
+    const the_hash: Hash = hash_nquads(state, nquads);
 
-    /* @@@ */ state.logger.info(`§4.7.3 First degree quads (unsorted):\n  quads: {${nquads}\n  hash: ${the_hash}`);
+    /* @@@ */ state.logger.info(`Leaving Hash First Degree Quads function (4.7.3). Output are:\n  identifier: "${identifier}"\n  quads: "${nquads}"\n  hash: "${the_hash}"`);
     return the_hash;
 }
