@@ -125,7 +125,7 @@ export function compute_canonicalized_graph(state: GlobalState, input: Quads): Q
                         const bn = temporary_issuer.issue_id(n);
                         // Step 5.2.4
                         const result: NDegreeHashResult = compute_n_degree_hash(state, n, temporary_issuer);
-                        /* @@@ */ state.logger.debug(`§4.5.3 (5.2.4) computed n-degree hash: ${JSON.stringify(result,null,4)}`);
+                        /* @@@ */ state.logger.debug(`§4.5.3 (5.2.4) computed n-degree hashwith hash: ${result.hash} and issuer: ${result.issuer.toString()}`);
                         hash_path_list.push(result);
                     }
                 }
@@ -159,6 +159,7 @@ export function compute_canonicalized_graph(state: GlobalState, input: Quads): Q
                 }
             };
             for (const quad of input_dataset) {
+                /* @@@ */state.logger.debug(`Last round on quads ${JSON.stringify(quad,null,4)}`);
                 // Step 6.1 & 6.2
                 const subject_copy = replace_bnode(quad.subject) as rdf.Quad_Subject;
                 const object_copy  = replace_bnode(quad.object) as rdf.Quad_Object;

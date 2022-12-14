@@ -77,4 +77,13 @@ export class IdIssuer {
             yield [key,value]
         }
     }
+
+    /**
+     * Presentation for debug
+     */
+    toString(): string {
+        const values: [BNodeId,BNodeId][] = [];
+        for (const [key,value] of this._issued_id_map) { values.push([key,value]) };
+        return `counter: ${this._counter}, mappings: [${values}]`;
+    }
 }

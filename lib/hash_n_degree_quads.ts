@@ -27,6 +27,7 @@ const permutation = require('array-permutation');
  * @returns 
  */
  function compute_hash_related_blank_node(state: GlobalState, related: BNodeId, quad: rdf.Quad, issuer: IdIssuer, position: string): Hash {
+    /* @@@ */ state.logger.info(`§4.8.3 entering function, related: ${related}, quad: ${JSON.stringify(quad,null,4)}`);
     const get_identifier = (): BNodeId => {
         if (state.canonical_issuer.is_set(related)) {
             return state.canonical_issuer.issue_id(related);
@@ -52,7 +53,12 @@ const permutation = require('array-permutation');
     input = `${input}_:${identifier}`;
 
     // Step 5
-    return compute_hash(state,input);
+    const hash: Hash = compute_hash(state,input);
+
+    /* @@@ */ state.logger.info(`§4.8.3 step 4, input to hash: ${input}, hash: ${hash}`);
+
+    // Step 5
+    return hash;
 }
 
 
@@ -67,7 +73,8 @@ const permutation = require('array-permutation');
  * @returns 
  */
  export function compute_n_degree_hash(state: GlobalState, identifier: BNodeId, issuer: IdIssuer): NDegreeHashResult {
-    /* @@@ */ state.logger.info(`§4.9.3 entering function, identifier: ${identifier}, issuer: ${JSON.stringify(issuer,null,4)}`);
+    /* @@@ */ state.logger.info(`§4.9.3 entering function, identifier: ${identifier}, issuer: ${issuer.toString()}`);
+ 
     // Step 1
     const Hn: HashToBNodes = {};
 
@@ -185,6 +192,6 @@ const permutation = require('array-permutation');
         issuer: issuer
     }
 
-    /* @@@ */ state.logger.info(`§4.9.3 leaving function: ${JSON.stringify(retval,null,4)}`);
+    /* @@@ */ state.logger.info(`§4.9.3 leaving function with hash: ${retval.hash} and issuer: ${retval.issuer.toString()}`);
     return retval;
 }
