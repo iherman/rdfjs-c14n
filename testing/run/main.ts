@@ -3,7 +3,7 @@ import { RDFCanon, Quads, Hash } from '../../index';
 import { SimpleLogger, Levels }  from './logger';
 import * as rdfn3                from './rdfn3';
 
-const number_of_tests: number = 62;
+const number_of_tests: number = 63;
 const extra_tests: string[] = ['900', '901']
 
 // The format of all test numbers
