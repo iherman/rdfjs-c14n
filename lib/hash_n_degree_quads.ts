@@ -6,10 +6,10 @@
  * @packageDocumentation
  */
 
-import * as rdf                                                                      from 'rdf-js';
-import { BNodeId, Hash, NDegreeHashResult, HashToBNodes, GlobalState, compute_hash } from './common';
-import { compute_first_degree_hash }                                                 from './hash_1_degree_quads';
-import { IdIssuer }                                                                  from './issue_identifier';
+import * as rdf                                                                                     from 'rdf-js';
+import { BNodeId, Hash, NDegreeHashResult, HashToBNodes, GlobalState, compute_hash, quad_to_nquad } from './common';
+import { compute_first_degree_hash }                                                                from './hash_1_degree_quads';
+import { IdIssuer }                                                                                 from './issue_identifier';
 const permutation = require('array-permutation');
 
 /**
@@ -27,7 +27,7 @@ const permutation = require('array-permutation');
  * @returns 
  */
  function compute_hash_related_blank_node(state: GlobalState, related: BNodeId, quad: rdf.Quad, issuer: IdIssuer, position: string): Hash {
-    /* @@@ */ state.logger.info(`§4.8.3 entering function, related: ${related}, quad: ${JSON.stringify(quad,null,4)}`);
+    /* @@@ */ state.logger.info(`Entering Hash Related Blank Node function (4.8.3), with related: "${related}" and quad "${quad_to_nquad(quad)}"`);
     const get_identifier = (): BNodeId => {
         if (state.canonical_issuer.is_set(related)) {
             return state.canonical_issuer.issue_id(related);
@@ -55,7 +55,7 @@ const permutation = require('array-permutation');
     // Step 5
     const hash: Hash = compute_hash(state,input);
 
-    /* @@@ */ state.logger.info(`§4.8.3 step 4, input to hash: ${input}, hash: ${hash}`);
+    /* @@@ */ state.logger.info(`Leaving Hash Related Blank Node function (4.8.3 (4)):\n  input to hash: "${input}"\n  hash value: "${hash}"`);
 
     // Step 5
     return hash;
@@ -73,7 +73,7 @@ const permutation = require('array-permutation');
  * @returns 
  */
  export function compute_n_degree_hash(state: GlobalState, identifier: BNodeId, issuer: IdIssuer): NDegreeHashResult {
-    /* @@@ */ state.logger.info(`§4.9.3 entering function, identifier: ${identifier}, issuer: ${issuer.toString()}`);
+    /* @@@ */ state.logger.info(`Entering Hash N-Degree Quads function (4.9.3). Identifier: "${identifier}",  issuer: ${issuer.toString()}`);
  
     // Step 1
     const Hn: HashToBNodes = {};
@@ -100,7 +100,7 @@ const permutation = require('array-permutation');
         per_component(quad.graph,  'g');
     }
 
-    /* @@@ */ state.logger.info(`§4.9.3, (3) Hn: ${JSON.stringify(Hn,null,4)}`);
+    /* @@@ */ state.logger.info(`Hash N-Degree Quads function (4.9.3 (3)).\nHn: ${JSON.stringify(Hn,null,4)}`);
 
     // Step 4
     let data_to_hash: string = '';
@@ -108,6 +108,7 @@ const permutation = require('array-permutation');
     // Step 5
     const hashes: Hash[] = Object.keys(Hn).sort();
     for (const hash of hashes) {
+        /* @@@ */ state.logger.info(`Hash N-Degree Quads function (4.9.3 (5)).\n  Entering loop with hash value "${hash}". Data to hash: "${data_to_hash}"`);
         // Step 5.1
         data_to_hash = `${data_to_hash}${hash}`;
 
@@ -124,6 +125,7 @@ const permutation = require('array-permutation');
         //
         const perms: BNodeId[][] = Hn[hash].length === 1 ? [Hn[hash]] : Array.from(permutation(Hn[hash]));
         perms: for (const p of perms) {
+            /* @@@ */ state.logger.info(`Hash N-Degree Quads function (4.9.3 (5.4)).\n  Entering permutation loop with "${p}"\n  chosen path: "${chosen_path}"`);
             // Step 5.4.1
             let issuer_copy: IdIssuer = issuer.copy();
 
@@ -135,9 +137,13 @@ const permutation = require('array-permutation');
 
             // Step 5.4.4
             for (const related of p) {
-                if (state.canonical_issuer.is_set(related)) {
+                /* @@@ */ state.logger.info(`Hash N-Degree Quads function (4.9.3 (5.4.4)).\n  Entering loop with related: "${related}"\n  path: "${path}"`);
+                // if (state.canonical_issuer.is_set(related)) {
+                //     // Step 5.4.4.1
+                //     path = `${path}_:${state.canonical_issuer.issue_id(related)}`;
+                if (issuer.is_set(related)) {
                     // Step 5.4.4.1
-                    path = `${path}_:${state.canonical_issuer.issue_id(related)}`;
+                    path = `${path}_:${related}`;
                 } else {
                     // Step 5.4.4.2
                     if (!issuer_copy.is_set(related)) {
@@ -151,6 +157,7 @@ const permutation = require('array-permutation');
                 }
             }
 
+            /* @@@ */ state.logger.info(`Hash N-Degree Quads function (4.9.3 (5.4.5)), before possible recursion. Recursion list: "${recursion_list}"\n  path: "${path}"`);
             // Step 5.4.5
             for (const related of recursion_list) {
                 // Step 5.4.5.1
@@ -164,6 +171,8 @@ const permutation = require('array-permutation');
 
                 // Step 5.4.5.4
                 issuer_copy = result.issuer;
+
+                /* @@@ */ state.logger.info(`Hash N-Degree Quads function (4.9.3 (5.4.5.4)), combine result of recursion.\n  path: "${path}"\n  issuer copy: ${issuer_copy.toString()}`);
 
                 // Step 5.4.5.5
                 if (chosen_path.length > 0 && path.length >= chosen_path.length && path > chosen_path) {
@@ -180,7 +189,8 @@ const permutation = require('array-permutation');
 
         // Step 5.5.
         data_to_hash = `${data_to_hash}${chosen_path}`;
-        /* @@@ */ state.logger.info(`§4.9.3 \n  chosen path: ${chosen_path}, \n  data to hash: ${data_to_hash}`);
+        
+        /* @@@ */ state.logger.info(`Hash N-Degree Quads function (4.9.3 (5.5). End of current loop with Hn hashes\n  chosen path: "${chosen_path}", \n  data to hash: "${data_to_hash}"`);
 
         // Step 5.6
         issuer = chosen_issuer;
@@ -192,6 +202,6 @@ const permutation = require('array-permutation');
         issuer: issuer
     }
 
-    /* @@@ */ state.logger.info(`§4.9.3 leaving function with hash: ${retval.hash} and issuer: ${retval.issuer.toString()}`);
+    /* @@@ */ state.logger.info(`Leaving Hash N-Degree Quads function (4.9.3).\n  hash: ${retval.hash}  ${retval.issuer.toString()}`);
     return retval;
 }

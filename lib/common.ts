@@ -10,6 +10,7 @@ import * as rdf       from 'rdf-js';
 import { createHash } from 'crypto';
 import { IdIssuer }   from './issue_identifier';
 import { nquads }     from '@tpluscode/rdf-string';
+import { Logger }     from './logging';
 
 
 export namespace Constants {
@@ -81,26 +82,6 @@ export interface NDegreeHashResult {
 }
 
 /**
- * Very simple Logger interface, to be used in the code. Nothing fancy.
- */
-export interface Logger {
-    debug(message: string, ...otherData: any[]): void;
-    warn(message: string, ...otherData: any[]): void;
-    error(message: string, ...otherData: any[]): void;
-    info(message: string, ...otherData: any[]): void;
-}
-
-/**
- * A default, no-operation logger instance, used by default.
- */
-export class NopLogger implements Logger {
-    debug(message: string, ...otherData: any[]): void {};
-    warn(message: string, ...otherData: any[]): void {};
-    error(message: string, ...otherData: any[]): void {};
-    info(message: string, ...otherData: any[]): void {};
-}
-
-/**
  * Return the hash of a string.
  * 
  * @param data 
@@ -166,6 +147,7 @@ export function quad_to_nquad(quad: rdf.Quad): string {
     const retval = nquads`${quad}`.toString();
     return retval.endsWith('  .') ? retval.replace(/  .$/, ' .') : retval;
 }
+
 
 /**
  * A shell to provide a unified way of handling the various ways a graph can be represented: a full blown
