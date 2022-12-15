@@ -32,24 +32,25 @@ import { BNodeId, Hash, GlobalState, quadToNquad, hashNquads } from './common';
     // characterizes the bnode.
     state.bnode_to_quads[identifier].forEach((quad: rdf.Quad): void => {
         // Get the 'fake' quad term to be used for hashing.
-        const map_term = (t: rdf.Term): rdf.Term => {
-            if (t.termType === "BlankNode") {
-                return (t.value === identifier) ? state.dataFactory.blankNode('a') : state.dataFactory.blankNode('z');
+        const mapTerm = (term: rdf.Term): rdf.Term => {
+            if (term.termType === "BlankNode") {
+                return (term.value === identifier) ? state.dataFactory.blankNode('a') : state.dataFactory.blankNode('z');
             } else {
-                return t
+                return term
             }
         }
         const new_term = state.dataFactory.quad(
-            map_term(quad.subject) as rdf.Quad_Subject, 
+            mapTerm(quad.subject) as rdf.Quad_Subject, 
             quad.predicate, 
-            map_term(quad.object) as rdf.Quad_Object,
-            map_term(quad.graph) as rdf.Quad_Graph
+            mapTerm(quad.object) as rdf.Quad_Object,
+            mapTerm(quad.graph) as rdf.Quad_Graph
         );
         nquads.push(quadToNquad(new_term))
     })
 
     // Step 4 (hopefully javascript does the right thing in terms of unicode)
     nquads.sort();
+
     // Step 5
     const the_hash: Hash = hashNquads(state, nquads);
 

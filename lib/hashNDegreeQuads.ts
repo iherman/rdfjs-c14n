@@ -6,10 +6,10 @@
  * @packageDocumentation
  */
 
-import * as rdf                                                                                     from 'rdf-js';
+import * as rdf                                                                                  from 'rdf-js';
 import { BNodeId, Hash, NDegreeHashResult, HashToBNodes, GlobalState, computeHash, quadToNquad } from './common';
 import { computeFirstDegreeHash }                                                                from './hash1DegreeQuads';
-import { IDIssuer }                                                                                 from './issueIdentifier';
+import { IDIssuer }                                                                              from './issueIdentifier';
 const permutation = require('array-permutation');
 
 /**
@@ -28,7 +28,7 @@ const permutation = require('array-permutation');
  */
  function computeHashRelatedBlankNode(state: GlobalState, related: BNodeId, quad: rdf.Quad, issuer: IDIssuer, position: string): Hash {
     /* @@@ */ state.logger.info(`Entering Hash Related Blank Node function (4.8.3), with related: "${related}" and quad "${quadToNquad(quad)}"`);
-    const get_identifier = (): BNodeId => {
+    const getIdentifier = (): BNodeId => {
         if (state.canonical_issuer.isSet(related)) {
             return state.canonical_issuer.issueID(related);
         } else if (issuer.isSet(related)) {
@@ -39,7 +39,7 @@ const permutation = require('array-permutation');
     };
 
     // Step 1
-    const identifier: BNodeId = get_identifier();
+    const identifier: BNodeId = getIdentifier();
 
     // Step 2
     let input: string = position;
@@ -83,21 +83,21 @@ const permutation = require('array-permutation');
     // Note that this step will, in possible recursive calls, create additional steps for the "gossips"
     for (const quad of state.bnode_to_quads[identifier]) {
         // Step 3.1
-        const per_component = (t: rdf.Term, position: string): void => {
-            if (t.termType === "BlankNode" &&  t.value !== identifier) {
+        const processTerm = (term: rdf.Term, position: string): void => {
+            if (term.termType === "BlankNode" &&  term.value !== identifier) {
                 // Step 3.1.1
-                const hash = computeHashRelatedBlankNode(state, t.value, quad,  issuer, position);
+                const hash = computeHashRelatedBlankNode(state, term.value, quad,  issuer, position);
                 // Step 3.1.2
                 if (Hn[hash] === undefined) {
-                    Hn[hash] = [t.value];
+                    Hn[hash] = [term.value];
                 } else {
-                    Hn[hash].push(t.value)
+                    Hn[hash].push(term.value)
                 }
             }
         }
-        per_component(quad.subject,'s');
-        per_component(quad.object, 'o');
-        per_component(quad.graph,  'g');
+        processTerm(quad.subject,'s');
+        processTerm(quad.object, 'o');
+        processTerm(quad.graph,  'g');
     }
 
     /* @@@ */ state.logger.info(`Hash N-Degree Quads function (4.9.3 (3)).\nHn: ${JSON.stringify(Hn,null,4)}`);

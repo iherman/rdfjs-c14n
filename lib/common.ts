@@ -151,27 +151,27 @@ export function quadToNquad(quad: rdf.Quad): string {
 
 /**
  * A shell to provide a unified way of handling the various ways a graph can be represented: a full blown
- * rdf.DatasetCore, or an array or a Set of Quads.
+ * rdf.DatasetCore, or an array, or a Set of Quads.
  */
 export class DatasetShell {
-    private theGraph: Quads ;
+    private the_dataset: Quads ;
 
-    constructor(theGraph: Quads) {
-        this.theGraph = theGraph;
+    constructor(dataset: Quads) {
+        this.the_dataset = dataset;
     }
 
     add(quad: rdf.Quad) {
-        if (Array.isArray(this.theGraph)) {
-            this.theGraph.push(quad)
+        if (Array.isArray(this.the_dataset)) {
+            this.the_dataset.push(quad)
         } else {
-            this.theGraph.add(quad);
+            this.the_dataset.add(quad);
         }
     }
 
     new(state: GlobalState): DatasetShell {
-        if (Array.isArray(this.theGraph)) {
+        if (Array.isArray(this.the_dataset)) {
             return new DatasetShell([]);
-        } else if(this.theGraph instanceof Set) {
+        } else if(this.the_dataset instanceof Set) {
             return new DatasetShell(new Set<rdf.Quad>());
         } else {
             if (state.datasetFactory) {
@@ -182,15 +182,15 @@ export class DatasetShell {
         }
     }
 
-    get data(): Quads {
-        return this.theGraph;
+    get dataset(): Quads {
+        return this.the_dataset;
     }
 
     /**
      * Iterate over the values in issuance order 
      */
      *[Symbol.iterator](): IterableIterator<rdf.Quad> {
-        for (const quad of this.theGraph) {
+        for (const quad of this.the_dataset) {
             yield quad;
         }
     }

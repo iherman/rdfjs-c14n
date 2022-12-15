@@ -167,6 +167,6 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
 
         // Step 7
         /* @@@ */ state.logger.info(`Leaving the canonicalization function (4.5.3). The canonical ID issuer is: ${state.canonical_issuer.toString()}`);
-        return retval.data;
+        return retval.dataset;
     }
 
