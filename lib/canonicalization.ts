@@ -15,7 +15,7 @@ import { bntqToString, ndhrToString }                                         fr
 
 
 /**
- * Implementation of the main algorithmic [steps on the top level](https://www.w3.org/TR/rdf-canon/##canon-algo-algo) for the details.
+ * Implementation of the main algorithmic [steps on the top level](https://www.w3.org/TR/rdf-canon/#canon-algo-algo) for the details.
  * 
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
