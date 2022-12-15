@@ -138,9 +138,12 @@ const permutation = require('array-permutation');
             // Step 5.4.4
             for (const related of p) {
                 /* @@@ */ state.logger.info(`Hash N-Degree Quads function (4.9.3 (5.4.4)).\n  Entering loop with related: "${related}"\n  path: "${path}"`);
-                if (state.canonical_issuer.is_set(related)) {
+                // if (state.canonical_issuer.is_set(related)) {
+                //     // Step 5.4.4.1
+                //     path = `${path}_:${state.canonical_issuer.issue_id(related)}`;
+                if (issuer.is_set(related)) {
                     // Step 5.4.4.1
-                    path = `${path}_:${state.canonical_issuer.issue_id(related)}`;
+                    path = `${path}_:${related}`;
                 } else {
                     // Step 5.4.4.2
                     if (!issuer_copy.is_set(related)) {
@@ -186,6 +189,7 @@ const permutation = require('array-permutation');
 
         // Step 5.5.
         data_to_hash = `${data_to_hash}${chosen_path}`;
+        
         /* @@@ */ state.logger.info(`Hash N-Degree Quads function (4.9.3 (5.5). End of current loop with Hn hashes\n  chosen path: "${chosen_path}", \n  data to hash: "${data_to_hash}"`);
 
         // Step 5.6

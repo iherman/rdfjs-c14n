@@ -131,7 +131,7 @@ export function compute_canonicalized_graph(state: GlobalState, input: Quads): Q
                 /* @@@ */ state.logger.info(`Canonicalization function, after (4.5.3 (5.2)) after computing N-Degree Hash for "${hash}":\n${ndhr_to_string(hash_path_list)}`);
 
                 // Step 5.3
-                const ordered_hash_path_list = hash_path_list.sort((a,b): number => {
+                const ordered_hash_path_list = hash_path_list.sort((a: NDegreeHashResult,b: NDegreeHashResult): number => {
                     if (a.hash < b.hash)      return -1;
                     else if (a.hash > b.hash) return 1;
                     else                      return 0;
