@@ -5,7 +5,7 @@
  * 
  * @packageDocumentation
  */
-import { BNodeId, NDegreeHashResult, BNodeToQuads, quad_to_nquad } from './common';
+import { BNodeId, NDegreeHashResult, BNodeToQuads, quadToNquad } from './common';
 
 /**
  * Very simple Logger interface, to be used in the code. Nothing fancy.
@@ -36,10 +36,10 @@ interface BNodeToNQuads {
  * @param bntq 
  * @returns 
  */
-export function bntq_to_string(bntq: BNodeToQuads): string {
+export function bntqToString(bntq: BNodeToQuads): string {
     const bntnq: BNodeToNQuads = {};
     for (const bn in bntq) {
-        bntnq[bn] = bntq[bn].map(quad_to_nquad);
+        bntnq[bn] = bntq[bn].map(quadToNquad);
     }
     return `${JSON.stringify(bntnq,null,4)}`;
 }
@@ -47,7 +47,7 @@ export function bntq_to_string(bntq: BNodeToQuads): string {
 /**
  * Return a string version of an @{NDegreeHashResult} instance, usable for debug
  */
-export function ndhr_to_string(ndhrs: NDegreeHashResult[]): string {
+export function ndhrToString(ndhrs: NDegreeHashResult[]): string {
     return ndhrs.map((ndhr: NDegreeHashResult): string => `Hash: "${ndhr.hash}"${ndhr.issuer.toString()}`).join(',\n')
 }
 

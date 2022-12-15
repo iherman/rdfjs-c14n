@@ -9,10 +9,10 @@
 
 
 import * as rdf from 'rdf-js';
-import { GlobalState, Quads, hash_dataset, Hash, Constants } from './lib/common';
-import { IdIssuer }                                          from './lib/issue_identifier';
-import { compute_canonicalized_graph }                       from './lib/canonicalization';
-import { Logger, NopLogger }                                 from './lib/logging';
+import { GlobalState, Quads, hashDataset, Hash, Constants } from './lib/common';
+import { IDIssuer }                                         from './lib/issueIdentifier';
+import { computeCanonicalDataset }                          from './lib/canonicalization';
+import { Logger, NopLogger }                                from './lib/logging';
 
 export { Quads } from './lib/common';
 export { Hash }  from './lib/common';
@@ -25,7 +25,7 @@ export { Hash }  from './lib/common';
  * {@link RDFCanon#canonicalize} for different graphs.
  */
 export class RDFCanon {
-    private _state:    GlobalState;
+    private state:    GlobalState;
     /**
      * @constructor
      * @param data_factory    An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface).
@@ -33,13 +33,13 @@ export class RDFCanon {
      * @param logger          A logger instance; defaults to an "empty" logger, ie, no logging happens.
      */
     constructor(data_factory: rdf.DataFactory, dataset_factory?: rdf.DatasetCoreFactory) {
-        this._state = {
+        this.state = {
             bnode_to_quads   : {},
             hash_to_bnodes   : {},
-            canonical_issuer : new IdIssuer(),
+            canonical_issuer : new IDIssuer(),
             hash_algorithm   : Constants.HASH_ALGORITHM,
-            data_factory     : data_factory,
-            dataset_factory  : dataset_factory,
+            dataFactory      : data_factory,
+            datasetFactory   : dataset_factory,
             logger           : new NopLogger(),
         }
     }
@@ -48,15 +48,15 @@ export class RDFCanon {
      * Set a logger instance. 
      * @param logger 
      */
-    set_logger(logger: Logger): void {
-        this._state.logger = logger;
+    setLogger(logger: Logger): void {
+        this.state.logger = logger;
     }
 
     /**
      * Set hash algorithm. The value can be anything that the underlying openssl environment accepts. The default is "sha256".
      */
-    set_hash_algorithm(algorithm: string): void {
-        this._state.hash_algorithm = algorithm;
+    setHashAlgorithm(algorithm: string): void {
+        this.state.hash_algorithm = algorithm;
     }
 
     /**
@@ -69,7 +69,7 @@ export class RDFCanon {
      * @returns - the exact type of the output depends on the type of the input dataset. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the dataset_factory has been set set, it will be a Dataset, otherwise a Set.
      */
     canonicalize(input_dataset: Quads): Quads {
-        return compute_canonicalized_graph(this._state, input_dataset);
+        return computeCanonicalDataset(this.state, input_dataset);
     }
 
     /**
@@ -84,7 +84,7 @@ export class RDFCanon {
      */
     hash(input_dataset: Quads): Hash {
         const canonicalized_dataset = this.canonicalize(input_dataset);
-        return hash_dataset(this._state, canonicalized_dataset, true);
+        return hashDataset(this.state, canonicalized_dataset, true);
     }
 }
 

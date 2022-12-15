@@ -10,7 +10,7 @@ const extra_tests: string[] = ['900', '901']
 const test_number_format = RegExp('^[0-9][0-9][0-9]$');
 
 // Compare two quad array for equality.
-function compare_nquads(left: string[], right: string[]): boolean {
+function compareNquads(left: string[], right: string[]): boolean {
     if (left.length !== right.length) {
         return false;
     } else {
@@ -24,7 +24,7 @@ function compare_nquads(left: string[], right: string[]): boolean {
 }
 
 // Print a single quad in a line
-function print_quads(nquads: string[], label: string): void {
+function printQuads(nquads: string[], label: string): void {
     console.log(`=== ${label}:`);
     for (const nquad of nquads) {
         console.log(nquad);
@@ -37,7 +37,7 @@ function print_quads(nquads: string[], label: string): void {
  * 
  * @param dump - whether the results should be printed on the screen
  */
-async function single_test(canonicalizer: RDFCanon, num: string, dump: boolean = true): Promise<boolean> {
+async function singleTest(canonicalizer: RDFCanon, num: string, dump: boolean = true): Promise<boolean> {
     const input_fname    = `testing/tests/test${num}-in.nq`;
     const expected_fname = `testing/tests/test${num}-urdna2015.nq`
     const [input, expected] = await Promise.all([
@@ -49,13 +49,13 @@ async function single_test(canonicalizer: RDFCanon, num: string, dump: boolean =
     const input_quads    = rdfn3.dataset_to_nquads(input).sort();
     const c14_quads      = rdfn3.dataset_to_nquads(c14n_input).sort();
     const expected_quads = rdfn3.dataset_to_nquads(expected).sort();
-    const result         = compare_nquads(c14_quads,expected_quads);
+    const result         = compareNquads(c14_quads,expected_quads);
 
     if (dump) {
         console.log(`*************** Test number ${num} *****************`);
-        print_quads(input_quads, 'Input quads');
-        print_quads(c14_quads,'Canonicalized quads');
-        print_quads(expected_quads,'Expected quads');    
+        printQuads(input_quads, 'Input quads');
+        printQuads(c14_quads,'Canonicalized quads');
+        printQuads(expected_quads,'Expected quads');    
         const test_passes    = result ? 'passes' : 'fails';
         console.log(`===> Test ${test_passes} <===`);
     }
@@ -82,7 +82,7 @@ async function single_test(canonicalizer: RDFCanon, num: string, dump: boolean =
  * @async
  */
 async function main(): Promise<void> {
-    const test_number = (num ?: string): string => {
+    const testNumber = (num ?: string): string => {
         if (num) {
             switch (num.length) {
                 case 1:
@@ -116,12 +116,12 @@ async function main(): Promise<void> {
     const trace = options.trace ? true : false;
 
     if (options.full) {
-        const base_tests = [...Array(number_of_tests).keys()].map((index: number): string => test_number(`${index}`));
+        const base_tests = [...Array(number_of_tests).keys()].map((index: number): string => testNumber(`${index}`));
         const tests = [...base_tests, ...extra_tests];
         tests.shift(); // There is no '000' test!
 
         // Run all the tests...
-        const proms: boolean[] = await Promise.all(tests.map((num) => single_test(canonicalizer, num, false)));
+        const proms: boolean[] = await Promise.all(tests.map((num) => singleTest(canonicalizer, num, false)));
         const failed_tests = tests
             // pair the test name and whether the tests passed:
             .map((value: string, index:number): [string, boolean] => [value, proms[index]])
@@ -138,11 +138,11 @@ async function main(): Promise<void> {
     } else {
         const logLevel = (debug) ? Levels.debug : ((trace) ? Levels.info : Levels.error);
         const logger = new SimpleLogger(logLevel);
-        canonicalizer.set_logger(logger);
+        canonicalizer.setLogger(logger);
 
-        const num = (program.args.length === 0) ? test_number(options.number) : test_number(program.args[0]);
+        const num = (program.args.length === 0) ? testNumber(options.number) : testNumber(program.args[0]);
         if (test_number_format.test(num)) {
-            single_test(canonicalizer, num, true)
+            singleTest(canonicalizer, num, true)
         } else {
             console.error('Invalid test number');
         }    

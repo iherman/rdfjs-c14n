@@ -8,7 +8,7 @@
 
 import * as rdf       from 'rdf-js';
 import { createHash } from 'crypto';
-import { IdIssuer }   from './issue_identifier';
+import { IDIssuer }   from './issueIdentifier';
 import { nquads }     from '@tpluscode/rdf-string';
 import { Logger }     from './logging';
 
@@ -52,7 +52,7 @@ export interface HashToBNodes {
 export interface C14nState {
     bnode_to_quads   : BNodeToQuads;
     hash_to_bnodes   : HashToBNodes;
-    canonical_issuer : IdIssuer;
+    canonical_issuer : IDIssuer;
     hash_algorithm   : string;
 }
 
@@ -64,10 +64,10 @@ export interface C14nState {
  */
 export interface GlobalState extends C14nState {
     /** RDF data factory instance, to be used to create new terms and quads */
-    data_factory    : rdf.DataFactory;
+    dataFactory     : rdf.DataFactory;
 
     /** RDF DatasetCoreFactory, to be used to create new datasets. If undefined, the return value of canonicalization is a set of quads. */
-    dataset_factory ?: rdf.DatasetCoreFactory;
+    datasetFactory ?: rdf.DatasetCoreFactory;
 
     /** A logger instance */
     logger          : Logger;
@@ -78,7 +78,7 @@ export interface GlobalState extends C14nState {
  */
 export interface NDegreeHashResult {
     hash: Hash;
-    issuer: IdIssuer
+    issuer: IDIssuer
 }
 
 /**
@@ -87,7 +87,7 @@ export interface NDegreeHashResult {
  * @param data 
  * @returns - hash value
  */
- export function compute_hash(state: C14nState, data: string): Hash {
+ export function computeHash(state: C14nState, data: string): Hash {
     return createHash(state.hash_algorithm).update(data).digest('hex');
 }
 
@@ -100,11 +100,11 @@ export interface NDegreeHashResult {
  * @returns - hash value
  * 
  */
-export function hash_nquads(state: C14nState, nquads: string[]): Hash {
+export function hashNquads(state: C14nState, nquads: string[]): Hash {
     // Care should be taken that the final data to be hashed include a single `/n`
     // for every quad, before joining the quads into a string that must be hashed
     const data: string = nquads.map((q:string): string => q.endsWith('\n') ? q : `${q}\n`).join('');
-    return compute_hash(state, data);
+    return computeHash(state, data);
 }
 
 /**
@@ -115,9 +115,9 @@ export function hash_nquads(state: C14nState, nquads: string[]): Hash {
  * @param nquads 
  * @returns 
  */
-export function sort_and_hash_nquads(state: C14nState, nquads: string[]): Hash {
+export function sortAndHashNquads(state: C14nState, nquads: string[]): Hash {
     nquads.sort();
-    return hash_nquads(state, nquads)
+    return hashNquads(state, nquads)
 }
 
 /**
@@ -127,13 +127,13 @@ export function sort_and_hash_nquads(state: C14nState, nquads: string[]): Hash {
  * @param sort - whether the quads must be sorted before hash. Defaults to `true`.
  * @returns 
  */
-export function hash_dataset(state: C14nState, quads: Iterable<rdf.Quad>, sort: boolean = true): Hash {
+export function hashDataset(state: C14nState, quads: Iterable<rdf.Quad>, sort: boolean = true): Hash {
     const nquads: string[] = [];
     for(const quad of quads) {
-        nquads.push(quad_to_nquad(quad))
+        nquads.push(quadToNquad(quad))
     }
     if (sort) nquads.sort();
-    return hash_nquads(state, nquads)
+    return hashNquads(state, nquads)
 }
 
 
@@ -143,7 +143,7 @@ export function hash_dataset(state: C14nState, quads: Iterable<rdf.Quad>, sort: 
  * @param quad 
  * @returns 
  */
-export function quad_to_nquad(quad: rdf.Quad): string {
+export function quadToNquad(quad: rdf.Quad): string {
     const retval = nquads`${quad}`.toString();
     return retval.endsWith('  .') ? retval.replace(/  .$/, ' .') : retval;
 }
@@ -174,8 +174,8 @@ export class DatasetShell {
         } else if(this.theGraph instanceof Set) {
             return new DatasetShell(new Set<rdf.Quad>());
         } else {
-            if (state.dataset_factory) {
-                return new DatasetShell(state.dataset_factory.dataset());    
+            if (state.datasetFactory) {
+                return new DatasetShell(state.datasetFactory.dataset());    
             } else {
                 return new DatasetShell(new Set<rdf.Quad>());
             }
