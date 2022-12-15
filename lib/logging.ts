@@ -31,7 +31,7 @@ interface BNodeToNQuads {
     [index: BNodeId] : string[];
 }
 /**
- * Return a string version of a @{BNodeToQuads} instance, usable for debug
+ * Return a string version of a {@link BNodeToQuads} instance, usable for debug
  * 
  * @param bntq 
  * @returns 
@@ -45,7 +45,7 @@ export function bntqToString(bntq: BNodeToQuads): string {
 }
 
 /**
- * Return a string version of an @{NDegreeHashResult} instance, usable for debug
+ * Return a string version of an {@link NDegreeHashResult} instance, usable for debug
  */
 export function ndhrToString(ndhrs: NDegreeHashResult[]): string {
     return ndhrs.map((ndhr: NDegreeHashResult): string => `Hash: "${ndhr.hash}"${ndhr.issuer.toString()}`).join(',\n')

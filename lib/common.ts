@@ -21,8 +21,7 @@ export namespace Constants {
     export const BNODE_PREFIX = "c14n";
 }
 
-       type Dataset     = rdf.DatasetCore<rdf.Quad,rdf.Quad>;
-export type Quads       = Dataset | rdf.Quad[] | Set<rdf.Quad>;
+export type Quads       = rdf.DatasetCore<rdf.Quad,rdf.Quad> | rdf.Quad[] | Set<rdf.Quad>;
 export type BNodeId     = string;
 export type Hash        = string;
 export type QuadToNquad = (quad: rdf.Quad) => string;

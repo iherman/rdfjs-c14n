@@ -7,23 +7,26 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.compute_canonicalized_graph = void 0;
-const hash_1_degree_quads_1 = require("./hash_1_degree_quads");
-const hash_n_degree_quads_1 = require("./hash_n_degree_quads");
-const issue_identifier_1 = require("./issue_identifier");
+exports.computeCanonicalDataset = void 0;
+const common_1 = require("./common");
+const hash1DegreeQuads_1 = require("./hash1DegreeQuads");
+const hashNDegreeQuads_1 = require("./hashNDegreeQuads");
+const issueIdentifier_1 = require("./issueIdentifier");
+const logging_1 = require("./logging");
 /**
  * Implementation of the main algorithmic [steps on the top level](https://www.w3.org/TR/rdf-canon/##canon-algo-algo) for the details.
  *
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
- * @param input_dataset
- * @returns
+ * @param input
+ * @returns - the exact type of the output depends on the type of the input. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the DatasetFactory is set, it will be a Dataset, otherwise a Set.
  */
-function compute_canonicalized_graph(state, input_dataset) {
+function computeCanonicalDataset(state, input) {
     // Re-initialize the state information: canonicalization should always start with a clean state
     state.bnode_to_quads = {};
     state.hash_to_bnodes = {};
-    state.canonical_issuer = new issue_identifier_1.IdIssuer();
-    const retval = state.dataset_factory.dataset();
+    state.canonical_issuer = new issueIdentifier_1.IDIssuer();
+    const input_dataset = new common_1.DatasetShell(input);
+    const retval = input_dataset.new(state);
     // Step 2
     // All quads are 'classified' depending on what bnodes they contain
     // Results in a mapping from bnodes to all quads that they are part of.
@@ -45,7 +48,7 @@ function compute_canonicalized_graph(state, input_dataset) {
             bnode_map(quad.graph);
         }
     }
-    /* @@@ */ state.logger.debug(`§4.5.3 (2) bnode to quads: ${JSON.stringify(state.bnode_to_quads, null, 4)}`);
+    /* @@@ */ state.logger.info(`Entering the canonicalization function (4.5.3 (2)). Bnode to quads: ${(0, logging_1.bntqToString)(state.bnode_to_quads)}`);
     // Step 3
     {
         // Compute a hash value for each bnode (depending on the quads it appear in)
@@ -53,7 +56,7 @@ function compute_canonicalized_graph(state, input_dataset) {
         // may be more. Hence the usage of the hash_to_bnodes map.
         Object.keys(state.bnode_to_quads).forEach((n) => {
             // Step 3.1
-            const hfn = (0, hash_1_degree_quads_1.compute_first_degree_hash)(state, n);
+            const hfn = (0, hash1DegreeQuads_1.computeFirstDegreeHash)(state, n);
             // Step 3.2
             if (state.hash_to_bnodes[hfn] === undefined) {
                 state.hash_to_bnodes[hfn] = [n];
@@ -62,7 +65,6 @@ function compute_canonicalized_graph(state, input_dataset) {
                 state.hash_to_bnodes[hfn].push(n);
             }
         });
-        /* @@@ */ state.logger.info(`§4.5.3 (3) hash to bnodes: \n${state.hash_to_bnodes}`);
     }
     // Step 4
     {
@@ -84,8 +86,8 @@ function compute_canonicalized_graph(state, input_dataset) {
             // Note that the IdIssuer automatically stores the (existing, issued) pairs for the
             // bnode identifier; these are retrieved in the last step when a new, normalized
             // graph is created.
-            const canon_id = state.canonical_issuer.issue_id(identifier_list[0]);
-            /* @@@ */ state.logger.info(`§4.5.3 (4) canonicalization of ${identifier_list[0]} -> ${canon_id}`);
+            const canon_id = state.canonical_issuer.issueID(identifier_list[0]);
+            /* @@@ */ state.logger.info(`Canonicalization function (4.5.3 (4)). Generate identifier in the first pass for "${identifier_list[0]}=>${canon_id}"`);
             // Step 4.3
             // Remove the corresponding hash
             delete state.hash_to_bnodes[hash];
@@ -98,7 +100,6 @@ function compute_canonicalized_graph(state, input_dataset) {
         const hashes = Object.keys(state.hash_to_bnodes).sort();
         for (const hash of hashes) {
             const identifier_list = state.hash_to_bnodes[hash];
-            /* @@@ */ state.logger.info(`§4.5.3 (5) identifier list with shared hashes: ${identifier_list} for hash: ${hash}`);
             // This cycle takes care of all problematic cases that share the same hash
             // Step 5.1
             // This stores a calculated hash and its relates identifier issuer for each
@@ -106,22 +107,21 @@ function compute_canonicalized_graph(state, input_dataset) {
             const hash_path_list = [];
             // Step 5.2
             for (const n of identifier_list) {
-                if (state.canonical_issuer.is_set(n)) {
+                if (state.canonical_issuer.isSet(n)) {
                     // Step 5.2.1
                     continue;
                 }
                 else {
                     // Step 5.2.2
-                    const temporary_issuer = new issue_identifier_1.IdIssuer('b');
+                    const temporary_issuer = new issueIdentifier_1.IDIssuer('b');
                     // Step 5.2.3
-                    const bn = temporary_issuer.issue_id(n);
+                    const bn = temporary_issuer.issueID(n);
                     // Step 5.2.4
-                    const result = (0, hash_n_degree_quads_1.compute_n_degree_hash)(state, n, temporary_issuer);
-                    /* @@@ */ state.logger.debug(`§4.5.3 (5.2.4) computed n-degree hash: ${JSON.stringify(result, null, 4)}`);
+                    const result = (0, hashNDegreeQuads_1.computeNDegreeHash)(state, n, temporary_issuer);
                     hash_path_list.push(result);
                 }
             }
-            /* @@@ */ state.logger.info(`§4.5.3 (5.2) hash path list: ${JSON.stringify(hash_path_list, null, 4)}`);
+            /* @@@ */ state.logger.info(`Canonicalization function, after (4.5.3 (5.2)) after computing N-Degree Hash for "${hash}":\n${(0, logging_1.ndhrToString)(hash_path_list)}`);
             // Step 5.3
             const ordered_hash_path_list = hash_path_list.sort((a, b) => {
                 if (a.hash < b.hash)
@@ -134,7 +134,7 @@ function compute_canonicalized_graph(state, input_dataset) {
             for (const result of ordered_hash_path_list) {
                 // Step 5.3.1
                 for (const [existing, temporary] of result.issuer) {
-                    state.canonical_issuer.issue_id(existing);
+                    state.canonical_issuer.issueID(existing);
                 }
             }
         }
@@ -144,8 +144,8 @@ function compute_canonicalized_graph(state, input_dataset) {
         // This function replaces the term with its canonical equivalent, if applicable
         const replace_bnode = (term) => {
             if (term.termType === "BlankNode") {
-                const canonical = state.canonical_issuer.issue_id(term.value);
-                return state.data_factory.blankNode(canonical);
+                const canonical = state.canonical_issuer.issueID(term.value);
+                return state.dataFactory.blankNode(canonical);
             }
             else {
                 return term;
@@ -156,11 +156,11 @@ function compute_canonicalized_graph(state, input_dataset) {
             const subject_copy = replace_bnode(quad.subject);
             const object_copy = replace_bnode(quad.object);
             const graph_copy = replace_bnode(quad.graph);
-            retval.add(state.data_factory.quad(subject_copy, quad.predicate, object_copy, graph_copy));
+            retval.add(state.dataFactory.quad(subject_copy, quad.predicate, object_copy, graph_copy));
         }
     }
     // Step 7
-    /* @@@ */ state.logger.debug(`§4.5.3 Leaving function\n${JSON.stringify(state, null, 4)}`);
-    return retval;
+    /* @@@ */ state.logger.info(`Leaving the canonicalization function (4.5.3). The canonical ID issuer is: ${state.canonical_issuer.toString()}`);
+    return retval.dataset;
 }
-exports.compute_canonicalized_graph = compute_canonicalized_graph;
+exports.computeCanonicalDataset = computeCanonicalDataset;
