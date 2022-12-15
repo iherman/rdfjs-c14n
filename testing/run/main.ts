@@ -1,5 +1,5 @@
 import { Command }               from 'commander';
-import { RDFCanon, Quads, Hash } from '../../index';
+import { RDFCanon }              from '../../index';
 import { SimpleLogger, Levels }  from './logger';
 import * as rdfn3                from './rdfn3';
 
@@ -45,7 +45,7 @@ async function single_test(canonicalizer: RDFCanon, num: string, dump: boolean =
         rdfn3.get_quads(expected_fname),
     ]);
 
-    const c14n_input = canonicalizer.canonicalize(input);
+    const c14n_input     = canonicalizer.canonicalize(input);
     const input_quads    = rdfn3.dataset_to_nquads(input).sort();
     const c14_quads      = rdfn3.dataset_to_nquads(c14n_input).sort();
     const expected_quads = rdfn3.dataset_to_nquads(expected).sort();
