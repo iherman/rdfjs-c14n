@@ -8,24 +8,24 @@
 
 import * as rdf from 'rdf-js';
 import { GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, DatasetShell } from './common';
-import { compute_first_degree_hash }                                          from './hash_1_degree_quads';
-import { compute_n_degree_hash }                                              from './hash_n_degree_quads';
-import { IdIssuer }                                                           from './issue_identifier';
-import { bntq_to_string, ndhr_to_string }                                     from './logging';
+import { computeFirstDegreeHash }                                             from './hash1DegreeQuads';
+import { computeNDegreeHash }                                                 from './hashNDegreeQuads';
+import { IDIssuer }                                                           from './issueIdentifier';
+import { bntqToString, ndhrToString }                                         from './logging';
 
 
 /**
- * Implementation of the main algorithmic [steps on the top level](https://www.w3.org/TR/rdf-canon/##canon-algo-algo) for the details.
+ * Implementation of the main algorithmic [steps on the top level](https://www.w3.org/TR/rdf-canon/#canon-algo-algo) for the details.
  * 
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
  * @returns - the exact type of the output depends on the type of the input. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the DatasetFactory is set, it will be a Dataset, otherwise a Set.
  */
-export function compute_canonicalized_graph(state: GlobalState, input: Quads): Quads {
+export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads {
         // Re-initialize the state information: canonicalization should always start with a clean state
         state.bnode_to_quads   = {};
         state.hash_to_bnodes   = {};
-        state.canonical_issuer = new IdIssuer();
+        state.canonical_issuer = new IDIssuer();
 
         const input_dataset: DatasetShell = new DatasetShell(input);
         const retval: DatasetShell        = input_dataset.new(state);
@@ -51,7 +51,7 @@ export function compute_canonicalized_graph(state: GlobalState, input: Quads): Q
             }
         }
 
-        /* @@@ */ state.logger.info(`Entering the canonicalization function (4.5.3 (2)). Bnode to quads: ${bntq_to_string(state.bnode_to_quads)}`);
+        /* @@@ */ state.logger.info(`Entering the canonicalization function (4.5.3 (2)). Bnode to quads: ${bntqToString(state.bnode_to_quads)}`);
 
         // Step 3
         {
@@ -60,7 +60,7 @@ export function compute_canonicalized_graph(state: GlobalState, input: Quads): Q
             // may be more. Hence the usage of the hash_to_bnodes map.
             Object.keys(state.bnode_to_quads).forEach((n: BNodeId): void => {
                 // Step 3.1
-                const hfn: Hash = compute_first_degree_hash(state, n)
+                const hfn: Hash = computeFirstDegreeHash(state, n)
                 // Step 3.2
                 if (state.hash_to_bnodes[hfn] === undefined) {
                     state.hash_to_bnodes[hfn] = [n];
@@ -90,7 +90,7 @@ export function compute_canonicalized_graph(state: GlobalState, input: Quads): Q
                 // Note that the IdIssuer automatically stores the (existing, issued) pairs for the
                 // bnode identifier; these are retrieved in the last step when a new, normalized
                 // graph is created.
-                const canon_id = state.canonical_issuer.issue_id(identifier_list[0]);
+                const canon_id = state.canonical_issuer.issueID(identifier_list[0]);
                 /* @@@ */ state.logger.info(`Canonicalization function (4.5.3 (4)). Generate identifier in the first pass for "${identifier_list[0]}=>${canon_id}"`);
 
                 // Step 4.3
@@ -114,21 +114,21 @@ export function compute_canonicalized_graph(state: GlobalState, input: Quads): Q
 
                 // Step 5.2
                 for (const n of identifier_list) {
-                    if (state.canonical_issuer.is_set(n)) {
+                    if (state.canonical_issuer.isSet(n)) {
                         // Step 5.2.1
                         continue;
                     } else {
                         // Step 5.2.2
-                        const temporary_issuer = new IdIssuer('b');
+                        const temporary_issuer = new IDIssuer('b');
                         // Step 5.2.3
-                        const bn = temporary_issuer.issue_id(n);
+                        const bn = temporary_issuer.issueID(n);
                         // Step 5.2.4
-                        const result: NDegreeHashResult = compute_n_degree_hash(state, n, temporary_issuer);
+                        const result: NDegreeHashResult = computeNDegreeHash(state, n, temporary_issuer);
                         hash_path_list.push(result);
                     }
                 }
 
-                /* @@@ */ state.logger.info(`Canonicalization function, after (4.5.3 (5.2)) after computing N-Degree Hash for "${hash}":\n${ndhr_to_string(hash_path_list)}`);
+                /* @@@ */ state.logger.info(`Canonicalization function, after (4.5.3 (5.2)) after computing N-Degree Hash for "${hash}":\n${ndhrToString(hash_path_list)}`);
 
                 // Step 5.3
                 const ordered_hash_path_list = hash_path_list.sort((a: NDegreeHashResult,b: NDegreeHashResult): number => {
@@ -139,7 +139,7 @@ export function compute_canonicalized_graph(state: GlobalState, input: Quads): Q
                 for (const result of ordered_hash_path_list) {
                     // Step 5.3.1
                     for (const [existing,temporary] of result.issuer) {
-                        state.canonical_issuer.issue_id(existing)
+                        state.canonical_issuer.issueID(existing)
                     }
                 }
             }
@@ -150,8 +150,8 @@ export function compute_canonicalized_graph(state: GlobalState, input: Quads): Q
             // This function replaces the term with its canonical equivalent, if applicable
             const replace_bnode = (term: rdf.Term): rdf.Term => {
                 if (term.termType === "BlankNode") {
-                    const canonical = state.canonical_issuer.issue_id(term.value);
-                    return state.data_factory.blankNode(canonical)
+                    const canonical = state.canonical_issuer.issueID(term.value);
+                    return state.dataFactory.blankNode(canonical)
                 } else {
                     return term;
                 }
@@ -161,12 +161,12 @@ export function compute_canonicalized_graph(state: GlobalState, input: Quads): Q
                 const subject_copy = replace_bnode(quad.subject) as rdf.Quad_Subject;
                 const object_copy  = replace_bnode(quad.object) as rdf.Quad_Object;
                 const graph_copy   = replace_bnode(quad.graph) as rdf.Quad_Graph;
-                retval.add(state.data_factory.quad(subject_copy, quad.predicate, object_copy, graph_copy))
+                retval.add(state.dataFactory.quad(subject_copy, quad.predicate, object_copy, graph_copy))
             }
         }
 
         // Step 7
         /* @@@ */ state.logger.info(`Leaving the canonicalization function (4.5.3). The canonical ID issuer is: ${state.canonical_issuer.toString()}`);
-        return retval.data;
+        return retval.dataset;
     }
 

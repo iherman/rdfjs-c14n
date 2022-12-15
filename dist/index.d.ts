@@ -9,8 +9,6 @@ declare interface Logger {
     info(message: string, ...otherData: any[]): void;
 }
 
-declare function hash_dataset(quads: Quads, sort: boolean, algorithm?: string): Hash;
-
 declare class RDFCanon {
     /**
      * 
@@ -23,12 +21,12 @@ declare class RDFCanon {
      * Set a logger instance. By default it is an "empty" logger, ie, no logging happens
      * @param logger 
      */
-    set_logger(logger: Logger): void;
+    setLogger(logger: Logger): void;
 
     /**
      * Set hash algorithm. The value can be anything that the underlying openssl environment accepts. The default is "sha256".
      */
-    set_hash_algorithm(algorithm: string): void;
+    setHashAlgorithm(algorithm: string): void;
 
     /**
      * Implementation of the main algorithmic steps
@@ -49,5 +47,5 @@ declare class RDFCanon {
      * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
      * @returns 
      */
-     hash(input_dataset: Quads, algorithm: string): Hash;
+     hash(input_dataset: Quads): Hash;
 }

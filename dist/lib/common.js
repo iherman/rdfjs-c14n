@@ -7,7 +7,7 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.quad_to_nquad = exports.hash_dataset = exports.sort_and_hash_nquads = exports.hash_nquads = exports.compute_hash = exports.NopLogger = exports.Constants = void 0;
+exports.DatasetShell = exports.quadToNquad = exports.hashDataset = exports.sortAndHashNquads = exports.hashNquads = exports.computeHash = exports.Constants = void 0;
 const crypto_1 = require("crypto");
 const rdf_string_1 = require("@tpluscode/rdf-string");
 var Constants;
@@ -18,86 +18,115 @@ var Constants;
     Constants.BNODE_PREFIX = "c14n";
 })(Constants = exports.Constants || (exports.Constants = {}));
 /**
- * A default, no-operation logger instance, used by default.
- */
-class NopLogger {
-    debug(message, ...otherData) { }
-    ;
-    warn(message, ...otherData) { }
-    ;
-    error(message, ...otherData) { }
-    ;
-    info(message, ...otherData) { }
-    ;
-}
-exports.NopLogger = NopLogger;
-/**
  * Return the hash of a string.
  *
  * @param data
- * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
  * @returns - hash value
  */
-function compute_hash(data, algorithm = Constants.HASH_ALGORITHM) {
-    return (0, crypto_1.createHash)(algorithm).update(data).digest('hex');
+function computeHash(state, data) {
+    return (0, crypto_1.createHash)(state.hash_algorithm).update(data).digest('hex');
 }
-exports.compute_hash = compute_hash;
+exports.computeHash = computeHash;
 /**
  * Return the hash of an array of nquad statements; per spec, this means
  * concatenating all nquads into a long string. Care should be taken that each
  * quad must end with a single `/n`.
  *
  * @param nquads
- * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
  * @returns - hash value
  *
  */
-function hash_nquads(nquads, algorithm = Constants.HASH_ALGORITHM) {
+function hashNquads(state, nquads) {
     // Care should be taken that the final data to be hashed include a single `/n`
     // for every quad, before joining the quads into a string that must be hashed
     const data = nquads.map((q) => q.endsWith('\n') ? q : `${q}\n`).join('');
-    return compute_hash(data, algorithm);
+    return computeHash(state, data);
 }
-exports.hash_nquads = hash_nquads;
+exports.hashNquads = hashNquads;
 /**
  * Return the hash of an array of nquad statements after being sorted. Per spec, this means
  * concatenating all nquads into a long string. Care should be taken that each
  * quad must end with a single `/n`.
  *
  * @param nquads
- * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
  * @returns
  */
-function sort_and_hash_nquads(nquads, algorithm = Constants.HASH_ALGORITHM) {
+function sortAndHashNquads(state, nquads) {
     nquads.sort();
-    return hash_nquads(nquads, algorithm);
+    return hashNquads(state, nquads);
 }
-exports.sort_and_hash_nquads = sort_and_hash_nquads;
+exports.sortAndHashNquads = sortAndHashNquads;
 /**
  * Hash a dataset
+ *
  * @param quads
- * @param sort - whether the quads must be sorted before hash. Defaults to `true`
- * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
+ * @param sort - whether the quads must be sorted before hash. Defaults to `true`.
  * @returns
  */
-function hash_dataset(quads, sort = true, algorithm = Constants.HASH_ALGORITHM) {
+function hashDataset(state, quads, sort = true) {
     const nquads = [];
     for (const quad of quads) {
-        nquads.push(quad_to_nquad(quad));
+        nquads.push(quadToNquad(quad));
     }
     if (sort)
         nquads.sort();
-    return hash_nquads(nquads, algorithm);
+    return hashNquads(state, nquads);
 }
-exports.hash_dataset = hash_dataset;
+exports.hashDataset = hashDataset;
 /**
  * Return an nquad version for a single quad.
  *
  * @param quad
  * @returns
  */
-function quad_to_nquad(quad) {
+function quadToNquad(quad) {
     const retval = (0, rdf_string_1.nquads) `${quad}`.toString();
     return retval.endsWith('  .') ? retval.replace(/  .$/, ' .') : retval;
 }
-exports.quad_to_nquad = quad_to_nquad;
+exports.quadToNquad = quadToNquad;
+/**
+ * A shell to provide a unified way of handling the various ways a graph can be represented: a full blown
+ * rdf.DatasetCore, or an array, or a Set of Quads.
+ */
+class DatasetShell {
+    the_dataset;
+    constructor(dataset) {
+        this.the_dataset = dataset;
+    }
+    add(quad) {
+        if (Array.isArray(this.the_dataset)) {
+            this.the_dataset.push(quad);
+        }
+        else {
+            this.the_dataset.add(quad);
+        }
+    }
+    new(state) {
+        if (Array.isArray(this.the_dataset)) {
+            return new DatasetShell([]);
+        }
+        else if (this.the_dataset instanceof Set) {
+            return new DatasetShell(new Set());
+        }
+        else {
+            if (state.datasetFactory) {
+                return new DatasetShell(state.datasetFactory.dataset());
+            }
+            else {
+                return new DatasetShell(new Set());
+            }
+        }
+    }
+    get dataset() {
+        return this.the_dataset;
+    }
+    /**
+     * Iterate over the values in issuance order
+     */
+    *[Symbol.iterator]() {
+        for (const quad of this.the_dataset) {
+            yield quad;
+        }
+    }
+}
+exports.DatasetShell = DatasetShell;

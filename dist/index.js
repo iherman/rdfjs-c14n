@@ -8,12 +8,11 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RDFCanon = exports.hash_dataset = void 0;
+exports.RDFCanon = void 0;
 const common_1 = require("./lib/common");
-const issue_identifier_1 = require("./lib/issue_identifier");
+const issueIdentifier_1 = require("./lib/issueIdentifier");
 const canonicalization_1 = require("./lib/canonicalization");
-var common_2 = require("./lib/common");
-Object.defineProperty(exports, "hash_dataset", { enumerable: true, get: function () { return common_2.hash_dataset; } });
+const logging_1 = require("./lib/logging");
 /**
  * Just a shell around the algorithm, consisting of a state, and the call for the real implementation.
  *
@@ -22,22 +21,36 @@ Object.defineProperty(exports, "hash_dataset", { enumerable: true, get: function
  * {@link RDFCanon#canonicalize} for different graphs.
  */
 class RDFCanon {
-    _state;
+    state;
     /**
      * @constructor
-     * @param data_factory    An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface)
-     * @param dataset_factory An implementation of the generic RDF DatasetCoreFactory interface, see [the specification]https://rdf.js.org/dataset-spec/#datasetcorefactory-interface)
-     * @param logger          A logger instance; defaults to an "empty" logger, ie, no logging happens
+     * @param data_factory    An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface).
+     * @param dataset_factory An implementation of the generic RDF DatasetCoreFactory interface, see [the specification]https://rdf.js.org/dataset-spec/#datasetcorefactory-interface). If undefined, the canonicalized graph will automatically be a Set of quads.
+     * @param logger          A logger instance; defaults to an "empty" logger, ie, no logging happens.
      */
-    constructor(data_factory, dataset_factory, logger = new common_1.NopLogger()) {
-        this._state = {
+    constructor(data_factory, dataset_factory) {
+        this.state = {
             bnode_to_quads: {},
             hash_to_bnodes: {},
-            canonical_issuer: new issue_identifier_1.IdIssuer(),
-            data_factory: data_factory,
-            dataset_factory: dataset_factory,
-            logger: logger
+            canonical_issuer: new issueIdentifier_1.IDIssuer(),
+            hash_algorithm: common_1.Constants.HASH_ALGORITHM,
+            dataFactory: data_factory,
+            datasetFactory: dataset_factory,
+            logger: new logging_1.NopLogger(),
         };
+    }
+    /**
+     * Set a logger instance.
+     * @param logger
+     */
+    setLogger(logger) {
+        this.state.logger = logger;
+    }
+    /**
+     * Set hash algorithm. The value can be anything that the underlying openssl environment accepts. The default is "sha256".
+     */
+    setHashAlgorithm(algorithm) {
+        this.state.hash_algorithm = algorithm;
     }
     /**
      * Canonicalize a Dataset.
@@ -46,10 +59,10 @@ class RDFCanon {
      * real work is done in [separate](../functions/lib_canonicalization.compute_canonicalized_graph.html) function.
      *
      * @param input_dataset
-     * @returns
+     * @returns - the exact type of the output depends on the type of the input dataset. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the dataset_factory has been set set, it will be a Dataset, otherwise a Set.
      */
     canonicalize(input_dataset) {
-        return (0, canonicalization_1.compute_canonicalized_graph)(this._state, input_dataset);
+        return (0, canonicalization_1.computeCanonicalDataset)(this.state, input_dataset);
     }
     /**
      * Hash a dataset:
@@ -59,12 +72,11 @@ class RDFCanon {
      * 3. Compute the hash of the concatenated nquads.
      *
      * @param input_dataset
-     * @param algorithm - Hash algorithm to use. The value can be anything that the underlying openssl environment accepts, defaults to sha256.
      * @returns
      */
-    hash(input_dataset, algorithm = common_1.Constants.HASH_ALGORITHM) {
+    hash(input_dataset) {
         const canonicalized_dataset = this.canonicalize(input_dataset);
-        return (0, common_1.hash_dataset)(canonicalized_dataset, true, algorithm);
+        return (0, common_1.hashDataset)(this.state, canonicalized_dataset, true);
     }
 }
 exports.RDFCanon = RDFCanon;
