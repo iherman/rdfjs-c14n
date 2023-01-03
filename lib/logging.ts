@@ -5,50 +5,58 @@
  * 
  * @packageDocumentation
  */
-import { BNodeId, NDegreeHashResult, BNodeToQuads, quadToNquad } from './common';
+import { NDegreeHashResult, BNodeToQuads, quadToNquad } from './common';
 
 /**
  * Very simple Logger interface, to be used in the code. Nothing fancy.
  */
+export interface LogItem {
+    [index: string]: string|string[]|LogItem|LogItem[]|boolean;
+}
+
 export interface Logger {
-    debug(message: string, ...otherData: any[]): void;
-    warn(message: string, ...otherData: any[]): void;
-    error(message: string, ...otherData: any[]): void;
-    info(message: string, ...otherData: any[]): void;
+    log: string;
+    debug(message: string, ...otherData: LogItem[]): void;
+    warn(message: string, ...otherData: LogItem[]): void;
+    error(message: string, ...otherData: LogItem[]): void;
+    info(message: string, ...otherData: LogItem[]): void;
 }
 
 /**
  * A default, no-operation logger instance, used by default.
  */
 export class NopLogger implements Logger {
-    debug(message: string, ...otherData: any[]): void {};
-    warn(message: string, ...otherData: any[]): void {};
-    error(message: string, ...otherData: any[]): void {};
-    info(message: string, ...otherData: any[]): void {};
+    log: string;
+    debug(message: string, ...otherData: LogItem[]): void {};
+    warn(message: string, ...otherData: LogItem[]): void {};
+    error(message: string, ...otherData: LogItem[]): void {};
+    info(message: string, ...otherData: LogItem[]): void {};
 }
 
-interface BNodeToNQuads {
-    [index: BNodeId] : string[];
-}
 /**
  * Return a string version of a {@link BNodeToQuads} instance, usable for debug
  * 
  * @param bntq 
  * @returns 
  */
-export function bntqToString(bntq: BNodeToQuads): string {
-    const bntnq: BNodeToNQuads = {};
+export function bntqToLogItem(bntq: BNodeToQuads): LogItem {
+    const bntnq: LogItem = {};
     for (const bn in bntq) {
         bntnq[bn] = bntq[bn].map(quadToNquad);
     }
-    return `${JSON.stringify(bntnq,null,4)}`;
+    return bntnq;
 }
 
 /**
  * Return a string version of an {@link NDegreeHashResult} instance, usable for debug
  */
-export function ndhrToString(ndhrs: NDegreeHashResult[]): string {
-    return ndhrs.map((ndhr: NDegreeHashResult): string => `Hash: "${ndhr.hash}"${ndhr.issuer.toString()}`).join(',\n')
+export function ndhrToLogItem(ndhrs: NDegreeHashResult[]): LogItem[] {
+    return ndhrs.map((ndhr: NDegreeHashResult): LogItem => {
+        return {
+            "hash" : ndhr.hash,
+            "issuer": ndhr.issuer.toLogItem()
+        }
+    });
 }
 
 

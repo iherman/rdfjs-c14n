@@ -7,6 +7,7 @@
  */
 
 import { Constants, BNodeId } from './common';
+import { LogItem }            from './logging';
 
 /**
  * Issue Identifier.
@@ -83,6 +84,22 @@ export class IDIssuer {
             yield [key,value]
         }
     }
+
+    /**
+     * Presentation for logging
+     */
+    toLogItem() : LogItem {
+        const values: string[] = [...this.issued_identifiers_map].map(([key, value]): string =>  `${key}=>${value}`);
+        const retval: LogItem = {
+            "issuer ID" : `${this.id}`,
+            "prefix"    : this.identifier_prefix,
+            "counter"   : `${this.identifier_counter}`,
+            "mappings"  : values
+        }
+
+        return retval;
+    }
+
 
     /**
      * Presentation for debug

@@ -142,7 +142,8 @@ async function main(): Promise<void> {
 
         const num = (program.args.length === 0) ? testNumber(options.number) : testNumber(program.args[0]);
         if (test_number_format.test(num)) {
-            singleTest(canonicalizer, num, true)
+            await singleTest(canonicalizer, num, true);
+            console.log(logger.log);
         } else {
             console.error('Invalid test number');
         }    
