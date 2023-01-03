@@ -1,6 +1,6 @@
 import { Command }               from 'commander';
-import { RDFCanon }              from '../../index';
-import { SimpleLogger, Levels }  from './logger';
+import { RDFCanon, SimpleYamlLogger, LogLevels } from '../../index';
+// import { SimpleLogger, Levels }  from './logger';
 import * as rdfn3                from './rdfn3';
 
 const number_of_tests: number = 63;
@@ -136,8 +136,8 @@ async function main(): Promise<void> {
             console.log(`Failed tests: ${failed_tests}`)
         }
     } else {
-        const logLevel = (debug) ? Levels.debug : ((trace) ? Levels.info : Levels.error);
-        const logger = new SimpleLogger(logLevel);
+        const logLevel = (debug) ? LogLevels.debug : ((trace) ? LogLevels.info : LogLevels.error);
+        const logger = new SimpleYamlLogger(logLevel);
         canonicalizer.setLogger(logger);
 
         const num = (program.args.length === 0) ? testNumber(options.number) : testNumber(program.args[0]);

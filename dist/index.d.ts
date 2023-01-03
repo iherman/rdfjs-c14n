@@ -2,11 +2,16 @@ import * as rdf from 'rdf-js';
 export type Quads = rdf.DatasetCore<rdf.Quad,rdf.Quad> | rdf.Quad[] | Set<rdf.Quad>;
 export type Hash  = string;
 
+declare interface LogItem {
+    [index: string]: string|string[]|LogItem|LogItem[]|boolean;
+}
+
 declare interface Logger {
-    debug(message: string, ...otherData: any[]): void;
-    warn(message: string, ...otherData: any[]): void;
-    error(message: string, ...otherData: any[]): void;
-    info(message: string, ...otherData: any[]): void;
+    log: string;
+    debug(message: string, ...otherData: LogItem[]): void;
+    warn(message: string, ...otherData: LogItem[]): void;
+    error(message: string, ...otherData: LogItem[]): void;
+    info(message: string, ...otherData: LogItem[]): void;
 }
 
 declare class RDFCanon {
