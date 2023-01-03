@@ -30,9 +30,9 @@ const permutation = require('array-permutation');
     /* @@@ */ state.logger.info(`Entering Hash Related Blank Node function (4.8.3), with related: "${related}" and quad "${quadToNquad(quad)}"`);
     const getIdentifier = (): BNodeId => {
         if (state.canonical_issuer.isSet(related)) {
-            return state.canonical_issuer.issueID(related);
+            return `_:${state.canonical_issuer.issueID(related)}`;
         } else if (issuer.isSet(related)) {
-            return issuer.issueID(related);
+            return `_:${issuer.issueID(related)}`;
         } else {
             return computeFirstDegreeHash(state, related)
         }    
@@ -50,7 +50,7 @@ const permutation = require('array-permutation');
     }
 
     // Step 4
-    input = `${input}_:${identifier}`;
+    input = `${input}${identifier}`;
 
     // Step 5
     const hash: Hash = computeHash(state,input);
