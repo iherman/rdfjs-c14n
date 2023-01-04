@@ -7,7 +7,7 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DatasetShell = exports.quadToNquad = exports.hashDataset = exports.sortAndHashNquads = exports.hashNquads = exports.computeHash = exports.Constants = void 0;
+exports.DatasetShell = exports.quadToNquad = exports.quadsToNquads = exports.hashDataset = exports.sortAndHashNquads = exports.hashNquads = exports.computeHash = exports.Constants = void 0;
 const crypto_1 = require("crypto");
 const rdf_string_1 = require("@tpluscode/rdf-string");
 var Constants;
@@ -73,6 +73,19 @@ function hashDataset(state, quads, sort = true) {
     return hashNquads(state, nquads);
 }
 exports.hashDataset = hashDataset;
+/**
+ * Return a nquad serialization of a dataset
+ */
+function quadsToNquads(quads, sort = true) {
+    const retval = [];
+    for (const quad of quads) {
+        retval.push(quadToNquad(quad));
+    }
+    if (sort)
+        retval.sort();
+    return retval;
+}
+exports.quadsToNquads = quadsToNquads;
 /**
  * Return an nquad version for a single quad.
  *

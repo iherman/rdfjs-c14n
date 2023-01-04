@@ -21,7 +21,9 @@ const common_1 = require("./common");
  * @returns
  */
 function computeFirstDegreeHash(state, identifier) {
-    /* @@@ */ state.logger.info(`Entering Hash First Degree Quads function (4.7.3) with identifier: "${identifier}"`);
+    /* @@@ */
+    state.logger.info("Entering Hash First Degree Quads function (4.7.3)", { identifier });
+    /* @@@ */
     // Step 1
     const nquads = [];
     // Step 2,3: Collect all quads that includes the blank node that we are talking about.
@@ -46,7 +48,13 @@ function computeFirstDegreeHash(state, identifier) {
     nquads.sort();
     // Step 5
     const the_hash = (0, common_1.hashNquads)(state, nquads);
-    /* @@@ */ state.logger.info(`Leaving Hash First Degree Quads function (4.7.3). Output are:\n  identifier: "${identifier}"\n  quads: "${nquads}"\n  hash: "${the_hash}"`);
+    /* @@@ */
+    state.logger.info("Leaving Hash First Degree Quads function (4.7.3).", {
+        identifier,
+        "quads": nquads,
+        "hash": the_hash
+    });
+    /* @@@ */
     return the_hash;
 }
 exports.computeFirstDegreeHash = computeFirstDegreeHash;

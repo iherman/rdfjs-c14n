@@ -1,7 +1,6 @@
-import { Command }               from 'commander';
+import { Command }                               from 'commander';
 import { RDFCanon, SimpleYamlLogger, LogLevels } from '../../index';
-// import { SimpleLogger, Levels }  from './logger';
-import * as rdfn3                from './rdfn3';
+import * as rdfn3                                from './rdfn3';
 
 const number_of_tests: number = 63;
 const extra_tests: string[] = ['900', '901']

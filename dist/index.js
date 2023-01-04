@@ -8,11 +8,16 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RDFCanon = void 0;
+exports.RDFCanon = exports.quadsToNquads = exports.LogLevels = exports.SimpleYamlLogger = void 0;
 const common_1 = require("./lib/common");
 const issueIdentifier_1 = require("./lib/issueIdentifier");
 const canonicalization_1 = require("./lib/canonicalization");
 const logging_1 = require("./lib/logging");
+var logging_2 = require("./lib/logging");
+Object.defineProperty(exports, "SimpleYamlLogger", { enumerable: true, get: function () { return logging_2.SimpleYamlLogger; } });
+Object.defineProperty(exports, "LogLevels", { enumerable: true, get: function () { return logging_2.LogLevels; } });
+var common_2 = require("./lib/common");
+Object.defineProperty(exports, "quadsToNquads", { enumerable: true, get: function () { return common_2.quadsToNquads; } });
 /**
  * Just a shell around the algorithm, consisting of a state, and the call for the real implementation.
  *
