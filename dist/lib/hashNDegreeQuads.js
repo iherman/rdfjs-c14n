@@ -26,13 +26,18 @@ const permutation = require('array-permutation');
  * @returns
  */
 function computeHashRelatedBlankNode(state, related, quad, issuer, position) {
-    /* @@@ */ state.logger.info(`Entering Hash Related Blank Node function (4.8.3), with related: "${related}" and quad "${(0, common_1.quadToNquad)(quad)}"`);
+    /* @@@ */
+    state.logger.info("Entering Hash Related Blank Node function (4.8.3)", {
+        "related": related,
+        "quad": (0, common_1.quadToNquad)(quad),
+    });
+    /* @@@ */
     const getIdentifier = () => {
         if (state.canonical_issuer.isSet(related)) {
-            return state.canonical_issuer.issueID(related);
+            return `_:${state.canonical_issuer.issueID(related)}`;
         }
         else if (issuer.isSet(related)) {
-            return issuer.issueID(related);
+            return `_:${issuer.issueID(related)}`;
         }
         else {
             return (0, hash1DegreeQuads_1.computeFirstDegreeHash)(state, related);
@@ -47,10 +52,15 @@ function computeHashRelatedBlankNode(state, related, quad, issuer, position) {
         input = `${input}<${quad.predicate.value}>`;
     }
     // Step 4
-    input = `${input}_:${identifier}`;
+    input = `${input}${identifier}`;
     // Step 5
     const hash = (0, common_1.computeHash)(state, input);
-    /* @@@ */ state.logger.info(`Leaving Hash Related Blank Node function (4.8.3 (4)):\n  input to hash: "${input}"\n  hash value: "${hash}"`);
+    /* @@@ */
+    state.logger.info("Leaving Hash Related Blank Node function (4.8.3 (4))", {
+        "input to hash": input,
+        hash
+    });
+    /* @@@ */
     // Step 5
     return hash;
 }
@@ -65,7 +75,10 @@ function computeHashRelatedBlankNode(state, related, quad, issuer, position) {
  * @returns
  */
 function computeNDegreeHash(state, identifier, issuer) {
-    /* @@@ */ state.logger.info(`Entering Hash N-Degree Quads function (4.9.3). Identifier: "${identifier}",  issuer: ${issuer.toString()}`);
+    /* @@@ */ state.logger.info("Entering Hash N-Degree Quads function (4.9.3).", {
+        identifier,
+        "issuer": state.canonical_issuer.toLogItem(),
+    });
     // Step 1
     const Hn = {};
     // Step 2, 3
@@ -90,13 +103,22 @@ function computeNDegreeHash(state, identifier, issuer) {
         processTerm(quad.object, 'o');
         processTerm(quad.graph, 'g');
     }
-    /* @@@ */ state.logger.info(`Hash N-Degree Quads function (4.9.3 (3)).\nHn: ${JSON.stringify(Hn, null, 4)}`);
+    /* @@@ */
+    state.logger.info("Hash N-Degree Quads function (4.9.3 (3))", {
+        "Hash to bnodes": Hn
+    });
+    /* @@@ */
     // Step 4
     let data_to_hash = '';
     // Step 5
     const hashes = Object.keys(Hn).sort();
     for (const hash of hashes) {
-        /* @@@ */ state.logger.info(`Hash N-Degree Quads function (4.9.3 (5)).\n  Entering loop with hash value "${hash}". Data to hash: "${data_to_hash}"`);
+        /* @@@ */
+        state.logger.info("Hash N-Degree Quads function (4.9.3 (5)), entering loop", {
+            hash,
+            "data to hash": data_to_hash
+        });
+        /* @@@ */
         // Step 5.1
         data_to_hash = `${data_to_hash}${hash}`;
         // Step 5.2
@@ -110,7 +132,12 @@ function computeNDegreeHash(state, identifier, issuer) {
         //
         const perms = Hn[hash].length === 1 ? [Hn[hash]] : Array.from(permutation(Hn[hash]));
         perms: for (const p of perms) {
-            /* @@@ */ state.logger.info(`Hash N-Degree Quads function (4.9.3 (5.4)).\n  Entering permutation loop with "${p}"\n  chosen path: "${chosen_path}"`);
+            /* @@@ */
+            state.logger.info("Hash N-Degree Quads function (4.9.3 (5.4)), entering loop", {
+                p,
+                "chosen path": chosen_path
+            });
+            /* @@@ */
             // Step 5.4.1
             let issuer_copy = issuer.copy();
             // Step 5.4.2
@@ -119,13 +146,12 @@ function computeNDegreeHash(state, identifier, issuer) {
             const recursion_list = [];
             // Step 5.4.4
             for (const related of p) {
-                /* @@@ */ state.logger.info(`Hash N-Degree Quads function (4.9.3 (5.4.4)).\n  Entering loop with related: "${related}"\n  path: "${path}"`);
-                // if (state.canonical_issuer.is_set(related)) {
-                //     // Step 5.4.4.1
-                //     path = `${path}_:${state.canonical_issuer.issue_id(related)}`;
-                if (issuer.isSet(related)) {
+                /* @@@ */
+                state.logger.info("Hash N-Degree Quads function (4.9.3 (5.4.4)), entering loop", { related, path });
+                /* @@@ */
+                if (state.canonical_issuer.isSet(related)) {
                     // Step 5.4.4.1
-                    path = `${path}_:${related}`;
+                    path = `${path}_:${state.canonical_issuer.issueID(related)}`;
                 }
                 else {
                     // Step 5.4.4.2
@@ -139,7 +165,12 @@ function computeNDegreeHash(state, identifier, issuer) {
                     continue perms;
                 }
             }
-            /* @@@ */ state.logger.info(`Hash N-Degree Quads function (4.9.3 (5.4.5)), before possible recursion. Recursion list: "${recursion_list}"\n  path: "${path}"`);
+            /* @@@ */
+            state.logger.info("Hash N-Degree Quads function (4.9.3 (5.4.5)), before possible recursion.", {
+                "recursion list": recursion_list,
+                path
+            });
+            /* @@@ */
             // Step 5.4.5
             for (const related of recursion_list) {
                 // Step 5.4.5.1
@@ -150,7 +181,10 @@ function computeNDegreeHash(state, identifier, issuer) {
                 path = `${path}<${result.hash}>`;
                 // Step 5.4.5.4
                 issuer_copy = result.issuer;
-                /* @@@ */ state.logger.info(`Hash N-Degree Quads function (4.9.3 (5.4.5.4)), combine result of recursion.\n  path: "${path}"\n  issuer copy: ${issuer_copy.toString()}`);
+                /* @@@ */ state.logger.info("Hash N-Degree Quads function (4.9.3 (5.4.5.4)), combine result of recursion.", {
+                    path,
+                    "issuer copy": issuer_copy.toLogItem(),
+                });
                 // Step 5.4.5.5
                 if (chosen_path.length > 0 && path.length >= chosen_path.length && path > chosen_path) {
                     continue perms;
@@ -164,7 +198,12 @@ function computeNDegreeHash(state, identifier, issuer) {
         }
         // Step 5.5.
         data_to_hash = `${data_to_hash}${chosen_path}`;
-        /* @@@ */ state.logger.info(`Hash N-Degree Quads function (4.9.3 (5.5). End of current loop with Hn hashes\n  chosen path: "${chosen_path}", \n  data to hash: "${data_to_hash}"`);
+        /* @@@ */
+        state.logger.info("Hash N-Degree Quads function (4.9.3 (5.5). End of current loop with Hn hashes", {
+            "chosen path": chosen_path,
+            "data to hash": data_to_hash
+        });
+        /* @@@ */
         // Step 5.6
         issuer = chosen_issuer;
     }
@@ -173,7 +212,10 @@ function computeNDegreeHash(state, identifier, issuer) {
         hash: (0, common_1.computeHash)(state, data_to_hash),
         issuer: issuer
     };
-    /* @@@ */ state.logger.info(`Leaving Hash N-Degree Quads function (4.9.3).\n  hash: ${retval.hash}  ${retval.issuer.toString()}`);
+    /* @@@ */ state.logger.info("Leaving Hash N-Degree Quads function (4.9.3).", {
+        "hash": retval.hash,
+        "issuer": retval.issuer.toLogItem()
+    });
     return retval;
 }
 exports.computeNDegreeHash = computeNDegreeHash;

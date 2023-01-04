@@ -7,15 +7,16 @@
  * @packageDocumentation
  */
 
-
 import * as rdf from 'rdf-js';
 import { GlobalState, Quads, hashDataset, Hash, Constants } from './lib/common';
 import { IDIssuer }                                         from './lib/issueIdentifier';
 import { computeCanonicalDataset }                          from './lib/canonicalization';
-import { Logger, NopLogger }                                from './lib/logging';
+import { Logger, NopLogger}                                 from './lib/logging';
 
-export { Quads } from './lib/common';
-export { Hash }  from './lib/common';
+export { Quads }                       from './lib/common';
+export { Hash }                        from './lib/common';
+export { SimpleYamlLogger, LogLevels } from './lib/logging';
+export { quadsToNquads }               from './lib/common';
 
 /**
  * Just a shell around the algorithm, consisting of a state, and the call for the real implementation.
@@ -25,7 +26,7 @@ export { Hash }  from './lib/common';
  * {@link RDFCanon#canonicalize} for different graphs.
  */
 export class RDFCanon {
-    private state:    GlobalState;
+    private state: GlobalState;
     /**
      * @constructor
      * @param data_factory    An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface).

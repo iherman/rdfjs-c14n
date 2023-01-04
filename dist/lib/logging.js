@@ -1,18 +1,30 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ndhrToString = exports.bntqToString = exports.NopLogger = void 0;
+exports.ndhrToLogItem = exports.bntqToLogItem = exports.SimpleYamlLogger = exports.NopLogger = exports.LogLevels = void 0;
 /**
- * Helper functions to make logging more readable.
+ * Simple logging environment, used by the rest of the code. By default, no logging occurs; the user can set his/her own
+ * logging environment. This module also includes a logger to dump the results into a YAML file.
  *
  * @copyright Ivan Herman 2023
  *
  * @packageDocumentation
  */
+const yaml = require("yaml");
 const common_1 = require("./common");
+/** Logging levels (following the usual practice) */
+var LogLevels;
+(function (LogLevels) {
+    LogLevels[LogLevels["error"] = 0] = "error";
+    LogLevels[LogLevels["warn"] = 1] = "warn";
+    LogLevels[LogLevels["info"] = 2] = "info";
+    LogLevels[LogLevels["debug"] = 3] = "debug";
+})(LogLevels = exports.LogLevels || (exports.LogLevels = {}));
+;
 /**
  * A default, no-operation logger instance, used by default.
  */
 class NopLogger {
+    log;
     debug(message, ...otherData) { }
     ;
     warn(message, ...otherData) { }
@@ -24,23 +36,69 @@ class NopLogger {
 }
 exports.NopLogger = NopLogger;
 /**
- * Return a string version of a @{BNodeToQuads} instance, usable for debug
+ * Simple logger, producing a YAML output of the log entries. This final log can be retrieved by
+ * using the `log` variable.
+ */
+class SimpleYamlLogger {
+    level;
+    theLog;
+    constructor(level) {
+        this.level = level;
+        this.theLog = [];
+    }
+    emitMessage(mtype, msg, extras) {
+        const item = {
+            "log point": `[${mtype}] ${msg}`
+        };
+        if (extras.length > 0) {
+            item["with"] = extras;
+        }
+        this.theLog.push(item);
+    }
+    debug(msg, ...extras) {
+        if (this.level >= LogLevels.debug)
+            this.emitMessage("debug", msg, extras);
+    }
+    info(msg, ...extras) {
+        if (this.level >= LogLevels.info)
+            this.emitMessage("info", msg, extras);
+    }
+    warn(msg, ...extras) {
+        if (this.level >= LogLevels.warn)
+            this.emitMessage("warn", msg, extras);
+    }
+    error(msg, ...extras) {
+        if (this.level >= LogLevels.error)
+            this.emitMessage("error", msg, extras);
+    }
+    get log() {
+        return yaml.stringify(this.theLog);
+    }
+}
+exports.SimpleYamlLogger = SimpleYamlLogger;
+/**
+ * Return a log item version of a {@link BNodeToQuads} instance, used to build up a full log message.
  *
  * @param bntq
  * @returns
  */
-function bntqToString(bntq) {
+function bntqToLogItem(bntq) {
     const bntnq = {};
     for (const bn in bntq) {
         bntnq[bn] = bntq[bn].map(common_1.quadToNquad);
     }
-    return `${JSON.stringify(bntnq, null, 4)}`;
+    return bntnq;
 }
-exports.bntqToString = bntqToString;
+exports.bntqToLogItem = bntqToLogItem;
 /**
- * Return a string version of an @{NDegreeHashResult} instance, usable for debug
+ * Return a log item version of an {@link NDegreeHashResult} instance, used to build up a full log message.
  */
-function ndhrToString(ndhrs) {
-    return ndhrs.map((ndhr) => `Hash: "${ndhr.hash}"${ndhr.issuer.toString()}`).join(',\n');
+function ndhrToLogItem(ndhrs) {
+    return ndhrs.map((ndhr) => {
+        return {
+            "hash": ndhr.hash,
+            "issuer": ndhr.issuer.toLogItem()
+        };
+    });
 }
-exports.ndhrToString = ndhrToString;
+exports.ndhrToLogItem = ndhrToLogItem;

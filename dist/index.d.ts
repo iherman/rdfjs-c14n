@@ -2,12 +2,11 @@ import * as rdf from 'rdf-js';
 export type Quads = rdf.DatasetCore<rdf.Quad,rdf.Quad> | rdf.Quad[] | Set<rdf.Quad>;
 export type Hash  = string;
 
-declare interface Logger {
-    debug(message: string, ...otherData: any[]): void;
-    warn(message: string, ...otherData: any[]): void;
-    error(message: string, ...otherData: any[]): void;
-    info(message: string, ...otherData: any[]): void;
-}
+/*********************************************************
+The main class encapsulating the library's functionalities
+**********************************************************/
+
+declare function quadsToNquads(quads: Iterable<rdf.Quad>, sort?: boolean): string[];
 
 declare class RDFCanon {
     /**
@@ -48,4 +47,36 @@ declare class RDFCanon {
      * @returns 
      */
      hash(input_dataset: Quads): Hash;
+}
+
+
+/*****************************************************************************
+Type and class declarations for logging; can be ignored if no logging is used
+******************************************************************************/
+declare enum LogLevels {
+    error,
+    warn,
+    info,
+    debug
+}
+
+declare interface LogItem {
+    [index: string]: string|string[]|LogItem|LogItem[]|boolean;
+}
+
+declare interface Logger {
+    log: string;
+    debug(message: string, ...otherData: LogItem[]): void;
+    warn(message: string, ...otherData: LogItem[]): void;
+    error(message: string, ...otherData: LogItem[]): void;
+    info(message: string, ...otherData: LogItem[]): void;
+}
+
+declare class SimpleYamlLogger implements Logger {
+    log: string;
+    constructor(LogLevels);
+    debug(message: string, ...otherData: LogItem[]): void;
+    warn(message: string, ...otherData: LogItem[]): void;
+    error(message: string, ...otherData: LogItem[]): void;
+    info(message: string, ...otherData: LogItem[]): void;
 }

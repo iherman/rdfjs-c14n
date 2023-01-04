@@ -135,6 +135,17 @@ export function hashDataset(state: C14nState, quads: Iterable<rdf.Quad>, sort: b
     return hashNquads(state, nquads)
 }
 
+/**
+ * Return a nquad serialization of a dataset
+ */
+export function quadsToNquads(quads: Iterable<rdf.Quad>, sort:boolean = true): string[] {
+    const retval: string[] = [];
+    for(const quad of quads) {
+        retval.push(quadToNquad(quad))
+    }
+    if (sort) retval.sort();
+    return retval;
+}
 
 /**
  * Return an nquad version for a single quad.

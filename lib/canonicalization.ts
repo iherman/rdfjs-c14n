@@ -11,7 +11,7 @@ import { GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, DatasetShell } fr
 import { computeFirstDegreeHash }                                             from './hash1DegreeQuads';
 import { computeNDegreeHash }                                                 from './hashNDegreeQuads';
 import { IDIssuer }                                                           from './issueIdentifier';
-import { bntqToString, ndhrToString }                                         from './logging';
+import { bntqToLogItem, ndhrToLogItem, LogItem } from './logging';
 
 
 /**
@@ -51,7 +51,11 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
             }
         }
 
-        /* @@@ */ state.logger.info(`Entering the canonicalization function (4.5.3 (2)). Bnode to quads: ${bntqToString(state.bnode_to_quads)}`);
+        /* @@@ */ 
+        state.logger.info("Entering the canonicalization function (4.5.3 (2)).", { 
+            "Bnode to quads" : bntqToLogItem(state.bnode_to_quads)
+        });
+        /* @@@ */ 
 
         // Step 3
         {
@@ -91,7 +95,11 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
                 // bnode identifier; these are retrieved in the last step when a new, normalized
                 // graph is created.
                 const canon_id = state.canonical_issuer.issueID(identifier_list[0]);
-                /* @@@ */ state.logger.info(`Canonicalization function (4.5.3 (4)). Generate identifier in the first pass for "${identifier_list[0]}=>${canon_id}"`);
+                /* @@@ */ 
+                state.logger.info("Canonicalization function (4.5.3 (4)).", {
+                    "Identifier in first pass": `${identifier_list[0]}=>${canon_id}`
+                });
+                /* @@@ */ 
 
                 // Step 4.3
                 // Remove the corresponding hash
@@ -128,7 +136,12 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
                     }
                 }
 
-                /* @@@ */ state.logger.info(`Canonicalization function, after (4.5.3 (5.2)) after computing N-Degree Hash for "${hash}":\n${ndhrToString(hash_path_list)}`);
+                /* @@@ */ 
+                state.logger.info("Canonicalization function, after (4.5.3 (5.2))",{
+                    "computed for": hash,
+                    "hash path list": ndhrToLogItem(hash_path_list)
+                });
+                /* @@@ */ 
 
                 // Step 5.3
                 const ordered_hash_path_list = hash_path_list.sort((a: NDegreeHashResult,b: NDegreeHashResult): number => {
@@ -166,7 +179,11 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
         }
 
         // Step 7
-        /* @@@ */ state.logger.info(`Leaving the canonicalization function (4.5.3). The canonical ID issuer is: ${state.canonical_issuer.toString()}`);
+        /* @@@ */ 
+        state.logger.info("Leaving the canonicalization function (4.5.3)", {
+            "issuer": state.canonical_issuer.toLogItem(),
+        });
+        /* @@@ */ 
         return retval.dataset;
     }
 

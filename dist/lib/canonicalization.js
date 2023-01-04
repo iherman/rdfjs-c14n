@@ -14,7 +14,7 @@ const hashNDegreeQuads_1 = require("./hashNDegreeQuads");
 const issueIdentifier_1 = require("./issueIdentifier");
 const logging_1 = require("./logging");
 /**
- * Implementation of the main algorithmic [steps on the top level](https://www.w3.org/TR/rdf-canon/##canon-algo-algo) for the details.
+ * Implementation of the main algorithmic [steps on the top level](https://www.w3.org/TR/rdf-canon/#canon-algo-algo) for the details.
  *
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
@@ -48,7 +48,11 @@ function computeCanonicalDataset(state, input) {
             bnode_map(quad.graph);
         }
     }
-    /* @@@ */ state.logger.info(`Entering the canonicalization function (4.5.3 (2)). Bnode to quads: ${(0, logging_1.bntqToString)(state.bnode_to_quads)}`);
+    /* @@@ */
+    state.logger.info("Entering the canonicalization function (4.5.3 (2)).", {
+        "Bnode to quads": (0, logging_1.bntqToLogItem)(state.bnode_to_quads)
+    });
+    /* @@@ */
     // Step 3
     {
         // Compute a hash value for each bnode (depending on the quads it appear in)
@@ -87,7 +91,11 @@ function computeCanonicalDataset(state, input) {
             // bnode identifier; these are retrieved in the last step when a new, normalized
             // graph is created.
             const canon_id = state.canonical_issuer.issueID(identifier_list[0]);
-            /* @@@ */ state.logger.info(`Canonicalization function (4.5.3 (4)). Generate identifier in the first pass for "${identifier_list[0]}=>${canon_id}"`);
+            /* @@@ */
+            state.logger.info("Canonicalization function (4.5.3 (4)).", {
+                "Identifier in first pass": `${identifier_list[0]}=>${canon_id}`
+            });
+            /* @@@ */
             // Step 4.3
             // Remove the corresponding hash
             delete state.hash_to_bnodes[hash];
@@ -121,7 +129,12 @@ function computeCanonicalDataset(state, input) {
                     hash_path_list.push(result);
                 }
             }
-            /* @@@ */ state.logger.info(`Canonicalization function, after (4.5.3 (5.2)) after computing N-Degree Hash for "${hash}":\n${(0, logging_1.ndhrToString)(hash_path_list)}`);
+            /* @@@ */
+            state.logger.info("Canonicalization function, after (4.5.3 (5.2))", {
+                "computed for": hash,
+                "hash path list": (0, logging_1.ndhrToLogItem)(hash_path_list)
+            });
+            /* @@@ */
             // Step 5.3
             const ordered_hash_path_list = hash_path_list.sort((a, b) => {
                 if (a.hash < b.hash)
@@ -160,7 +173,11 @@ function computeCanonicalDataset(state, input) {
         }
     }
     // Step 7
-    /* @@@ */ state.logger.info(`Leaving the canonicalization function (4.5.3). The canonical ID issuer is: ${state.canonical_issuer.toString()}`);
+    /* @@@ */
+    state.logger.info("Leaving the canonicalization function (4.5.3)", {
+        "issuer": state.canonical_issuer.toLogItem(),
+    });
+    /* @@@ */
     return retval.dataset;
 }
 exports.computeCanonicalDataset = computeCanonicalDataset;

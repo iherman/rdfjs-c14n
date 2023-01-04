@@ -7,6 +7,7 @@
  */
 
 import { Constants, BNodeId } from './common';
+import { LogItem }            from './logging';
 
 /**
  * Issue Identifier.
@@ -15,7 +16,7 @@ import { Constants, BNodeId } from './common';
  * functionalities are encapsulated in one class.
  */
 export class IDIssuer {
-    // This is mainly used to provide a readable ID...
+    // This is mainly used to provide a readable ID at debug/logging time...
     private static IDIssuerID : number = 1234;
     // ... for each instance; it is only used for debugging purposes.
     private id                : number;
@@ -85,10 +86,17 @@ export class IDIssuer {
     }
 
     /**
-     * Presentation for debug
+     * Presentation for logging
      */
-    toString(): string {
-        const values: string[] = [...this.issued_identifiers_map].map(([key, value]): string =>  `${key}=>${value}`);
-        return `\n  issuer ID: ${this.id}\n  prefix: ${this.identifier_prefix}\n  counter: ${this.identifier_counter}\n  mappings: [${values}]`;
+    toLogItem() : LogItem {
+        const values: string[] = [...this.issued_identifiers_map].map(([key, value]): string => `${key}=>${value}`);
+        const retval: LogItem = {
+            "issuer ID" : `${this.id}`,
+            "prefix"    : this.identifier_prefix,
+            "counter"   : `${this.identifier_counter}`,
+            "mappings"  : values
+        }
+
+        return retval;
     }
 }
