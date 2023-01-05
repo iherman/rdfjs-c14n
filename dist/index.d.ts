@@ -41,7 +41,7 @@ declare class RDFCanon {
      * 1. Serialize the dataset into nquads and sort the result
      * 2. Compute the hash of the concatenated nquads.
      * 
-     * This method is typically used on the result of the canonicalization, to compute the official, canonical hash of a dataset.
+     * This method is typically used on the result of the canonicalization to compute the canonical hash of a dataset.
      * 
      * @param input_dataset 
      * @returns 

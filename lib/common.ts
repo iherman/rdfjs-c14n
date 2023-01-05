@@ -12,12 +12,17 @@ import { IDIssuer }   from './issueIdentifier';
 import { nquads }     from '@tpluscode/rdf-string';
 import { Logger }     from './logging';
 
-
 export namespace Constants {
-    /** The hashing algorithm's name used in the module */
+    /** 
+     * The hashing algorithm's name used in the module
+     */
     export const HASH_ALGORITHM = "sha256";
 
-    /** The prefix used for all generated canonical bnode IDs */
+    /** 
+     * The prefix used for all generated canonical bnode IDs 
+     * 
+     * @readonly
+     */
     export const BNODE_PREFIX = "c14n";
 }
 
@@ -60,11 +65,14 @@ export interface C14nState {
  * Extensions to the state. These extensions are not defined by the specification, but are necessary to
  * run.
  * 
+ * @remarks
  * The class instances in this extension are necessary to create/modify RDF terms, or to provide logging. These instances
  * reflect the underlying RDF environment that uses this module; the algorithm itself depends on standard RDF interfaces only.
  */
 export interface GlobalState extends C14nState {
-    /** [RDF data factory instance](http://rdf.js.org/data-model-spec/#datafactory-interface), to be used to create new terms and quads */
+    /** 
+     * [RDF data factory instance](http://rdf.js.org/data-model-spec/#datafactory-interface), to be used to create new terms and quads 
+     */
     dataFactory     : rdf.DataFactory;
 
     /** 
@@ -171,6 +179,7 @@ export function hashDataset(state: C14nState, quads: Iterable<rdf.Quad>, sort: b
  * A shell to provide a unified way of handling the various ways a graph can be represented: a full blown
  * [RDF Dataset core instance](https://rdf.js.org/dataset-spec/#datasetcore-interface), or an Array of Quads, or a Set of Quads.
  * 
+ * @remarks
  * The reason this is necessary is (1) the Array object in JS does not have a `add` property and (2) care should be taken
  * about creating new RDF Datasets, see the {@link new} method.
  */
@@ -190,8 +199,10 @@ export class DatasetShell {
     }
 
     /**
-     * Create a new instance whose exact type reflects the current type. However, 
-     * if the global state days not provide a [RDF Dataset core factory instance](https://rdf.js.org/dataset-spec/#datasetcorefactory-interface),
+     * Create a new instance whose exact type reflects the current type. 
+     * 
+     * @remarks
+     * If the global state days not provide a [RDF Dataset core factory instance](https://rdf.js.org/dataset-spec/#datasetcorefactory-interface),
      * a Set of Quads will be used instead.
      * 
      * @param state 

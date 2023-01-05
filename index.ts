@@ -30,7 +30,7 @@ export class RDFCanon {
     /**
      * @constructor
      * @param data_factory    An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface).
-     * @param dataset_factory An implementation of the generic RDF DatasetCoreFactory interface, see [the specification]https://rdf.js.org/dataset-spec/#datasetcorefactory-interface). If undefined, the canonicalized graph will automatically be a Set of quads.
+     * @param dataset_factory An implementation of the generic RDF DatasetCoreFactory interface, see [the specification](https://rdf.js.org/dataset-spec/#datasetcorefactory-interface). If undefined, the canonicalized graph will automatically be a Set of quads.
      */
     constructor(data_factory: rdf.DataFactory, dataset_factory?: rdf.DatasetCoreFactory) {
         this.state = {
@@ -78,7 +78,7 @@ export class RDFCanon {
      * 1. Serialize the dataset into nquads and sort the result
      * 2. Compute the hash of the concatenated nquads.
      * 
-     * This method is typically used on the result of the canonicalization, to compute the official, canonical hash of a dataset.
+     * This method is typically used on the result of the canonicalization to compute the canonical hash of a dataset.
      * 
      * @param input_dataset 
      * @returns
