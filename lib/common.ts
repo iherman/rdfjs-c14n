@@ -27,16 +27,16 @@ export type Hash        = string;
 export type QuadToNquad = (quad: rdf.Quad) => string;
 
 /**
- * Used in the canonicalization state: blank node to quad map. See
- * the [specification](https://w3c.github.io/rdf-canon/spec/#canon-state).
+ * BNode labels to Quads mapping. Used in the canonicalization state: blank node to quad map. See
+ * the [specification](https://www.w3.org/TR/rdf-canon/#canon-state).
  */
 export interface BNodeToQuads {
     [index: BNodeId] : rdf.Quad[];
 }
 
 /**
- * Used in the canonicalization state: hash to bnode map. See
- * the [specification](https://w3c.github.io/rdf-canon/spec/#canon-state).
+ * Hash values to BNode labels mapping. Used in the canonicalization state: hash to bnode map. See
+ * the [specification](https://www.w3.org/TR/rdf-canon/#canon-state).
  */
 export interface HashToBNodes {
     [index: Hash] : BNodeId[];
@@ -44,9 +44,10 @@ export interface HashToBNodes {
 
 /**
  * Canonicalization state. See
- * the [specification](https://w3c.github.io/rdf-canon/spec/#canon-state).
- * The "algorithm" has been added to the state in anticipation of the evolution of the algorithm
- * that makes this (possibly) parametrized.
+ * the [specification](https://www.w3.org/TR/rdf-canon/#canon-state).
+ * 
+ * The "hash algorithm" field has been added to the state in anticipation of the evolution of the algorithm
+ * that may make this parametrized.
  */
 export interface C14nState {
     bnode_to_quads   : BNodeToQuads;
@@ -56,16 +57,20 @@ export interface C14nState {
 }
 
 /**
- * These extensions to the state are not defined by the specification, but are necessary to
+ * Extensions to the state. These extensions are not defined by the specification, but are necessary to
  * run.
- * These are the two functions/classes that must be implemented by a lower level RDF library. 
- * The c14n code itself uses the low level abstract RDF JS datatypes only
+ * 
+ * The class instances in this extension are necessary to create/modify RDF terms, or to provide logging. These instances
+ * reflect the underlying RDF environment that uses this module; the algorithm itself depends on standard RDF interfaces only.
  */
 export interface GlobalState extends C14nState {
-    /** RDF data factory instance, to be used to create new terms and quads */
+    /** [RDF data factory instance](http://rdf.js.org/data-model-spec/#datafactory-interface), to be used to create new terms and quads */
     dataFactory     : rdf.DataFactory;
 
-    /** RDF DatasetCoreFactory, to be used to create new datasets. If undefined, the return value of canonicalization is a set of quads. */
+    /** 
+     * [RDF Dataset core factory instance](https://rdf.js.org/dataset-spec/#datasetcorefactory-interface), to be used to create new datasets.
+     * If undefined, the return value of canonicalization is a Set of quads. 
+     */
     datasetFactory ?: rdf.DatasetCoreFactory;
 
     /** A logger instance */
@@ -80,6 +85,10 @@ export interface NDegreeHashResult {
     issuer: IDIssuer
 }
 
+/***********************************************************
+Various utility functions used by the rest of the code.  
+***********************************************************/
+
 /**
  * Return the hash of a string.
  * 
@@ -91,7 +100,7 @@ export interface NDegreeHashResult {
 }
 
 /**
- * Return the hash of an array of nquad statements; per spec, this means
+ * Return the hash of an array of nquad statements; per specification, this means
  * concatenating all nquads into a long string. Care should be taken that each
  * quad must end with a single `/n`.
  * 
@@ -112,7 +121,7 @@ export function hashNquads(state: C14nState, nquads: string[]): Hash {
  * quad must end with a single `/n`.
  * 
  * @param nquads 
- * @returns 
+ * @returns - hash value
  */
 export function sortAndHashNquads(state: C14nState, nquads: string[]): Hash {
     nquads.sort();
@@ -120,23 +129,21 @@ export function sortAndHashNquads(state: C14nState, nquads: string[]): Hash {
 }
 
 /**
- * Hash a dataset
+ * Return an nquad version for a single quad.
  * 
- * @param quads 
- * @param sort - whether the quads must be sorted before hash. Defaults to `true`.
- * @returns 
+ * @param quad 
+ * @returns - nquad
  */
-export function hashDataset(state: C14nState, quads: Iterable<rdf.Quad>, sort: boolean = true): Hash {
-    const nquads: string[] = [];
-    for(const quad of quads) {
-        nquads.push(quadToNquad(quad))
-    }
-    if (sort) nquads.sort();
-    return hashNquads(state, nquads)
+export function quadToNquad(quad: rdf.Quad): string {
+    const retval = nquads`${quad}`.toString();
+    return retval.endsWith('  .') ? retval.replace(/  .$/, ' .') : retval;
 }
 
 /**
- * Return a nquad serialization of a dataset
+ * Return a nquad serialization of a dataset. A utility that external user can use.
+ * @param quads 
+ * @param sort - whether the quads must be sorted before hash. Defaults to `true`.
+ * @returns - array of nquads
  */
 export function quadsToNquads(quads: Iterable<rdf.Quad>, sort:boolean = true): string[] {
     const retval: string[] = [];
@@ -148,20 +155,24 @@ export function quadsToNquads(quads: Iterable<rdf.Quad>, sort:boolean = true): s
 }
 
 /**
- * Return an nquad version for a single quad.
+ * Hash a dataset. This is done by turning each quad into a nquad, concatenate them, possibly 
+ * store them, and then hash the result.
  * 
- * @param quad 
- * @returns 
+ * @param quads 
+ * @param sort - whether the quads must be sorted before hash. Defaults to `true`.
+ * @returns - hash value
  */
-export function quadToNquad(quad: rdf.Quad): string {
-    const retval = nquads`${quad}`.toString();
-    return retval.endsWith('  .') ? retval.replace(/  .$/, ' .') : retval;
+export function hashDataset(state: C14nState, quads: Iterable<rdf.Quad>, sort: boolean = true): Hash {
+    const nquads: string[] = quadsToNquads(quads, sort)
+    return hashNquads(state, nquads)
 }
-
 
 /**
  * A shell to provide a unified way of handling the various ways a graph can be represented: a full blown
- * rdf.DatasetCore, or an array, or a Set of Quads.
+ * [RDF Dataset core instance](https://rdf.js.org/dataset-spec/#datasetcore-interface), or an Array of Quads, or a Set of Quads.
+ * 
+ * The reason this is necessary is (1) the Array object in JS does not have a `add` property and (2) care should be taken
+ * about creating new RDF Datasets, see the {@link new} method.
  */
 export class DatasetShell {
     private the_dataset: Quads ;
@@ -178,6 +189,14 @@ export class DatasetShell {
         }
     }
 
+    /**
+     * Create a new instance whose exact type reflects the current type. However, 
+     * if the global state days not provide a [RDF Dataset core factory instance](https://rdf.js.org/dataset-spec/#datasetcorefactory-interface),
+     * a Set of Quads will be used instead.
+     * 
+     * @param state 
+     * @returns - a new (empty) dataset
+     */
     new(state: GlobalState): DatasetShell {
         if (Array.isArray(this.the_dataset)) {
             return new DatasetShell([]);
@@ -197,7 +216,7 @@ export class DatasetShell {
     }
 
     /**
-     * Iterate over the values in issuance order 
+     * Iterate over the quads 
      */
      *[Symbol.iterator](): IterableIterator<rdf.Quad> {
         for (const quad of this.the_dataset) {

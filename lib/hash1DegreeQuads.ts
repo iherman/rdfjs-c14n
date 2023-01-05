@@ -18,7 +18,7 @@ import { BNodeId, Hash, GlobalState, quadToNquad, hashNquads } from './common';
  * 
  * @param state 
  * @param identifier 
- * @returns 
+ * @returns - hash value
  */
  export function computeFirstDegreeHash(state: GlobalState, identifier: BNodeId): Hash {
     /* @@@ */ 

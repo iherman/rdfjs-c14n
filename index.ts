@@ -13,10 +13,10 @@ import { IDIssuer }                                         from './lib/issueIde
 import { computeCanonicalDataset }                          from './lib/canonicalization';
 import { Logger, NopLogger}                                 from './lib/logging';
 
-export { Quads }                       from './lib/common';
-export { Hash }                        from './lib/common';
-export { SimpleYamlLogger, LogLevels } from './lib/logging';
-export { quadsToNquads }               from './lib/common';
+export { Quads }                 from './lib/common';
+export { Hash }                  from './lib/common';
+export { YamlLogger, LogLevels } from './lib/logging';
+export { quadsToNquads }         from './lib/common';
 
 /**
  * Just a shell around the algorithm, consisting of a state, and the call for the real implementation.
@@ -31,7 +31,6 @@ export class RDFCanon {
      * @constructor
      * @param data_factory    An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface).
      * @param dataset_factory An implementation of the generic RDF DatasetCoreFactory interface, see [the specification]https://rdf.js.org/dataset-spec/#datasetcorefactory-interface). If undefined, the canonicalized graph will automatically be a Set of quads.
-     * @param logger          A logger instance; defaults to an "empty" logger, ie, no logging happens.
      */
     constructor(data_factory: rdf.DataFactory, dataset_factory?: rdf.DatasetCoreFactory) {
         this.state = {
@@ -54,7 +53,7 @@ export class RDFCanon {
     }
 
     /**
-     * Set hash algorithm. The value can be anything that the underlying openssl environment accepts. The default is "sha256".
+     * Set the hash algorithm. The value can be anything that the underlying openssl, as used by node.js, accepts. The default is "sha256".
      */
     setHashAlgorithm(algorithm: string): void {
         this.state.hash_algorithm = algorithm;
@@ -64,7 +63,7 @@ export class RDFCanon {
      * Canonicalize a Dataset.
      * 
      * Implementation of the main algorithmic steps, see [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
-     * real work is done in [separate](../functions/lib_canonicalization.compute_canonicalized_graph.html) function.
+     * real work is done in the [separate function](../functions/lib_canonicalization.compute_canonicalized_graph.html).
      * 
      * @param input_dataset 
      * @returns - the exact type of the output depends on the type of the input dataset. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the dataset_factory has been set set, it will be a Dataset, otherwise a Set.
@@ -76,16 +75,16 @@ export class RDFCanon {
     /**
      * Hash a dataset:
      * 
-     * 1. Compute a canonical version of the dataset
-     * 2. Serialize the dataset into nquads and sort the result
-     * 3. Compute the hash of the concatenated nquads.
+     * 1. Serialize the dataset into nquads and sort the result
+     * 2. Compute the hash of the concatenated nquads.
+     * 
+     * This method is typically used on the result of the canonicalization, to compute the official, canonical hash of a dataset.
      * 
      * @param input_dataset 
      * @returns
      */
     hash(input_dataset: Quads): Hash {
-        const canonicalized_dataset = this.canonicalize(input_dataset);
-        return hashDataset(this.state, canonicalized_dataset, true);
+        return hashDataset(this.state, input_dataset, true);
     }
 }
 

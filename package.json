@@ -8,7 +8,7 @@
     "url": "ttps://github.com/iherman/rdfjs-c14n"
   },
   "bugs": {
-    "url": "ttps://github.com/iherman/rdfjs-c14n/issues"
+    "url": "https://github.com/iherman/rdfjs-c14n/issues"
   },
   "scripts": {
     "test": "./node_modules/.bin/ts-node testing/run/main.ts",

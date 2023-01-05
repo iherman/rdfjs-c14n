@@ -11,15 +11,15 @@ import { GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, DatasetShell } fr
 import { computeFirstDegreeHash }                                             from './hash1DegreeQuads';
 import { computeNDegreeHash }                                                 from './hashNDegreeQuads';
 import { IDIssuer }                                                           from './issueIdentifier';
-import { bntqToLogItem, ndhrToLogItem, LogItem } from './logging';
+import { bntqToLogItem, ndhrToLogItem }                                       from './logging';
 
 
 /**
- * Implementation of the main algorithmic [steps on the top level](https://www.w3.org/TR/rdf-canon/#canon-algo-algo) for the details.
+ * Implementation of the main [steps on the top level](https://www.w3.org/TR/rdf-canon/#canon-algo-algo) of the algorithm specification.
  * 
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
- * @returns - the exact type of the output depends on the type of the input. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the DatasetFactory is set, it will be a Dataset, otherwise a Set.
+ * @returns - A semantically identical set of Quads, with canonical BNode labels. The exact format of the output depends on the format of the input. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the `datasetFactory` field in the [global state](../interfaces/lib_common.GlobalState.html) is set, it will be a Dataset, otherwise a Set.
  */
 export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads {
         // Re-initialize the state information: canonicalization should always start with a clean state
