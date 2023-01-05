@@ -23,7 +23,7 @@ declare class RDFCanon {
     setLogger(logger: Logger): void;
 
     /**
-     * Set hash algorithm. The value can be anything that the underlying openssl environment accepts. The default is "sha256".
+     * Set the hash algorithm. The value can be anything that the underlying openssl, as used by node.js, accepts. The default is "sha256".
      */
     setHashAlgorithm(algorithm: string): void;
 
@@ -38,12 +38,12 @@ declare class RDFCanon {
     /**
      * Hash a dataset:
      * 
-     * 1. Compute a canonical version of the dataset
-     * 2. Serialize the dataset into nquads and sort the result
-     * 3. Compute the hash of the concatenated nquads.
+     * 1. Serialize the dataset into nquads and sort the result
+     * 2. Compute the hash of the concatenated nquads.
+     * 
+     * This method is typically used on the result of the canonicalization to compute the canonical hash of a dataset.
      * 
      * @param input_dataset 
-     * @param algorithm - Hash algorithm to use. the value can be anything that the underlying openssl environment accepts, defaults to sha256.
      * @returns 
      */
      hash(input_dataset: Quads): Hash;
@@ -72,9 +72,9 @@ declare interface Logger {
     info(message: string, ...otherData: LogItem[]): void;
 }
 
-declare class SimpleYamlLogger implements Logger {
+declare class YamlLogger implements Logger {
     log: string;
-    constructor(LogLevels);
+    constructor(level?: LogLevels);
     debug(message: string, ...otherData: LogItem[]): void;
     warn(message: string, ...otherData: LogItem[]): void;
     error(message: string, ...otherData: LogItem[]): void;

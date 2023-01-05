@@ -74,14 +74,12 @@ const permutation = require('array-permutation');
 
 
 /**
- * Compute the n-degree hash
- * 
- * See the [specification](https://www.w3.org/TR/rdf-canon/#hash-nd-quads-algorithm) for the details.
+ * Compute the n-degree hash. See the [specification](https://www.w3.org/TR/rdf-canon/#hash-nd-quads-algorithm) for the details.
  * 
  * @param state 
  * @param identifier 
  * @param issuer 
- * @returns 
+ * @returns
  */
  export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issuer: IDIssuer): NDegreeHashResult {
     /* @@@ */ state.logger.info("Entering Hash N-Degree Quads function (4.9.3).", {

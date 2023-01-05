@@ -13,7 +13,7 @@ import { LogItem }            from './logging';
  * Issue Identifier.
  * 
  * See [the specification](https://www.w3.org/TR/rdf-canon/#issue-identifier-algorithm) for the details, except that all
- * functionalities are encapsulated in one class.
+ * functionalities are encapsulated in a class.
  */
 export class IDIssuer {
     // This is mainly used to provide a readable ID at debug/logging time...
@@ -58,7 +58,7 @@ export class IDIssuer {
     }
 
     /**
-     * Has a bnode already been canonicalized?
+     * Has a bnode label been assigned a canonical alternative?
      * 
      * @param existing - the bnode id to be checked
      */
@@ -67,7 +67,7 @@ export class IDIssuer {
     }
 
     /**
-     * "Deep" copy of this instance
+     * "Deep" copy of this instance.
      */
     copy(): IDIssuer {
         const retval = new IDIssuer(this.identifier_prefix);
@@ -77,7 +77,7 @@ export class IDIssuer {
     }
 
     /**
-     * Iterate over the values in issuance order 
+     * Iterate over the values in issuance order.
      */
      *[Symbol.iterator](): IterableIterator<[BNodeId,BNodeId]> {
         for (const [key,value] of this.issued_identifiers_map) {
@@ -86,7 +86,7 @@ export class IDIssuer {
     }
 
     /**
-     * Presentation for logging
+     * Presentation for logging.
      */
     toLogItem() : LogItem {
         const values: string[] = [...this.issued_identifiers_map].map(([key, value]): string => `${key}=>${value}`);
@@ -96,7 +96,6 @@ export class IDIssuer {
             "counter"   : `${this.identifier_counter}`,
             "mappings"  : values
         }
-
         return retval;
     }
 }

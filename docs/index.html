@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>Implementation of the RDF Canonicalization algorithm URDNA2015 - v1.0.1</title><meta name="description" content="Documentation for Implementation of the RDF Canonicalization algorithm URDNA2015 - v1.0.1"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>Implementation of the RDF Canonicalization algorithm URDNA2015 - v1.0.2</title><meta name="description" content="Documentation for Implementation of the RDF Canonicalization algorithm URDNA2015 - v1.0.2"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
 <div class="tsd-toolbar-contents container">
 <div class="table-cell" id="tsd-search" data-base=".">
 <div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M15.7824 13.833L12.6666 10.7177C12.5259 10.5771 12.3353 10.499 12.1353 10.499H11.6259C12.4884 9.39596 13.001 8.00859 13.001 6.49937C13.001 2.90909 10.0914 0 6.50048 0C2.90959 0 0 2.90909 0 6.49937C0 10.0896 2.90959 12.9987 6.50048 12.9987C8.00996 12.9987 9.39756 12.4863 10.5008 11.6239V12.1332C10.5008 12.3332 10.5789 12.5238 10.7195 12.6644L13.8354 15.7797C14.1292 16.0734 14.6042 16.0734 14.8948 15.7797L15.7793 14.8954C16.0731 14.6017 16.0731 14.1267 15.7824 13.833ZM6.50048 10.499C4.29094 10.499 2.50018 8.71165 2.50018 6.49937C2.50018 4.29021 4.28781 2.49976 6.50048 2.49976C8.71001 2.49976 10.5008 4.28708 10.5008 6.49937C10.5008 8.70852 8.71314 10.499 6.50048 10.499Z" fill="var(--color-text)"></path></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
@@ -6,19 +6,73 @@
 <div id="tsd-toolbar-links"></div></div>
 <ul class="results">
 <li class="state loading">Preparing search index...</li>
-<li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">Implementation of the RDF Canonicalization algorithm URDNA2015 - v1.0.1</a></div>
+<li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">Implementation of the RDF Canonicalization algorithm URDNA2015 - v1.0.2</a></div>
 <div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget tsd-toolbar-icon menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="7" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="11" width="14" height="2" fill="var(--color-text)"></rect></svg></a></div></div></header>
 <div class="container container-main">
 <div class="col-8 col-content">
 <div class="tsd-page-title">
-<h2>Implementation of the RDF Canonicalization algorithm URDNA2015 - v1.0.1</h2></div>
+<h2>Implementation of the RDF Canonicalization algorithm URDNA2015 - v1.0.2</h2></div>
 <div class="tsd-panel tsd-typography">
 <a href="#rdf-canonicalization-in-typescript" id="rdf-canonicalization-in-typescript" style="color: inherit; text-decoration: none;">
   <h1>RDF Canonicalization in TypeScript</h1>
 </a>
-<p>This is an implementation (under development) of the <a href="https://www.w3.org/TR/rdf-canon/">RDF Dataset Canonicalization</a> algorithm. (The algorithm is being specified by the W3C <a href="https://www.w3.org/groups/wg/rch">RDF Dataset Canonicalization and Hash Working Group</a>, and nothing is final…)</p>
-<p>The core library is (in TypeScript) in the <code>lib</code> directory, and &quot;indexed&quot; via the <code>index.ts</code> file. This library is only dependent on the generic RDF DataFactory interface, see <a href="http://rdf.js.org/data-model-spec/#datafactory-interface">the specification</a>. A separate <code>tester</code> library includes a small &quot;application&quot;, relying on the <a href="https://github.com/rdfjs/N3.js"><code>n3</code></a> library implementing the generic <code>rdf.js</code> interface to run the library on specific Turtle/TriG files.  </p>
-<p>A proper documentation will come further when the code ready to be published on npm.</p>
+<p>This is an implementation (under development) of the <a href="https://www.w3.org/TR/rdf-canon/">RDF Dataset Canonicalization</a> algorithm. (The algorithm is being specified by the W3C <a href="https://www.w3.org/groups/wg/rch">RDF Dataset Canonicalization and Hash Working Group</a>)</p>
+<blockquote>
+<p><strong>The <a href="https://www.w3.org/TR/rdf-canon/">specification</a> is not yet final. This implementations aims at reflecting <em>exactly</em> the specification, which means it may evolve alongside the specification.</strong></p>
+</blockquote>
+
+<a href="#requirements" id="requirements" style="color: inherit; text-decoration: none;">
+  <h2>Requirements</h2>
+</a>
+<p>The implementation depends on the interfaces defined by the <a href="http://rdf.js.org/data-model-spec/">RDF/JS Data model specification</a> for RDF terms, named and blank nodes, or quads. It also depends on an instance of an RDF Data Factory, specified by the aforementioned <a href="http://rdf.js.org/data-model-spec/#datafactory-interface">specification</a>. For TypeScript, the necessary type specifications are available through the <a href="https://www.npmjs.com/package/@rdfjs/types"><code>@rdfjs/types</code> package</a>; an implementation of the RDF Data Factory is provided by, for example, the <a href="https://www.npmjs.com/package/n3"><code>n3</code> package</a> (but there are others), which also provides a Turtle/TriG parser and serializer to test the library.</p>
+<p>An input RDF Dataset may be represented by: </p>
+<ul>
+<li>A Set of <a href="https://rdf.js.org/data-model-spec/#quad-interface">Quad instances</a>; or</li>
+<li>An Array of <a href="https://rdf.js.org/data-model-spec/#quad-interface">Quad instances</a>; or</li>
+<li>An instance of a <a href="https://rdf.js.org/dataset-spec/#datasetcore-interface">Core Dataset</a></li>
+</ul>
+<p>The canonicalization process returns </p>
+<ul>
+<li>A Set or an Array of Quad instances, if the input was a Set or an Array, respectively;</li>
+<li>An instance of a Core Dataset if the input was a Core Dataset <em><strong>and</strong></em> the canonicalization is initialized with an instance of the <a href="https://rdf.js.org/dataset-spec/#datasetcorefactory-interface">Dataset Core Factory</a>; otherwise it is a Set of Quad instances.</li>
+</ul>
+<p>The separate <a href="https://github.com/iherman/rdfjs-c14n/tree/main/testing">testing folder</a> includes a tiny application that runs the official specification tests, and can be used as an example for the additional packages that are required. </p>
+
+<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+  <h2>Installation</h2>
+</a>
+<p>The usual <code>npm</code> installation can be used:</p>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">rdf</span><span class="hl-1">-</span><span class="hl-0">c14n</span>
+</code></pre>
+<p>The package has been written in TypeScript but is distributed in JavaScript; the type definition (i.e., <code>index.d.ts</code>) is included in the distribution.</p>
+
+<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+  <h2>Usage</h2>
+</a>
+<p>There is a more detailed documentation of the classes and types <a href="https://iherman.github.io/rdfjs-c14n/">on github</a>. The basic usage may be as follows:</p>
+<pre><code class="language-js"><span class="hl-2">import</span><span class="hl-1"> </span><span class="hl-3">*</span><span class="hl-1"> </span><span class="hl-2">as</span><span class="hl-1"> </span><span class="hl-0">n3</span><span class="hl-1">  </span><span class="hl-2">from</span><span class="hl-1"> </span><span class="hl-4">&#39;n3&#39;</span><span class="hl-1">;</span><br/><span class="hl-2">import</span><span class="hl-1"> </span><span class="hl-3">*</span><span class="hl-1"> </span><span class="hl-2">as</span><span class="hl-1"> </span><span class="hl-0">rdf</span><span class="hl-1"> </span><span class="hl-2">from</span><span class="hl-1"> </span><span class="hl-4">&#39;rdf-js&#39;</span><span class="hl-1">;</span><br/><span class="hl-5">// The definition of &quot;Quads&quot; is:</span><br/><span class="hl-5">// export type Quads = rdf.DatasetCore&lt;rdf.Quad,rdf.Quad&gt; | rdf.Quad[] | Set&lt;rdf.Quad&gt;; </span><br/><span class="hl-2">import</span><span class="hl-1"> {</span><span class="hl-0">RDFCanon</span><span class="hl-1">, </span><span class="hl-0">Quads</span><span class="hl-1">, </span><span class="hl-0">quadsToNquads</span><span class="hl-1"> } </span><span class="hl-2">from</span><span class="hl-1"> </span><span class="hl-4">&#39;rdf-c14n&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-6">main</span><span class="hl-1">() {</span><br/><span class="hl-1">    </span><span class="hl-5">// Any implementation of the data factory will do in the call below.</span><br/><span class="hl-1">    </span><span class="hl-5">// Optionally, an instance of a Dataset Core Factory may be added as a second argument.</span><br/><span class="hl-1">    </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-7">canonicalizer</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-6">RDFCanon</span><span class="hl-1">(</span><span class="hl-0">n3</span><span class="hl-1">.</span><span class="hl-0">DataFactory</span><span class="hl-1">);  </span><br/><br/><span class="hl-1">    </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-7">input</span><span class="hl-1"> = </span><span class="hl-6">parseYourFavouriteTriGIntoQuads</span><span class="hl-1">();</span><br/><br/><span class="hl-1">    </span><span class="hl-5">// &quot;normalized&quot; is a dataset of quads with &quot;canonical&quot; blank node labels</span><br/><span class="hl-1">    </span><span class="hl-5">// per the specification </span><br/><span class="hl-1">    </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-7">normalized</span><span class="hl-1">: </span><span class="hl-8">Quads</span><span class="hl-1"> = </span><span class="hl-0">canonicalizer</span><span class="hl-1">.</span><span class="hl-6">canonicalize</span><span class="hl-1">(</span><span class="hl-0">input</span><span class="hl-1">)</span><br/><br/><span class="hl-1">    </span><span class="hl-5">// &quot;hash&quot; is the hash value of the canonical dataset, per specification</span><br/><span class="hl-1">    </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-7">hash</span><span class="hl-1"> = </span><span class="hl-0">canonicalizer</span><span class="hl-1">.</span><span class="hl-6">hash</span><span class="hl-1">(</span><span class="hl-0">normalized</span><span class="hl-1">);</span><br/><br/><span class="hl-1">    </span><span class="hl-5">// Generate a sorted array of canonical nquads for the normalized dataset</span><br/><span class="hl-1">    </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-7">nquads</span><span class="hl-1"> = </span><span class="hl-6">quadsToNquads</span><span class="hl-1">(</span><span class="hl-0">normalized</span><span class="hl-1">);</span><br/><span class="hl-1">}</span>
+</code></pre>
+
+<a href="#additional-features" id="additional-features" style="color: inherit; text-decoration: none;">
+  <h3>Additional features</h3>
+</a>
+
+<a href="#choice-of-hash" id="choice-of-hash" style="color: inherit; text-decoration: none;">
+  <h4>Choice of hash</h4>
+</a>
+<p>The <a href="https://www.w3.org/TR/rdf-canon/">RDF Dataset Canonicalization</a> algorithm is based on an extensive usage of hashing. By default, as specified by the document, the hash function is &#39;sha256&#39;. This default hash function can be changed via the</p>
+<pre><code class="language-js"><span class="hl-1">    </span><span class="hl-0">canonicalizer</span><span class="hl-1">.</span><span class="hl-6">setHashAlgorithm</span><span class="hl-1">(</span><span class="hl-0">algorithm</span><span class="hl-1">);</span>
+</code></pre>
+<p>method, where <code>algorithm</code> can be any hash function identification that the underlying openssl environment (as used by <code>node.js</code>) accepts. Examples are &#39;sha256&#39;, &#39;sha512&#39;, etc. On recent releases of OpenSSL, <code>openssl list -digest-algorithms</code> will display the available algorithms.</p>
+
+<a href="#logging" id="logging" style="color: inherit; text-decoration: none;">
+  <h4>Logging</h4>
+</a>
+<p>The canonicalization algorithm has built-in logging points that can be followed via a logger. This is  only of interest for debugging the algorithm itself; it can be safely ignored by the average user. By default, no logging happens.</p>
+<p>A built-in logger can be switched on which displays logging information in YAML. To use this YAML logger, do the following:</p>
+<pre><code class="language-js"><span class="hl-2">import</span><span class="hl-1"> { </span><span class="hl-0">YamlLogger</span><span class="hl-1">, </span><span class="hl-0">LogLevels</span><span class="hl-1"> } </span><span class="hl-2">from</span><span class="hl-1"> </span><span class="hl-4">&#39;rdf-c14n&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-6">main</span><span class="hl-1">() {</span><br/><span class="hl-1">    …</span><br/><span class="hl-1">    </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-7">canonicalizer</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-6">RDFCanon</span><span class="hl-1">(</span><span class="hl-0">n3</span><span class="hl-1">.</span><span class="hl-0">DataFactory</span><span class="hl-1">);</span><br/><span class="hl-1">    </span><span class="hl-5">// `logLevel` may be LogLevels.error, LogLevels.warn, LogLevels.info, LogLevels.debug  </span><br/><span class="hl-1">    </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-7">logger</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-6">YamlLogger</span><span class="hl-1">(</span><span class="hl-0">logLevel</span><span class="hl-1">);</span><br/><span class="hl-1">    </span><span class="hl-0">canonicalizer</span><span class="hl-1">.</span><span class="hl-6">setLogger</span><span class="hl-1">(</span><span class="hl-0">logger</span><span class="hl-1">);</span><br/><span class="hl-1">    …</span><br/><span class="hl-1">    </span><span class="hl-5">// &quot;logger.log&quot; is a string containing the full log in YAML format</span><br/><span class="hl-1">    </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">logger</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">);</span><br/><span class="hl-1">}</span>
+</code></pre>
+<p>See the <a href="https://iherman.github.io/rdfjs-c14n/interfaces/lib_logging.Logger.html">interface specification for Logger</a> to possibly implement your own logger.</p>
 <hr>
 <p>Maintainer: <a href="https://github.com/iherman">@iherman</a></p>
 </div></div>
@@ -39,7 +93,7 @@
 <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)"></path></svg> Modules</h3></summary>
 <div class="tsd-accordion-details">
 <ul>
-<li class="current selected"><a href="modules.html">Implementation of the RDF <wbr/>Canonicalization algorithm URDNA2015 -<wbr/> v1.0.1</a>
+<li class="current selected"><a href="modules.html">Implementation of the RDF <wbr/>Canonicalization algorithm URDNA2015 -<wbr/> v1.0.2</a>
 <ul>
 <li class="tsd-kind-module"><a href="modules/index.html">index</a></li>
 <li class="tsd-kind-module"><a href="modules/lib_canonicalization.html">lib/canonicalization</a></li>
