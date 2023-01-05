@@ -9,7 +9,10 @@
 import * as yaml from 'yaml';
 import { NDegreeHashResult, BNodeToQuads, quadToNquad } from './common';
 
-/** Logging severity levels (following the usual practice, although the full hierarchy is not used) */
+/** 
+ * Logging severity levels (following the usual practice, although the full hierarchy is not used) 
+ * @enum
+ */
 export enum LogLevels {
     error,
     warn,
