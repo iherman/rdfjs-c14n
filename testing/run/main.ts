@@ -1,6 +1,6 @@
-import { Command }                         from 'commander';
-import { RDFCanon, YamlLogger, LogLevels } from '../../index';
-import * as rdfn3                          from './rdfn3';
+import { Command }                                 from 'commander';
+import { RDFCanon, YamlLogger, LogLevels, Logger } from '../../index';
+import * as rdfn3                                  from './rdfn3';
 
 const number_of_tests: number = 63;
 const extra_tests: string[] = ['900', '901']
@@ -97,7 +97,7 @@ async function main(): Promise<void> {
         }
     };
 
-    const canonicalizer = new RDFCanon(rdfn3.DataFactory);  
+    const canonicalizer = new RDFCanon();  
 
     const program = new Command();
     program
@@ -135,14 +135,21 @@ async function main(): Promise<void> {
             console.log(`Failed tests: ${failed_tests}`)
         }
     } else {
-        const logLevel = (debug) ? LogLevels.debug : ((trace) ? LogLevels.info : LogLevels.error);
-        const logger = new YamlLogger(logLevel);
-        canonicalizer.setLogger(logger);
+        let logger : Logger|undefined = undefined; // = new SimpleYamlLogger(logLevel);
+        const logLevel = (debug) ? LogLevels.debug : ((trace) ? LogLevels.info : undefined);
 
+        if (logLevel) {
+            logger = new YamlLogger(logLevel);
+            canonicalizer.setLogger(logger);
+        }
+    
         const num = (program.args.length === 0) ? testNumber(options.number) : testNumber(program.args[0]);
         if (test_number_format.test(num)) {
             await singleTest(canonicalizer, num, true);
-            console.log(logger.log);
+            if (logger) {
+                console.log("\n>> Log <<")
+                console.log(logger.log);
+            }
         } else {
             console.error('Invalid test number');
         }    

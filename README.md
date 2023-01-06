@@ -8,6 +8,8 @@ This is an implementation (under development) of the [RDF Dataset Canonicalizati
 
 The implementation depends on the interfaces defined by the [RDF/JS Data model specification](http://rdf.js.org/data-model-spec/) for RDF terms, named and blank nodes, or quads. It also depends on an instance of an RDF Data Factory, specified by the aforementioned [specification](http://rdf.js.org/data-model-spec/#datafactory-interface). For TypeScript, the necessary type specifications are available through the [`@rdfjs/types` package](https://www.npmjs.com/package/@rdfjs/types); an implementation of the RDF Data Factory is provided by, for example, the [`n3` package](https://www.npmjs.com/package/n3) (but there are others), which also provides a Turtle/TriG parser and serializer to test the library.
 
+By default (i.e., if not explicitly specified) the Data Factory of the [`n3` package](https://www.npmjs.com/package/n3) is used.
+
 An input RDF Dataset may be represented by: 
 
 - A Set of [Quad instances](https://rdf.js.org/data-model-spec/#quad-interface); or
@@ -44,6 +46,8 @@ import {RDFCanon, Quads, quadsToNquads } from 'rdf-c14n';
 
 main() {
     // Any implementation of the data factory will do in the call below.
+    // By default, the Data Factory of the `n3` package (i.e., the argument in the call
+    // below is not strictly necessary).
     // Optionally, an instance of a Dataset Core Factory may be added as a second argument.
     const canonicalizer = new RDFCanon(n3.DataFactory);  
 
@@ -56,8 +60,8 @@ main() {
     // "hash" is the hash value of the canonical dataset, per specification
     const hash = canonicalizer.hash(normalized);
 
-    // Generate a sorted array of canonical nquads for the normalized dataset
-    const nquads = quadsToNquads(normalized);
+    // Generate a sorted array of nquads for the normalized dataset
+    const nquads = canonicalizer.toNquads(normalized);
 }
 ```
 

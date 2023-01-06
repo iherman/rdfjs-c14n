@@ -6,15 +6,13 @@ export type Hash  = string;
 The main class encapsulating the library's functionalities
 **********************************************************/
 
-declare function quadsToNquads(quads: Iterable<rdf.Quad>, sort?: boolean): string[];
-
 declare class RDFCanon {
     /**
-     * 
-     * @param data_factory    An implementation of the generic RDF DataFactory interface, see http://rdf.js.org/data-model-spec/#datafactory-interface
-     * @param dataset_factory An implementation of the generic RDF DatasetCoreFactory interface, see https://rdf.js.org/dataset-spec/#datasetcorefactory-interface. If undefined, the canonicalized graph will automatically be a Set of quads.
+     * @constructor
+     * @param data_factory  An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface). If undefined, the DataFactory of the [`n3` pacakge](https://www.npmjs.com/package/n3) is used.
+     * @param dataset_factory An implementation of the generic RDF DatasetCoreFactory interface, see [the specification](https://rdf.js.org/dataset-spec/#datasetcorefactory-interface). If undefined, the canonicalized graph will automatically be a Set of quads.
      */
-    constructor(data_factory: rdf.DataFactory, dataset_factory?: rdf.DatasetCoreFactory);
+    constructor(data_factory?: rdf.DataFactory, dataset_factory?: rdf.DatasetCoreFactory);
 
     /**
      * Set a logger instance. By default it is an "empty" logger, ie, no logging happens
@@ -34,6 +32,15 @@ declare class RDFCanon {
      * @returns - the exact type of the output depends on the type of the input dataset. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the dataset_factory has been set set, it will be a Dataset, otherwise a Set.
      */
     canonicalize(input_dataset: Quads): Quads;
+
+    /**
+     * Serialize the dataset into a (possibly sorted) Array of nquads.
+     * 
+     * @param input_dataset 
+     * @param sort If `true` (the default) the array is lexicographically sorted
+     * @returns 
+     */
+    toNquads(input_dataset: Quads, sort?: boolean): string[];
 
     /**
      * Hash a dataset:

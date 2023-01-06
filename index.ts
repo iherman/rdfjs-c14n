@@ -8,15 +8,16 @@
  */
 
 import * as rdf from 'rdf-js';
-import { GlobalState, Quads, hashDataset, Hash, Constants } from './lib/common';
-import { IDIssuer }                                         from './lib/issueIdentifier';
-import { computeCanonicalDataset }                          from './lib/canonicalization';
-import { Logger, NopLogger}                                 from './lib/logging';
+import * as n3  from 'n3';
 
-export { Quads }                 from './lib/common';
-export { Hash }                  from './lib/common';
-export { YamlLogger, LogLevels } from './lib/logging';
-export { quadsToNquads }         from './lib/common';
+import { GlobalState, Quads, hashDataset, Hash, Constants, quadsToNquads } from './lib/common';
+import { IDIssuer }                                                        from './lib/issueIdentifier';
+import { computeCanonicalDataset }                                         from './lib/canonicalization';
+import { Logger, NopLogger}                                                from './lib/logging';
+
+export { Quads }                         from './lib/common';
+export { Hash }                          from './lib/common';
+export { YamlLogger, LogLevels, Logger } from './lib/logging';
 
 /**
  * Just a shell around the algorithm, consisting of a state, and the call for the real implementation.
@@ -29,16 +30,16 @@ export class RDFCanon {
     private state: GlobalState;
     /**
      * @constructor
-     * @param data_factory    An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface).
+     * @param data_factory  An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface). If undefined, the DataFactory of the [n3 package](https://www.npmjs.com/package/n3) is used.
      * @param dataset_factory An implementation of the generic RDF DatasetCoreFactory interface, see [the specification](https://rdf.js.org/dataset-spec/#datasetcorefactory-interface). If undefined, the canonicalized graph will automatically be a Set of quads.
      */
-    constructor(data_factory: rdf.DataFactory, dataset_factory?: rdf.DatasetCoreFactory) {
+    constructor(data_factory?: rdf.DataFactory, dataset_factory?: rdf.DatasetCoreFactory) {
         this.state = {
             bnode_to_quads   : {},
             hash_to_bnodes   : {},
             canonical_issuer : new IDIssuer(),
             hash_algorithm   : Constants.HASH_ALGORITHM,
-            dataFactory      : data_factory,
+            dataFactory      : data_factory ? data_factory : n3.DataFactory,
             datasetFactory   : dataset_factory,
             logger           : new NopLogger(),
         }
@@ -70,6 +71,17 @@ export class RDFCanon {
      */
     canonicalize(input_dataset: Quads): Quads {
         return computeCanonicalDataset(this.state, input_dataset);
+    }
+
+    /**
+     * Serialize the dataset into a (possibly sorted) Array of nquads.
+     * 
+     * @param input_dataset 
+     * @param sort If `true` (the default) the array is lexicographically sorted
+     * @returns 
+     */
+    toNquads(input_dataset: Quads, sort: boolean = true): string[] {
+        return quadsToNquads(input_dataset, sort);
     }
 
     /**
