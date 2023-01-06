@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ndhrToLogItem = exports.bntqToLogItem = exports.SimpleYamlLogger = exports.NopLogger = exports.LogLevels = void 0;
+exports.ndhrToLogItem = exports.bntqToLogItem = exports.YamlLogger = exports.NopLogger = exports.LogLevels = void 0;
 /**
  * Simple logging environment, used by the rest of the code. By default, no logging occurs; the user can set his/her own
  * logging environment. This module also includes a logger to dump the results into a YAML file.
@@ -11,7 +11,10 @@ exports.ndhrToLogItem = exports.bntqToLogItem = exports.SimpleYamlLogger = expor
  */
 const yaml = require("yaml");
 const common_1 = require("./common");
-/** Logging levels (following the usual practice) */
+/**
+ * Logging severity levels (following the usual practice, although the full hierarchy is not used)
+ * @enum
+ */
 var LogLevels;
 (function (LogLevels) {
     LogLevels[LogLevels["error"] = 0] = "error";
@@ -21,10 +24,10 @@ var LogLevels;
 })(LogLevels = exports.LogLevels || (exports.LogLevels = {}));
 ;
 /**
- * A default, no-operation logger instance, used by default.
+ * A default, no-operation logger instance, used by default. All messages are lost
  */
 class NopLogger {
-    log;
+    log = '';
     debug(message, ...otherData) { }
     ;
     warn(message, ...otherData) { }
@@ -36,13 +39,18 @@ class NopLogger {
 }
 exports.NopLogger = NopLogger;
 /**
- * Simple logger, producing a YAML output of the log entries. This final log can be retrieved by
- * using the `log` variable.
+ * Simple logger, storing the individual log messages as an array of {@link LogItem} objects. The logger
+ * follows the recommendations on severity levels as described in {@link Logger}.
+ *
+ * The final log can be retrieved either as the array of Objects via the `logObject`, or
+ * as a YAML string via the `log` attributes, respectively.
+ *
+ * By default, the logger level is set to `LogLevels.info`.
  */
-class SimpleYamlLogger {
+class YamlLogger {
     level;
     theLog;
-    constructor(level) {
+    constructor(level = LogLevels.info) {
         this.level = level;
         this.theLog = [];
     }
@@ -71,13 +79,16 @@ class SimpleYamlLogger {
         if (this.level >= LogLevels.error)
             this.emitMessage("error", msg, extras);
     }
+    get logObject() {
+        return this.theLog;
+    }
     get log() {
         return yaml.stringify(this.theLog);
     }
 }
-exports.SimpleYamlLogger = SimpleYamlLogger;
+exports.YamlLogger = YamlLogger;
 /**
- * Return a log item version of a {@link BNodeToQuads} instance, used to build up a full log message.
+ * Return a log item version of a `BNodeToQuads` instance, used to build up a full log message.
  *
  * @param bntq
  * @returns
@@ -91,7 +102,7 @@ function bntqToLogItem(bntq) {
 }
 exports.bntqToLogItem = bntqToLogItem;
 /**
- * Return a log item version of an {@link NDegreeHashResult} instance, used to build up a full log message.
+ * Return a log item version of an `NDegreeHashResult` instance, used to build up a full log message.
  */
 function ndhrToLogItem(ndhrs) {
     return ndhrs.map((ndhr) => {

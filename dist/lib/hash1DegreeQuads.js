@@ -18,7 +18,7 @@ const common_1 = require("./common");
  *
  * @param state
  * @param identifier
- * @returns
+ * @returns - hash value
  */
 function computeFirstDegreeHash(state, identifier) {
     /* @@@ */

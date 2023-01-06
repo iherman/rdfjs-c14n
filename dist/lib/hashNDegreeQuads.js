@@ -65,9 +65,7 @@ function computeHashRelatedBlankNode(state, related, quad, issuer, position) {
     return hash;
 }
 /**
- * Compute the n-degree hash
- *
- * See the [specification](https://www.w3.org/TR/rdf-canon/#hash-nd-quads-algorithm) for the details.
+ * Compute the n-degree hash. See the [specification](https://www.w3.org/TR/rdf-canon/#hash-nd-quads-algorithm) for the details.
  *
  * @param state
  * @param identifier
