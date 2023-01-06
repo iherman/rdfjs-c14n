@@ -7,7 +7,7 @@
  * @packageDocumentation
  */
 import * as yaml from 'yaml';
-import { NDegreeHashResult, BNodeToQuads, quadToNquad } from './common';
+import { NDegreeHashResult, BNodeToQuads, quadToNquad, HashToBNodes, Hash } from './common';
 
 /** 
  * Logging severity levels (following the usual practice, although the full hierarchy is not used) 
@@ -75,7 +75,7 @@ export class YamlLogger implements Logger {
 
     private emitMessage(mtype: "debug"|"info"|"warn"|"error", msg: string, extras: LogItem[]): void {
         const item: LogItem = {
-            "log point" : `[${mtype}] ${msg}`
+            "log point" : mtype === "info" ? `${msg}` : `[${mtype}] ${msg}`
         }
         if (extras.length > 0) {
             item["with"] = extras;
@@ -121,6 +121,9 @@ export function bntqToLogItem(bntq: BNodeToQuads): LogItem {
 
 /**
  * Return a log item version of an `NDegreeHashResult` instance, used to build up a full log message.
+ * 
+ * @param ndhrs 
+ * @returns 
  */
 export function ndhrToLogItem(ndhrs: NDegreeHashResult[]): LogItem[] {
     return ndhrs.map((ndhr: NDegreeHashResult): LogItem => {
@@ -131,4 +134,18 @@ export function ndhrToLogItem(ndhrs: NDegreeHashResult[]): LogItem[] {
     });
 }
 
+/**
+ * Return a log item version of an `HashToBNodes` instance, used to build up a full log message.
+ * 
+ * @param htbn 
+ * @returns 
+ */
+export function htbnToLogItem(htbn: HashToBNodes): LogItem[] {
+    return Object.keys(htbn).map((index: Hash): LogItem => {
+        return {
+            "hash": index,
+            "bnodes": htbn[index]
+        }
+    });
+}
 

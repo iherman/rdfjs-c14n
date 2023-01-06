@@ -22,7 +22,7 @@ import { BNodeId, Hash, GlobalState, quadToNquad, hashNquads } from './common';
  */
  export function computeFirstDegreeHash(state: GlobalState, identifier: BNodeId): Hash {
     /* @@@ */ 
-    state.logger.info("Entering Hash First Degree Quads function (4.7.3)", { identifier });
+    state.logger.info("hfdq1: Entering Hash First Degree Quads function (4.7.3)", { identifier });
     /* @@@ */ 
 
     // Step 1
@@ -57,7 +57,7 @@ import { BNodeId, Hash, GlobalState, quadToNquad, hashNquads } from './common';
     const the_hash: Hash = hashNquads(state, nquads);
 
     /* @@@ */
-    state.logger.info("Leaving Hash First Degree Quads function (4.7.3).", { 
+    state.logger.debug("hfdq5: Leaving Hash First Degree Quads function (4.7.3).", { 
         identifier,
         "quads" : nquads,
         "hash" : the_hash

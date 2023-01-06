@@ -11,7 +11,7 @@ import { GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, DatasetShell } fr
 import { computeFirstDegreeHash }                                             from './hash1DegreeQuads';
 import { computeNDegreeHash }                                                 from './hashNDegreeQuads';
 import { IDIssuer }                                                           from './issueIdentifier';
-import { bntqToLogItem, ndhrToLogItem }                                       from './logging';
+import { bntqToLogItem, ndhrToLogItem, htbnToLogItem, LogItem }               from './logging';
 
 
 /**
@@ -52,7 +52,7 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
         }
 
         /* @@@ */ 
-        state.logger.info("Entering the canonicalization function (4.5.3 (2)).", { 
+        state.logger.info("ca2: Entering the canonicalization function (4.5.3 (2)).", { 
             "Bnode to quads" : bntqToLogItem(state.bnode_to_quads)
         });
         /* @@@ */ 
@@ -72,6 +72,12 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
                     state.hash_to_bnodes[hfn].push(n);
                 }
             });
+            
+            /* @@@ */
+            state.logger.info("ca3: Calculated first degree hashes (4.5.3. (3)", {
+                "Hash to bnodes" : htbnToLogItem(state.hash_to_bnodes)
+            });
+            /* @@@ */
         }
 
         // Step 4
@@ -83,6 +89,7 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
             // If a bnode is "handled", ie, it does have a canonical ID, it is removed from the
             // state structure on hash->bnodes. 
             const hashes: Hash[] = Object.keys(state.hash_to_bnodes).sort();
+            const logItems: LogItem[] = [];
             for (const hash of hashes) {
                 const identifier_list: BNodeId[] = state.hash_to_bnodes[hash];
                 // Step 4.1
@@ -95,22 +102,34 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
                 // bnode identifier; these are retrieved in the last step when a new, normalized
                 // graph is created.
                 const canon_id = state.canonical_issuer.issueID(identifier_list[0]);
+
                 /* @@@ */ 
-                state.logger.info("Canonicalization function (4.5.3 (4)).", {
-                    "Identifier in first pass": `${identifier_list[0]}=>${canon_id}`
-                });
+                logItems.push({
+                    "identifier"   : identifier_list[0],
+                    "hash"         : hash,
+                    "canonical id" : canon_id
+                })
                 /* @@@ */ 
 
                 // Step 4.3
                 // Remove the corresponding hash
                 delete state.hash_to_bnodes[hash];
             }
+            /* @@@ */ 
+            state.logger.info("ca4: Canonicalization function (4.5.3 (4)).", ...logItems);
+            /* @@@ */ 
+           
         }
 
         // Step 5
         // This step takes care of the bnodes that do not have been canonicalized in the previous step,
         // because their simple, first degree hashes are not unique.
         {
+            /* @@@ */
+            state.logger.info("ca5: Calculate hashes for identifiers with shared hashes (4.5.3. (5)", {
+                "Hash to bnodes" : htbnToLogItem(state.hash_to_bnodes)
+            });
+            /* @@@ */
             const hashes: Hash[] = Object.keys(state.hash_to_bnodes).sort();
             for (const hash of hashes) {
                 const identifier_list: BNodeId[] = state.hash_to_bnodes[hash];
@@ -137,7 +156,7 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
                 }
 
                 /* @@@ */ 
-                state.logger.info("Canonicalization function, after (4.5.3 (5.2))",{
+                state.logger.info("ca5.2: Canonicalization function, after (4.5.3 (5.2))",{
                     "computed for": hash,
                     "hash path list": ndhrToLogItem(hash_path_list)
                 });
@@ -180,7 +199,7 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
 
         // Step 7
         /* @@@ */ 
-        state.logger.info("Leaving the canonicalization function (4.5.3)", {
+        state.logger.info("c6: Leaving the canonicalization function (4.5.3)", {
             "issuer": state.canonical_issuer.toLogItem(),
         });
         /* @@@ */ 
