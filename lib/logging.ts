@@ -27,6 +27,8 @@ export interface LogItem {
     [index: string]: string|string[]|LogItem|LogItem[]|boolean;
 }
 
+export type Log = Map<string,LogItem>;
+
 /**
  * Very simple Logger interface, to be used in the code. 
  * 
@@ -71,18 +73,19 @@ export class NopLogger implements Logger {
  */
 export class YamlLogger implements Logger {
     private level: LogLevels;
-    private theLog: LogItem;
+    private theLog: Log;
 
     constructor(level: LogLevels = LogLevels.info) {
         this.level = level;
-        this.theLog = {};
+        this.theLog = new Map<string, LogItem>;
     }
 
     private emitMessage(mtype: "debug"|"info"|"warn"|"error", log_point: string, position: string, extras: LogItem[]): void {
         const item: LogItem = {};
-        item["log point"] = mtype === "info" ? `${position}` : `[${mtype} ${position}]`;
+        item["log point"] = mtype === "info" ? `${position}` : `[${mtype}] ${position}`;
         item["with"] = extras;
-        this.theLog[log_point] = item;
+
+        this.theLog.set(log_point, item);
     }
 
     debug(log_point: string, position: string, ...extras: LogItem[]): void {
@@ -98,8 +101,8 @@ export class YamlLogger implements Logger {
         if (this.level >= LogLevels.error) this.emitMessage("error", log_point, position, extras)
     }
 
-    get logObject(): LogItem {
-        return this.theLog
+    get logObject(): Log {
+        return this.theLog;
     }
 
     get log(): string {
