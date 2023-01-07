@@ -51,7 +51,7 @@ main() {
     // Optionally, an instance of a Dataset Core Factory may be added as a second argument.
     const canonicalizer = new RDFCanon(n3.DataFactory);  
 
-    const input = parseYourFavouriteTriGIntoQuads();
+    const input = parseYourFavoriteTriGIntoQuads();
 
     // "normalized" is a dataset of quads with "canonical" blank node labels
     // per the specification 

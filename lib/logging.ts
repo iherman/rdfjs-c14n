@@ -34,24 +34,29 @@ export interface LogItem {
  * the Logger is set up with severity level of, say, `LogLevels.info`, then the messages to `debug` should be ignored. If the 
  * level is set to `LogLevels.warn`, then only warning and debugging messages should be recorded/displayed, etc.
  * 
+ * For each call the arguments are:
+ * - log_point: the identification of the log point, related to the spec (in practice, this should be identical to the `id` value of the respective HTML element)
+ * - position: short description of the position of the log
+ * - otherData: the 'real' log information
+ * 
  */
 export interface Logger {
     log: string;
-    debug(message: string, ...otherData: LogItem[]): void;
-    warn(message: string, ...otherData: LogItem[]): void;
-    error(message: string, ...otherData: LogItem[]): void;
-    info(message: string, ...otherData: LogItem[]): void;
+    debug(log_point: string, position: string, ...otherData: LogItem[]): void;
+    warn(log_point: string, position: string, ...otherData: LogItem[]): void;
+    error(log_point: string, position: string, ...otherData: LogItem[]): void;
+    info(log_point: string, position: string, ...otherData: LogItem[]): void;
 }
 
 /**
- * A default, no-operation logger instance, used by default. All messages are lost
+ * A default, no-operation logger instance, used by default. All messages are lost...
  */
 export class NopLogger implements Logger {
     log: string = '';
-    debug(message: string, ...otherData: LogItem[]): void {};
-    warn(message: string, ...otherData: LogItem[]): void {};
-    error(message: string, ...otherData: LogItem[]): void {};
-    info(message: string, ...otherData: LogItem[]): void {};
+    debug(log_point: string, position: string, ...otherData: LogItem[]): void {};
+    warn(log_point: string, position: string, ...otherData: LogItem[]): void {};
+    error(log_point: string, position: string, ...otherData: LogItem[]): void {};
+    info(log_point: string, position: string, ...otherData: LogItem[]): void {};
 }
 
 
@@ -66,37 +71,34 @@ export class NopLogger implements Logger {
  */
 export class YamlLogger implements Logger {
     private level: LogLevels;
-    private theLog: LogItem[];
+    private theLog: LogItem;
 
     constructor(level: LogLevels = LogLevels.info) {
         this.level = level;
-        this.theLog = [];
+        this.theLog = {};
     }
 
-    private emitMessage(mtype: "debug"|"info"|"warn"|"error", msg: string, extras: LogItem[]): void {
-        const item: LogItem = {
-            "log point" : mtype === "info" ? `${msg}` : `[${mtype}] ${msg}`
-        }
-        if (extras.length > 0) {
-            item["with"] = extras;
-        }
-        this.theLog.push(item);
+    private emitMessage(mtype: "debug"|"info"|"warn"|"error", log_point: string, position: string, extras: LogItem[]): void {
+        const item: LogItem = {};
+        item["log point"] = mtype === "info" ? `${position}` : `[${mtype} ${position}]`;
+        item["with"] = extras;
+        this.theLog[log_point] = item;
     }
 
-    debug(msg: string, ...extras: LogItem[]): void {
-        if (this.level >= LogLevels.debug) this.emitMessage("debug", msg, extras)
+    debug(log_point: string, position: string, ...extras: LogItem[]): void {
+        if (this.level >= LogLevels.debug) this.emitMessage("debug", log_point, position, extras)
     }
-    info(msg: string, ...extras: LogItem[]): void {
-        if (this.level >= LogLevels.info) this.emitMessage("info", msg, extras)
+    info(log_point: string, position: string, ...extras: LogItem[]): void {
+        if (this.level >= LogLevels.info) this.emitMessage("info", log_point, position, extras)
     }
-    warn(msg: string, ...extras: LogItem[]): void {
-        if (this.level >= LogLevels.warn) this.emitMessage("warn", msg, extras)
+    warn(log_point: string, position: string, ...extras: LogItem[]): void {
+        if (this.level >= LogLevels.warn) this.emitMessage("warn", log_point, position, extras)
     }
-    error(msg: string, ...extras: LogItem[]): void {
-        if (this.level >= LogLevels.error) this.emitMessage("error", msg, extras)
+    error(log_point: string, position: string, ...extras: LogItem[]): void {
+        if (this.level >= LogLevels.error) this.emitMessage("error", log_point, position, extras)
     }
 
-    get logObject(): LogItem[] {
+    get logObject(): LogItem {
         return this.theLog
     }
 

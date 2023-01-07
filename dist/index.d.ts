@@ -71,19 +71,32 @@ declare interface LogItem {
     [index: string]: string|string[]|LogItem|LogItem[]|boolean;
 }
 
+/**
+ * Very simple Logger interface, to be used in the code. 
+ * 
+ * Implementations should follow the usual interpretation of log severity levels. E.g., if 
+ * the Logger is set up with severity level of, say, `LogLevels.info`, then the messages to `debug` should be ignored. If the 
+ * level is set to `LogLevels.warn`, then only warning and debugging messages should be recorded/displayed, etc.
+ * 
+ * For each call the arguments are:
+ * - log_point: the identification of the log point, related to the spec (in practice, this should be identical to the `id` value of the respective HTML element)
+ * - position: short description of the position of the log
+ * - otherData: the 'real' log information
+ * 
+ */
 declare interface Logger {
     log: string;
-    debug(message: string, ...otherData: LogItem[]): void;
-    warn(message: string, ...otherData: LogItem[]): void;
-    error(message: string, ...otherData: LogItem[]): void;
-    info(message: string, ...otherData: LogItem[]): void;
+    debug(log_point: string, position: string, ...otherData: LogItem[]): void;
+    warn(log_point: string, position: string, ...otherData: LogItem[]): void;
+    error(log_point: string, position: string, ...otherData: LogItem[]): void;
+    info(log_point: string, position: string, ...otherData: LogItem[]): void;
 }
 
 declare class YamlLogger implements Logger {
     log: string;
     constructor(level?: LogLevels);
-    debug(message: string, ...otherData: LogItem[]): void;
-    warn(message: string, ...otherData: LogItem[]): void;
-    error(message: string, ...otherData: LogItem[]): void;
-    info(message: string, ...otherData: LogItem[]): void;
+    debug(log_point: string, position: string, ...otherData: LogItem[]): void;
+    warn(log_point: string, position: string, ...otherData: LogItem[]): void;
+    error(log_point: string, position: string, ...otherData: LogItem[]): void;
+    info(log_point: string, position: string, ...otherData: LogItem[]): void;
 }
