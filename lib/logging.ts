@@ -73,35 +73,37 @@ export class NopLogger implements Logger {
  */
 export class YamlLogger implements Logger {
     private level: LogLevels;
-    private theLog: Log;
+    private theLog: LogItem[];
 
     constructor(level: LogLevels = LogLevels.info) {
         this.level = level;
-        this.theLog = new Map<string, LogItem>;
+        this.theLog = [];
     }
 
-    private emitMessage(mtype: "debug"|"info"|"warn"|"error", log_point: string, position: string, extras: LogItem[]): void {
+    private emitMessage(mtype: "debug"|"info"|"warn"|"error", log_id: string, position: string, extras: LogItem[]): void {
         const item: LogItem = {};
         item["log point"] = mtype === "info" ? `${position}` : `[${mtype}] ${position}`;
         item["with"] = extras;
 
-        this.theLog.set(log_point, item);
+        const full_item: LogItem = {};
+        full_item[log_id] = item;
+        this.theLog.push(full_item);
     }
 
-    debug(log_point: string, position: string, ...extras: LogItem[]): void {
-        if (this.level >= LogLevels.debug) this.emitMessage("debug", log_point, position, extras)
+    debug(log_id: string, position: string, ...extras: LogItem[]): void {
+        if (this.level >= LogLevels.debug) this.emitMessage("debug", log_id, position, extras)
     }
-    info(log_point: string, position: string, ...extras: LogItem[]): void {
-        if (this.level >= LogLevels.info) this.emitMessage("info", log_point, position, extras)
+    info(log_id: string, position: string, ...extras: LogItem[]): void {
+        if (this.level >= LogLevels.info) this.emitMessage("info", log_id, position, extras)
     }
-    warn(log_point: string, position: string, ...extras: LogItem[]): void {
-        if (this.level >= LogLevels.warn) this.emitMessage("warn", log_point, position, extras)
+    warn(log_id: string, position: string, ...extras: LogItem[]): void {
+        if (this.level >= LogLevels.warn) this.emitMessage("warn", log_id, position, extras)
     }
-    error(log_point: string, position: string, ...extras: LogItem[]): void {
-        if (this.level >= LogLevels.error) this.emitMessage("error", log_point, position, extras)
+    error(log_id: string, position: string, ...extras: LogItem[]): void {
+        if (this.level >= LogLevels.error) this.emitMessage("error", log_id, position, extras)
     }
 
-    get logObject(): Log {
+    get logObject(): LogItem[] {
         return this.theLog;
     }
 
