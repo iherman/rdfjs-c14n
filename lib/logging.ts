@@ -24,7 +24,7 @@ export enum LogLevels {
  * And individual log item. A complete log is, conceptually, an array of such log reports.
  */
 export interface LogItem {
-    [index: string]: string|string[]|LogItem|LogItem[]|boolean;
+    [index: string]: string|string[]|Map<string,string>|boolean|LogItem|LogItem[];
 }
 
 export type Log = Map<string,LogItem>;

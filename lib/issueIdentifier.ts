@@ -89,12 +89,11 @@ export class IDIssuer {
      * Presentation for logging.
      */
     toLogItem() : LogItem {
-        const values: string[] = [...this.issued_identifiers_map].map(([key, value]): string => `${key}=>${value}`);
         const retval: LogItem = {
             "issuer ID" : `${this.id}`,
             "prefix"    : this.identifier_prefix,
             "counter"   : `${this.identifier_counter}`,
-            "mappings"  : values
+            "mappings"  : this.issued_identifiers_map
         }
         return retval;
     }

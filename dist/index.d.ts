@@ -68,7 +68,7 @@ declare enum LogLevels {
 }
 
 declare interface LogItem {
-    [index: string]: string|string[]|LogItem|LogItem[]|boolean;
+    [index: string]: string|string[]|Map<string,string>|boolean|LogItem|LogItem[];
 }
 
 /**
