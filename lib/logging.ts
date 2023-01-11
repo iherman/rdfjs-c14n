@@ -1,6 +1,6 @@
 /**
- * Simple logging environment, used by the rest of the code. By default, no logging occurs; the user can set his/her own
- * logging environment. This module also includes a logger to dump the results into a YAML file.
+ * Logging environment, used by the rest of the code. By default, no logging occurs; the user can set his/her own
+ * logging environment. This module also includes a logger to create a recursive log in YAML.
  * 
  * @copyright Ivan Herman 2023
  * 
@@ -21,11 +21,13 @@ export enum LogLevels {
 };
 
 /**
- * And individual log item. A complete log is, conceptually, an array of such log reports.
+ * And individual log item.
  */
 export interface LogItem {
-    [index: string]: string|string[]|LogItem|LogItem[]|boolean;
+    [index: string]: string|string[]|Map<string,string>|boolean|LogItem|LogItem[];
 }
+
+export type Log = Map<string,LogItem>;
 
 /**
  * Very simple Logger interface, to be used in the code. 
@@ -34,24 +36,82 @@ export interface LogItem {
  * the Logger is set up with severity level of, say, `LogLevels.info`, then the messages to `debug` should be ignored. If the 
  * level is set to `LogLevels.warn`, then only warning and debugging messages should be recorded/displayed, etc.
  * 
+ * For each call the arguments are:
+ * - log_point: the identification of the log point, related to the spec (in practice, this should be identical to the `id` value of the respective HTML element)
+ * - position: short description of the position of the log. The string may be empty (i.e., ""), in which case it will be ignored.
+ * - otherData: the 'real' log information
+ * 
  */
 export interface Logger {
+    /** The current log */
+    log_object: LogItem;
+
+    /** The current log, in some string representation */
     log: string;
-    debug(message: string, ...otherData: LogItem[]): void;
-    warn(message: string, ...otherData: LogItem[]): void;
-    error(message: string, ...otherData: LogItem[]): void;
-    info(message: string, ...otherData: LogItem[]): void;
+
+    /**
+     * Debug level log.
+     * 
+     * @param log_point 
+     * @param position 
+     * @param otherData 
+     */
+    debug(log_point: string, position: string, ...otherData: LogItem[]): void;
+
+    /**
+     * Warning level log.
+     * 
+     * @param log_point 
+     * @param position 
+     * @param otherData 
+     */
+    warn(log_point: string, position: string, ...otherData: LogItem[]): void;
+
+    /**
+     * Error level log.
+     * 
+     * @param log_point 
+     * @param position 
+     * @param otherData 
+     */
+    error(log_point: string, position: string, ...otherData: LogItem[]): void;
+
+    /**
+     * Information level log.
+     * 
+     * @param log_point 
+     * @param position 
+     * @param otherData 
+     */
+    info(log_point: string, position: string, ...otherData: LogItem[]): void;
+
+    /**
+     * Entry point for a increase in stack level. This is issued at each function entry except the top level, and at some, more complex, cycles.
+     * Needed if the logger instance intends to create recursive logs or if the structure is complex.
+     * @param label - identification of the position in the code
+     * @param extra_info - possible extra information on the level increase 
+     * @param 
+     */
+    push(label: string, extra_info ?: string, ...otherData: LogItem[]): void;
+
+    /**
+     * Counterpart of the {@link push} method.
+     */
+    pop(): void;
 }
 
 /**
- * A default, no-operation logger instance, used by default. All messages are lost
+ * A default, no-operation logger instance, used by default. All methods are empty, ie, all messages are lost...
  */
 export class NopLogger implements Logger {
     log: string = '';
-    debug(message: string, ...otherData: LogItem[]): void {};
-    warn(message: string, ...otherData: LogItem[]): void {};
-    error(message: string, ...otherData: LogItem[]): void {};
-    info(message: string, ...otherData: LogItem[]): void {};
+    log_object: LogItem = {};
+    debug(log_point: string, position: string, ...otherData: LogItem[]): void {};
+    warn(log_point: string, position: string, ...otherData: LogItem[]): void {};
+    error(log_point: string, position: string, ...otherData: LogItem[]): void {};
+    info(log_point: string, position: string, ...otherData: LogItem[]): void {};
+    push(label: string, extra_info ?: string, ...otherData: LogItem[]): void {};
+    pop(): void {};
 }
 
 
@@ -59,52 +119,91 @@ export class NopLogger implements Logger {
  * Simple logger, storing the individual log messages as an array of {@link LogItem} objects. The logger
  * follows the recommendations on severity levels as described in {@link Logger}.
  * 
- * The final log can be retrieved either as the array of Objects via the `logObject`, or
+ * The "current" log is an array of {@link LogItem} instances, filled by subsequent logger calls. In case of a call to `push` this instance is 
+ * pushed on an internal stack and a new array is created.
+ * 
+ * The final log can be retrieved either as the array of Objects via the `log_object`, or
  * as a YAML string via the `log` attributes, respectively.
  * 
  * By default, the logger level is set to `LogLevels.info`.
  */
 export class YamlLogger implements Logger {
     private level: LogLevels;
-    private theLog: LogItem[];
+
+    private top_log: LogItem = {};
+    private current_log: LogItem[];
+    private log_stack: LogItem[][] = [];
 
     constructor(level: LogLevels = LogLevels.info) {
         this.level = level;
-        this.theLog = [];
+
+        const ca_level: LogItem[] = [];
+        this.top_log["ca"] = ca_level;
+        this.current_log = ca_level;
     }
 
-    private emitMessage(mtype: "debug"|"info"|"warn"|"error", msg: string, extras: LogItem[]): void {
-        const item: LogItem = {
-            "log point" : mtype === "info" ? `${msg}` : `[${mtype}] ${msg}`
+    private emitMessage(mtype: "debug"|"info"|"warn"|"error", log_id: string, position: string, extras: LogItem[]): void {
+        const item: LogItem = {};
+        if (position !== '') {
+            item["log point"] = mtype === "info" ? `${position}` : `[${mtype}] ${position}`;
         }
-        if (extras.length > 0) {
+        if (extras.length !== 0) {
             item["with"] = extras;
         }
-        this.theLog.push(item);
+
+        const full_item: LogItem = {};
+        full_item[log_id] = item;
+        this.current_log.push(full_item);
     }
 
-    debug(msg: string, ...extras: LogItem[]): void {
-        if (this.level >= LogLevels.debug) this.emitMessage("debug", msg, extras)
+    debug(log_id: string, position: string, ...extras: LogItem[]): void {
+        if (this.level >= LogLevels.debug) this.emitMessage("debug", log_id, position, extras)
     }
-    info(msg: string, ...extras: LogItem[]): void {
-        if (this.level >= LogLevels.info) this.emitMessage("info", msg, extras)
+    info(log_id: string, position: string, ...extras: LogItem[]): void {
+        if (this.level >= LogLevels.info) this.emitMessage("info", log_id, position, extras)
     }
-    warn(msg: string, ...extras: LogItem[]): void {
-        if (this.level >= LogLevels.warn) this.emitMessage("warn", msg, extras)
+    warn(log_id: string, position: string, ...extras: LogItem[]): void {
+        if (this.level >= LogLevels.warn) this.emitMessage("warn", log_id, position, extras)
     }
-    error(msg: string, ...extras: LogItem[]): void {
-        if (this.level >= LogLevels.error) this.emitMessage("error", msg, extras)
+    error(log_id: string, position: string, ...extras: LogItem[]): void {
+        if (this.level >= LogLevels.error) this.emitMessage("error", log_id, position, extras)
     }
 
-    get logObject(): LogItem[] {
-        return this.theLog
+    push(label: string, extra_info ?: string, ...extras: LogItem[]): void {
+        const new_level: LogItem[] = [];
+        const new_level_ref: LogItem = {};
+
+        new_level_ref[label] = new_level;
+        
+        if (extra_info && extra_info !== "") {
+            new_level.push({
+                "push info": extra_info
+            })
+        }
+        if (extras.length !== 0) {
+            new_level.push({
+                "with": extras
+            });
+        }
+
+        this.current_log.push(new_level_ref);
+        this.log_stack.push(this.current_log);
+        this.current_log = new_level;
+    }
+
+    pop(): void {
+        this.current_log = this.log_stack.pop();
+    }
+
+    get log_object(): LogItem {
+        return this.top_log;
     }
 
     get log(): string {
-        return yaml.stringify(this.theLog);
+        return yaml.stringify(this.log_object, { aliasDuplicateObjects: false });
     }
 }
-
+ 
 /**
  * Return a log item version of a `BNodeToQuads` instance, used to build up a full log message.
  * 
