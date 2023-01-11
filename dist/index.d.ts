@@ -80,23 +80,40 @@ declare interface LogItem {
  * 
  * For each call the arguments are:
  * - log_point: the identification of the log point, related to the spec (in practice, this should be identical to the `id` value of the respective HTML element)
- * - position: short description of the position of the log
+ * - position: short description of the position of the log. The string may be empty (i.e., ""), in which case it will be ignored.
  * - otherData: the 'real' log information
  * 
  */
 declare interface Logger {
     log: string;
+    log_object: LogItem;
     debug(log_point: string, position: string, ...otherData: LogItem[]): void;
     warn(log_point: string, position: string, ...otherData: LogItem[]): void;
     error(log_point: string, position: string, ...otherData: LogItem[]): void;
     info(log_point: string, position: string, ...otherData: LogItem[]): void;
+    /**
+     * Entry point for a increase in stack level. This is issued at each function entry except the top level, and at some, more complex, cycles.
+     * Needed if the logger instance intends to create recursive logs or if the structure is complex.
+     * @param label - identification of the position in the code
+     * @param extra_info - possible extra information on the level increase 
+     * @param 
+     */
+    push(label: string, extra_info ?: string, ...otherData: LogItem[]): void;
+
+    /**
+     * Counterpart of the {@link push} method.
+     */
+    pop(): void;
 }
 
 declare class YamlLogger implements Logger {
     log: string;
+    log_object: LogItem;
     constructor(level?: LogLevels);
     debug(log_point: string, position: string, ...otherData: LogItem[]): void;
     warn(log_point: string, position: string, ...otherData: LogItem[]): void;
     error(log_point: string, position: string, ...otherData: LogItem[]): void;
     info(log_point: string, position: string, ...otherData: LogItem[]): void;
+    push(label: string, extra_info ?: string, ...otherData: LogItem[]): void;
+    pop(): void;
 }
