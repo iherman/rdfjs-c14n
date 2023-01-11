@@ -38,7 +38,7 @@ export type Log = Map<string,LogItem>;
  * 
  * For each call the arguments are:
  * - log_point: the identification of the log point, related to the spec (in practice, this should be identical to the `id` value of the respective HTML element)
- * - position: short description of the position of the log
+ * - position: short description of the position of the log. The string may be empty (i.e., ""), in which case it will be ignored.
  * - otherData: the 'real' log information
  * 
  */
@@ -86,12 +86,13 @@ export interface Logger {
     info(log_point: string, position: string, ...otherData: LogItem[]): void;
 
     /**
-     * Entry point for recursive call. This is issued at each function entry except the top level, and at some, more complex cycles.
-     * Needed if the logger instance intends to create recursive logs.
+     * Entry point for a increase in stack level. This is issued at each function entry except the top level, and at some, more complex, cycles.
+     * Needed if the logger instance intends to create recursive logs or if the structure is complex.
      * @param label - identification of the position in the code
-     * @param position
+     * @param extra_info - possible extra information on the level increase 
+     * @param 
      */
-    push(label: string, position ?: string, ...otherData: LogItem[]): void;
+    push(label: string, extra_info ?: string, ...otherData: LogItem[]): void;
 
     /**
      * Counterpart of the {@link push} method.
@@ -109,7 +110,7 @@ export class NopLogger implements Logger {
     warn(log_point: string, position: string, ...otherData: LogItem[]): void {};
     error(log_point: string, position: string, ...otherData: LogItem[]): void {};
     info(log_point: string, position: string, ...otherData: LogItem[]): void {};
-    push(label: string, position ?: string, ...otherData: LogItem[]): void {};
+    push(label: string, extra_info ?: string, ...otherData: LogItem[]): void {};
     pop(): void {};
 }
 
@@ -117,6 +118,9 @@ export class NopLogger implements Logger {
 /**
  * Simple logger, storing the individual log messages as an array of {@link LogItem} objects. The logger
  * follows the recommendations on severity levels as described in {@link Logger}.
+ * 
+ * The "current" log is an array of {@link LogItem} instances, filled by subsequent logger calls. In case of a call to `push` this instance is 
+ * pushed on an internal stack and a new array is created.
  * 
  * The final log can be retrieved either as the array of Objects via the `log_object`, or
  * as a YAML string via the `log` attributes, respectively.
@@ -129,7 +133,6 @@ export class YamlLogger implements Logger {
     private top_log: LogItem = {};
     private current_log: LogItem[];
     private log_stack: LogItem[][] = [];
-
 
     constructor(level: LogLevels = LogLevels.info) {
         this.level = level;
@@ -166,14 +169,15 @@ export class YamlLogger implements Logger {
         if (this.level >= LogLevels.error) this.emitMessage("error", log_id, position, extras)
     }
 
-    push(label: string, position ?: string, ...extras: LogItem[]): void {
+    push(label: string, extra_info ?: string, ...extras: LogItem[]): void {
         const new_level: LogItem[] = [];
         const new_level_ref: LogItem = {};
 
         new_level_ref[label] = new_level;
-        if (position && position !== "") {
+        
+        if (extra_info && extra_info !== "") {
             new_level.push({
-                "push on stack": position
+                "push info": extra_info
             })
         }
         if (extras.length !== 0) {
@@ -183,7 +187,6 @@ export class YamlLogger implements Logger {
         }
 
         this.current_log.push(new_level_ref);
-
         this.log_stack.push(this.current_log);
         this.current_log = new_level;
     }

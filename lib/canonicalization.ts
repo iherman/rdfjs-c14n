@@ -59,11 +59,12 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
 
         // Step 3
         {
-            /* @@@ */ state.logger.push("ca.3"); /* @@@ */
+            /* @@@ */ state.logger.push("ca.3");
+            /* @@@ */ state.logger.push("ca.3.1");
+
             // Compute a hash value for each bnode (depending on the quads it appear in)
             // In simple cases a hash value refers to one bnode only; in unlucky cases there
             // may be more. Hence the usage of the hash_to_bnodes map.
-            /* @@@ */ state.logger.push("ca.3.1"); /* @@@ */
             Object.keys(state.bnode_to_quads).forEach((n: BNodeId): void => {
                 // Step 3.1
                 const hfn: Hash = computeFirstDegreeHash(state, n)
@@ -74,7 +75,7 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
                     state.hash_to_bnodes[hfn].push(n);
                 }
             });
-            /* @@@ */ state.logger.pop(); /* @@@ */
+            /* @@@ */ state.logger.pop();
             
             /* @@@ */
             state.logger.info("ca.3.2", "Calculated first degree hashes (4.5.3. (3))", {
@@ -135,11 +136,11 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
                 "Hash to bnodes" : htbnToLogItem(state.hash_to_bnodes)
             });
             /* @@@ */
+
             const hashes: Hash[] = Object.keys(state.hash_to_bnodes).sort();
 
-            /* @@@ */
-            if (hashes.length > 0) state.logger.push("ca.5.1");
-            /* @@@ */
+            
+            /* @@@ */ if (hashes.length > 0) state.logger.push("ca.5.1");
             for (const hash of hashes) {
                 const identifier_list: BNodeId[] = state.hash_to_bnodes[hash];
                 // This cycle takes care of all problematic cases that share the same hash
@@ -149,7 +150,7 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
                 const hash_path_list: NDegreeHashResult[] = [];
 
                 // Step 5.2
-                /* @@@ */state.logger.push("ca.5.2");
+                /* @@@ */ state.logger.push("ca.5.2");
                 for (const n of identifier_list) {
                     if (state.canonical_issuer.isSet(n)) {
                         // Step 5.2.1
@@ -164,14 +165,8 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
                         hash_path_list.push(result);
                     }
                 }
-                /* @@@ */state.logger.pop();
+                /* @@@ */ state.logger.pop();
 
-                /* @@@ */ 
-                state.logger.debug("ca.5.2.extra", "Canonicalization function, after (4.5.3 (5.2)), hash past list.",{
-                    "computed for": hash,
-                    "hash path list": ndhrToLogItem(hash_path_list)
-                });
-                /* @@@ */ 
 
                 // Step 5.3
                 const ordered_hash_path_list = hash_path_list.sort((a: NDegreeHashResult,b: NDegreeHashResult): number => {
@@ -179,6 +174,12 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
                     else if (a.hash > b.hash) return 1;
                     else                      return 0;
                 });
+                /* @@@ */ 
+                state.logger.debug("ca.5.2.extra", "Canonicalization function, after (4.5.3 (5.2)), ordered hash past list.",{
+                    "computed for": hash,
+                    "hash path list": ndhrToLogItem(ordered_hash_path_list)
+                });
+                /* @@@ */ 
                 for (const result of ordered_hash_path_list) {
                     // Step 5.3.1
                     for (const [existing,temporary] of result.issuer) {
@@ -186,11 +187,8 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
                     }
                 }
             }
-            /* @@@ */
-            if (hashes.length > 0) state.logger.pop();
-            /* @@@ */
-            
-            /* @@@ */ state.logger.pop(); /* @@@ */
+            /* @@@ */ if (hashes.length > 0) state.logger.pop();            
+            /* @@@ */ state.logger.pop();
         }
 
         // Step 6
@@ -219,6 +217,7 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
             "issuer": state.canonical_issuer.toLogItem(),
         });
         /* @@@ */ 
+
         return retval.dataset;
     }
 

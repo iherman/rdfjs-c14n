@@ -99,7 +99,7 @@ const permutation = require('array-permutation');
     // Calculate a unique hash for all other bnodes that are immediately connected to 'identifier'
     // Note that this step will, in possible recursive calls, create additional steps for the "gossips"
     {
-        state.logger.push("hndq.3")
+        /* @@@ */ state.logger.push("hndq.3")
         for (const quad of state.bnode_to_quads[identifier]) {
             /* @@@ */ state.logger.push("hndq.3.1","", {quad: quadToNquad(quad)});
             // Step 3.1
@@ -136,7 +136,7 @@ const permutation = require('array-permutation');
 
     // Step 5
     {
-        state.logger.push("hndq.5");
+        /* @@@ */ state.logger.push("hndq.5");
 
         const hashes: Hash[] = Object.keys(Hn).sort();
         for (const hash of hashes) {
@@ -213,9 +213,7 @@ const permutation = require('array-permutation');
                 /* @@@ */
 
                 // Step 5.4.5
-                if (recursion_list.length !== 0) {
-                    state.logger.push("hndq.5.4.5.", "Starting recursion");
-                }
+                /* @@@ */ if (recursion_list.length !== 0) state.logger.push("hndq.5.4.5.");
                 for (const related of recursion_list) {
                     // Step 5.4.5.1
                     const result: NDegreeHashResult = computeNDegreeHash(state, related, issuer_copy);
@@ -241,9 +239,7 @@ const permutation = require('array-permutation');
                         continue perms;
                     }
                 }
-                if (recursion_list.length !== 0) {
-                    state.logger.pop();
-                }
+                /* @@@ */ if (recursion_list.length !== 0) state.logger.pop();
 
                 // Step 5.4.6
                 if (chosen_path.length === 0 || path < chosen_path) {
@@ -251,7 +247,7 @@ const permutation = require('array-permutation');
                     chosen_issuer = issuer_copy;
                 }
             }
-            state.logger.pop();
+            /* @@@ */ state.logger.pop();
 
             // Step 5.5.
             data_to_hash = `${data_to_hash}${chosen_path}`;
