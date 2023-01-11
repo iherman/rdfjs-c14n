@@ -16,13 +16,13 @@
 <li><a href="lib_logging.html">lib/logging</a></li></ul>
 <h1>Module lib/logging</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>Simple logging environment, used by the rest of the code. By default, no logging occurs; the user can set his/her own
-logging environment. This module also includes a logger to dump the results into a YAML file.</p>
+<div class="tsd-comment tsd-typography"><p>Logging environment, used by the rest of the code. By default, no logging occurs; the user can set his/her own
+logging environment. This module also includes a logger to create a recursive log in YAML.</p>
 
 <h3>Copyright</h3><p>Ivan Herman 2023</p>
 </div></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/132d985/lib/logging.ts#L9">lib/logging.ts:9</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/522fe39/lib/logging.ts#L9">lib/logging.ts:9</a></li></ul></aside>
 <section class="tsd-panel-group">
 <section class="tsd-panel tsd-typography"></section></section>
 <section class="tsd-panel-group tsd-index-group">
@@ -32,6 +32,7 @@ logging environment. This module also includes a logger to dump the results into
 <h3 class="tsd-index-heading">Functions</h3>
 <div class="tsd-index-list"><a href="../functions/lib_logging.bntqToLogItem.html" class="tsd-index-link tsd-kind-function tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-function)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-64-path"></rect><path d="M9.39 16V7.24H14.55V8.224H10.446V11.128H14.238V12.112H10.47V16H9.39Z" fill="var(--color-text)" id="icon-64-text"></path></svg><span>bntq<wbr/>To<wbr/>Log<wbr/>Item</span></a>
 <a href="../functions/lib_logging.ndhrToLogItem.html" class="tsd-index-link tsd-kind-function tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg><span>ndhr<wbr/>To<wbr/>Log<wbr/>Item</span></a>
+<a href="../functions/lib_logging.htbnToLogItem.html" class="tsd-index-link tsd-kind-function tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg><span>htbn<wbr/>To<wbr/>Log<wbr/>Item</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Enumerations</h3>
@@ -41,6 +42,10 @@ logging environment. This module also includes a logger to dump the results into
 <h3 class="tsd-index-heading">Interfaces</h3>
 <div class="tsd-index-list"><a href="../interfaces/lib_logging.LogItem.html" class="tsd-index-link tsd-kind-interface tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-interface)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-256-path"></rect><path d="M9.51 16V15.016H11.298V8.224H9.51V7.24H14.19V8.224H12.402V15.016H14.19V16H9.51Z" fill="var(--color-text)" id="icon-256-text"></path></svg><span>Log<wbr/>Item</span></a>
 <a href="../interfaces/lib_logging.Logger.html" class="tsd-index-link tsd-kind-interface tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg><span>Logger</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Type Aliases</h3>
+<div class="tsd-index-list"><a href="../types/lib_logging.Log.html" class="tsd-index-link tsd-kind-type-alias tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-4194304-path"></rect><path d="M11.31 16V8.224H8.91V7.24H14.79V8.224H12.39V16H11.31Z" fill="var(--color-text)" id="icon-4194304-text"></path></svg><span>Log</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Classes</h3>
@@ -79,8 +84,10 @@ logging environment. This module also includes a logger to dump the results into
 <ul>
 <li class="tsd-kind-function tsd-parent-kind-module"><a href="../functions/lib_logging.bntqToLogItem.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>bntq<wbr/>To<wbr/>Log<wbr/>Item</a></li>
 <li class="tsd-kind-function tsd-parent-kind-module"><a href="../functions/lib_logging.ndhrToLogItem.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>ndhr<wbr/>To<wbr/>Log<wbr/>Item</a></li>
+<li class="tsd-kind-function tsd-parent-kind-module"><a href="../functions/lib_logging.htbnToLogItem.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>htbn<wbr/>To<wbr/>Log<wbr/>Item</a></li>
 <li class="tsd-kind-enum tsd-parent-kind-module"><a href="../enums/lib_logging.LogLevels.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-8-path"></use><use href="#icon-8-text"></use></svg>Log<wbr/>Levels</a></li>
 <li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/lib_logging.LogItem.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>Log<wbr/>Item</a></li>
+<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="../types/lib_logging.Log.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Log</a></li>
 <li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/lib_logging.Logger.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>Logger</a></li>
 <li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/lib_logging.NopLogger.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-128-path"></use><use href="#icon-128-text"></use></svg>Nop<wbr/>Logger</a></li>
 <li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/lib_logging.YamlLogger.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-128-path"></use><use href="#icon-128-text"></use></svg>Yaml<wbr/>Logger</a></li></ul></nav></div></div>

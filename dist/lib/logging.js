@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ndhrToLogItem = exports.bntqToLogItem = exports.YamlLogger = exports.NopLogger = exports.LogLevels = void 0;
+exports.htbnToLogItem = exports.ndhrToLogItem = exports.bntqToLogItem = exports.YamlLogger = exports.NopLogger = exports.LogLevels = void 0;
 /**
- * Simple logging environment, used by the rest of the code. By default, no logging occurs; the user can set his/her own
- * logging environment. This module also includes a logger to dump the results into a YAML file.
+ * Logging environment, used by the rest of the code. By default, no logging occurs; the user can set his/her own
+ * logging environment. This module also includes a logger to create a recursive log in YAML.
  *
  * @copyright Ivan Herman 2023
  *
@@ -24,17 +24,22 @@ var LogLevels;
 })(LogLevels = exports.LogLevels || (exports.LogLevels = {}));
 ;
 /**
- * A default, no-operation logger instance, used by default. All messages are lost
+ * A default, no-operation logger instance, used by default. All methods are empty, ie, all messages are lost...
  */
 class NopLogger {
     log = '';
-    debug(message, ...otherData) { }
+    log_object = {};
+    debug(log_point, position, ...otherData) { }
     ;
-    warn(message, ...otherData) { }
+    warn(log_point, position, ...otherData) { }
     ;
-    error(message, ...otherData) { }
+    error(log_point, position, ...otherData) { }
     ;
-    info(message, ...otherData) { }
+    info(log_point, position, ...otherData) { }
+    ;
+    push(label, extra_info, ...otherData) { }
+    ;
+    pop() { }
     ;
 }
 exports.NopLogger = NopLogger;
@@ -42,48 +47,79 @@ exports.NopLogger = NopLogger;
  * Simple logger, storing the individual log messages as an array of {@link LogItem} objects. The logger
  * follows the recommendations on severity levels as described in {@link Logger}.
  *
- * The final log can be retrieved either as the array of Objects via the `logObject`, or
+ * The "current" log is an array of {@link LogItem} instances, filled by subsequent logger calls. In case of a call to `push` this instance is
+ * pushed on an internal stack and a new array is created.
+ *
+ * The final log can be retrieved either as the array of Objects via the `log_object`, or
  * as a YAML string via the `log` attributes, respectively.
  *
  * By default, the logger level is set to `LogLevels.info`.
  */
 class YamlLogger {
     level;
-    theLog;
+    top_log = {};
+    current_log;
+    log_stack = [];
     constructor(level = LogLevels.info) {
         this.level = level;
-        this.theLog = [];
+        const ca_level = [];
+        this.top_log["ca"] = ca_level;
+        this.current_log = ca_level;
     }
-    emitMessage(mtype, msg, extras) {
-        const item = {
-            "log point": `[${mtype}] ${msg}`
-        };
-        if (extras.length > 0) {
+    emitMessage(mtype, log_id, position, extras) {
+        const item = {};
+        if (position !== '') {
+            item["log point"] = mtype === "info" ? `${position}` : `[${mtype}] ${position}`;
+        }
+        if (extras.length !== 0) {
             item["with"] = extras;
         }
-        this.theLog.push(item);
+        const full_item = {};
+        full_item[log_id] = item;
+        this.current_log.push(full_item);
     }
-    debug(msg, ...extras) {
+    debug(log_id, position, ...extras) {
         if (this.level >= LogLevels.debug)
-            this.emitMessage("debug", msg, extras);
+            this.emitMessage("debug", log_id, position, extras);
     }
-    info(msg, ...extras) {
+    info(log_id, position, ...extras) {
         if (this.level >= LogLevels.info)
-            this.emitMessage("info", msg, extras);
+            this.emitMessage("info", log_id, position, extras);
     }
-    warn(msg, ...extras) {
+    warn(log_id, position, ...extras) {
         if (this.level >= LogLevels.warn)
-            this.emitMessage("warn", msg, extras);
+            this.emitMessage("warn", log_id, position, extras);
     }
-    error(msg, ...extras) {
+    error(log_id, position, ...extras) {
         if (this.level >= LogLevels.error)
-            this.emitMessage("error", msg, extras);
+            this.emitMessage("error", log_id, position, extras);
     }
-    get logObject() {
-        return this.theLog;
+    push(label, extra_info, ...extras) {
+        const new_level = [];
+        const new_level_ref = {};
+        new_level_ref[label] = new_level;
+        if (extra_info && extra_info !== "") {
+            new_level.push({
+                "push info": extra_info
+            });
+        }
+        if (extras.length !== 0) {
+            new_level.push({
+                "with": extras
+            });
+        }
+        this.current_log.push(new_level_ref);
+        this.log_stack.push(this.current_log);
+        this.current_log = new_level;
+    }
+    pop() {
+        this.current_log = this.log_stack.pop();
+    }
+    get log_object() {
+        return this.top_log;
     }
     get log() {
-        return yaml.stringify(this.theLog);
+        return yaml.stringify(this.log_object, { aliasDuplicateObjects: false });
     }
 }
 exports.YamlLogger = YamlLogger;
@@ -103,6 +139,9 @@ function bntqToLogItem(bntq) {
 exports.bntqToLogItem = bntqToLogItem;
 /**
  * Return a log item version of an `NDegreeHashResult` instance, used to build up a full log message.
+ *
+ * @param ndhrs
+ * @returns
  */
 function ndhrToLogItem(ndhrs) {
     return ndhrs.map((ndhr) => {
@@ -113,3 +152,18 @@ function ndhrToLogItem(ndhrs) {
     });
 }
 exports.ndhrToLogItem = ndhrToLogItem;
+/**
+ * Return a log item version of an `HashToBNodes` instance, used to build up a full log message.
+ *
+ * @param htbn
+ * @returns
+ */
+function htbnToLogItem(htbn) {
+    return Object.keys(htbn).map((index) => {
+        return {
+            "hash": index,
+            "bnodes": htbn[index]
+        };
+    });
+}
+exports.htbnToLogItem = htbnToLogItem;

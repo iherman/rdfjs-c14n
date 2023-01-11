@@ -49,12 +49,14 @@ function computeCanonicalDataset(state, input) {
         }
     }
     /* @@@ */
-    state.logger.info("Entering the canonicalization function (4.5.3 (2)).", {
+    state.logger.info("ca.2", "Entering the canonicalization function (4.5.3 (2)).", {
         "Bnode to quads": (0, logging_1.bntqToLogItem)(state.bnode_to_quads)
     });
     /* @@@ */
     // Step 3
     {
+        /* @@@ */ state.logger.push("ca.3");
+        /* @@@ */ state.logger.push("ca.3.1");
         // Compute a hash value for each bnode (depending on the quads it appear in)
         // In simple cases a hash value refers to one bnode only; in unlucky cases there
         // may be more. Hence the usage of the hash_to_bnodes map.
@@ -69,6 +71,13 @@ function computeCanonicalDataset(state, input) {
                 state.hash_to_bnodes[hfn].push(n);
             }
         });
+        /* @@@ */ state.logger.pop();
+        /* @@@ */
+        state.logger.info("ca.3.2", "Calculated first degree hashes (4.5.3. (3))", {
+            "Hash to bnodes": (0, logging_1.htbnToLogItem)(state.hash_to_bnodes)
+        });
+        state.logger.pop();
+        /* @@@ */
     }
     // Step 4
     {
@@ -79,6 +88,7 @@ function computeCanonicalDataset(state, input) {
         // If a bnode is "handled", ie, it does have a canonical ID, it is removed from the
         // state structure on hash->bnodes. 
         const hashes = Object.keys(state.hash_to_bnodes).sort();
+        const logItems = [];
         for (const hash of hashes) {
             const identifier_list = state.hash_to_bnodes[hash];
             // Step 4.1
@@ -92,20 +102,33 @@ function computeCanonicalDataset(state, input) {
             // graph is created.
             const canon_id = state.canonical_issuer.issueID(identifier_list[0]);
             /* @@@ */
-            state.logger.info("Canonicalization function (4.5.3 (4)).", {
-                "Identifier in first pass": `${identifier_list[0]}=>${canon_id}`
+            logItems.push({
+                "identifier": identifier_list[0],
+                "hash": hash,
+                "canonical id": canon_id
             });
             /* @@@ */
             // Step 4.3
             // Remove the corresponding hash
             delete state.hash_to_bnodes[hash];
         }
+        /* @@@ */
+        state.logger.info("ca.4", "Canonicalization function (4.5.3 (4)).", ...logItems);
+        /* @@@ */
     }
     // Step 5
     // This step takes care of the bnodes that do not have been canonicalized in the previous step,
     // because their simple, first degree hashes are not unique.
     {
+        /* @@@ */
+        state.logger.push("ca.5", "Calculate hashes for identifiers with shared hashes (4.5.3. (5)).");
+        state.logger.debug("ca.5.extra", "", {
+            "Hash to bnodes": (0, logging_1.htbnToLogItem)(state.hash_to_bnodes)
+        });
+        /* @@@ */
         const hashes = Object.keys(state.hash_to_bnodes).sort();
+        /* @@@ */ if (hashes.length > 0)
+            state.logger.push("ca.5.1");
         for (const hash of hashes) {
             const identifier_list = state.hash_to_bnodes[hash];
             // This cycle takes care of all problematic cases that share the same hash
@@ -114,6 +137,7 @@ function computeCanonicalDataset(state, input) {
             // bnode related to this particular hash value
             const hash_path_list = [];
             // Step 5.2
+            /* @@@ */ state.logger.push("ca.5.2");
             for (const n of identifier_list) {
                 if (state.canonical_issuer.isSet(n)) {
                     // Step 5.2.1
@@ -129,12 +153,7 @@ function computeCanonicalDataset(state, input) {
                     hash_path_list.push(result);
                 }
             }
-            /* @@@ */
-            state.logger.info("Canonicalization function, after (4.5.3 (5.2))", {
-                "computed for": hash,
-                "hash path list": (0, logging_1.ndhrToLogItem)(hash_path_list)
-            });
-            /* @@@ */
+            /* @@@ */ state.logger.pop();
             // Step 5.3
             const ordered_hash_path_list = hash_path_list.sort((a, b) => {
                 if (a.hash < b.hash)
@@ -144,6 +163,12 @@ function computeCanonicalDataset(state, input) {
                 else
                     return 0;
             });
+            /* @@@ */
+            state.logger.debug("ca.5.2.extra", "Canonicalization function, after (4.5.3 (5.2)), ordered hash past list.", {
+                "computed for": hash,
+                "hash path list": (0, logging_1.ndhrToLogItem)(ordered_hash_path_list)
+            });
+            /* @@@ */
             for (const result of ordered_hash_path_list) {
                 // Step 5.3.1
                 for (const [existing, temporary] of result.issuer) {
@@ -151,6 +176,9 @@ function computeCanonicalDataset(state, input) {
                 }
             }
         }
+        /* @@@ */ if (hashes.length > 0)
+            state.logger.pop();
+        /* @@@ */ state.logger.pop();
     }
     // Step 6
     {
@@ -174,7 +202,7 @@ function computeCanonicalDataset(state, input) {
     }
     // Step 7
     /* @@@ */
-    state.logger.info("Leaving the canonicalization function (4.5.3)", {
+    state.logger.info("ca.6", "Leaving the canonicalization function (4.5.3)", {
         "issuer": state.canonical_issuer.toLogItem(),
     });
     /* @@@ */

@@ -17,7 +17,7 @@
 <li><a href="lib_logging.NopLogger.html">NopLogger</a></li></ul>
 <h1>Class NopLogger</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>A default, no-operation logger instance, used by default. All messages are lost</p>
+<div class="tsd-comment tsd-typography"><p>A default, no-operation logger instance, used by default. All methods are empty, ie, all messages are lost...</p>
 </div></section>
 <section class="tsd-panel tsd-hierarchy">
 <h4>Hierarchy</h4>
@@ -28,7 +28,7 @@
 <ul class="tsd-hierarchy">
 <li><a href="../interfaces/lib_logging.Logger.html" class="tsd-signature-type" data-tsd-kind="Interface">Logger</a></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/132d985/lib/logging.ts#L49">lib/logging.ts:49</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/522fe39/lib/logging.ts#L106">lib/logging.ts:106</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -41,6 +41,7 @@
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Properties</h3>
 <div class="tsd-index-list"><a href="lib_logging.NopLogger.html#log" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="#FF984D" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12" id="icon-1024-path"></rect><path d="M9.354 16V7.24H12.174C12.99 7.24 13.638 7.476 14.118 7.948C14.606 8.412 14.85 9.036 14.85 9.82C14.85 10.604 14.606 11.232 14.118 11.704C13.638 12.168 12.99 12.4 12.174 12.4H10.434V16H9.354ZM10.434 11.428H12.174C12.646 11.428 13.022 11.284 13.302 10.996C13.59 10.7 13.734 10.308 13.734 9.82C13.734 9.324 13.59 8.932 13.302 8.644C13.022 8.356 12.646 8.212 12.174 8.212H10.434V11.428Z" fill="var(--color-text)" id="icon-1024-text"></path></svg><span>log</span></a>
+<a href="lib_logging.NopLogger.html#log_object" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>log_<wbr/>object</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Methods</h3>
@@ -48,6 +49,8 @@
 <a href="lib_logging.NopLogger.html#warn" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>warn</span></a>
 <a href="lib_logging.NopLogger.html#error" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>error</span></a>
 <a href="lib_logging.NopLogger.html#info" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>info</span></a>
+<a href="lib_logging.NopLogger.html#push" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>push</span></a>
+<a href="lib_logging.NopLogger.html#pop" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>pop</span></a>
 </div></section></div></details></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Constructors</h2>
@@ -61,76 +64,138 @@
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="log" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>log</span><a href="#log" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
-<div class="tsd-signature">log<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;&#39;</span></div><aside class="tsd-sources">
+<div class="tsd-signature">log<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;&#39;</span></div>
+<div class="tsd-comment tsd-typography"><p>The current log, in some string representation</p>
+</div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/lib_logging.Logger.html">Logger</a>.<a href="../interfaces/lib_logging.Logger.html#log">log</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/132d985/lib/logging.ts#L50">lib/logging.ts:50</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/522fe39/lib/logging.ts#L107">lib/logging.ts:107</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="log_object" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>log_<wbr/>object</span><a href="#log_object" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">log_<wbr/>object<span class="tsd-signature-symbol">:</span> <a href="../interfaces/lib_logging.LogItem.html" class="tsd-signature-type" data-tsd-kind="Interface">LogItem</a><span class="tsd-signature-symbol"> = {}</span></div>
+<div class="tsd-comment tsd-typography"><p>The current log</p>
+</div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/lib_logging.Logger.html">Logger</a>.<a href="../interfaces/lib_logging.Logger.html#log_object">log_object</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/522fe39/lib/logging.ts#L108">lib/logging.ts:108</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="debug" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>debug</span><a href="#debug" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature tsd-anchor-link" id="debug.debug-1">debug<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, <span class="tsd-signature-symbol">...</span>otherData<span class="tsd-signature-symbol">: </span><a href="../interfaces/lib_logging.LogItem.html" class="tsd-signature-type" data-tsd-kind="Interface">LogItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#debug.debug-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="debug.debug-1">debug<span class="tsd-signature-symbol">(</span>log_point<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, position<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, <span class="tsd-signature-symbol">...</span>otherData<span class="tsd-signature-symbol">: </span><a href="../interfaces/lib_logging.LogItem.html" class="tsd-signature-type" data-tsd-kind="Interface">LogItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#debug.debug-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Debug level log.</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>message: <span class="tsd-signature-type">string</span></h5></li>
+<h5>log_point: <span class="tsd-signature-type">string</span></h5></li>
+<li>
+<h5>position: <span class="tsd-signature-type">string</span></h5></li>
 <li>
 <h5><code class="tsd-tag ts-flagRest">Rest</code> <span class="tsd-signature-symbol">...</span>otherData: <a href="../interfaces/lib_logging.LogItem.html" class="tsd-signature-type" data-tsd-kind="Interface">LogItem</a><span class="tsd-signature-symbol">[]</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/lib_logging.Logger.html">Logger</a>.<a href="../interfaces/lib_logging.Logger.html#debug">debug</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/132d985/lib/logging.ts#L51">lib/logging.ts:51</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/522fe39/lib/logging.ts#L109">lib/logging.ts:109</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="warn" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>warn</span><a href="#warn" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature tsd-anchor-link" id="warn.warn-1">warn<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, <span class="tsd-signature-symbol">...</span>otherData<span class="tsd-signature-symbol">: </span><a href="../interfaces/lib_logging.LogItem.html" class="tsd-signature-type" data-tsd-kind="Interface">LogItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#warn.warn-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="warn.warn-1">warn<span class="tsd-signature-symbol">(</span>log_point<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, position<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, <span class="tsd-signature-symbol">...</span>otherData<span class="tsd-signature-symbol">: </span><a href="../interfaces/lib_logging.LogItem.html" class="tsd-signature-type" data-tsd-kind="Interface">LogItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#warn.warn-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Warning level log.</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>message: <span class="tsd-signature-type">string</span></h5></li>
+<h5>log_point: <span class="tsd-signature-type">string</span></h5></li>
+<li>
+<h5>position: <span class="tsd-signature-type">string</span></h5></li>
 <li>
 <h5><code class="tsd-tag ts-flagRest">Rest</code> <span class="tsd-signature-symbol">...</span>otherData: <a href="../interfaces/lib_logging.LogItem.html" class="tsd-signature-type" data-tsd-kind="Interface">LogItem</a><span class="tsd-signature-symbol">[]</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/lib_logging.Logger.html">Logger</a>.<a href="../interfaces/lib_logging.Logger.html#warn">warn</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/132d985/lib/logging.ts#L52">lib/logging.ts:52</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/522fe39/lib/logging.ts#L110">lib/logging.ts:110</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="error" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>error</span><a href="#error" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature tsd-anchor-link" id="error.error-1">error<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, <span class="tsd-signature-symbol">...</span>otherData<span class="tsd-signature-symbol">: </span><a href="../interfaces/lib_logging.LogItem.html" class="tsd-signature-type" data-tsd-kind="Interface">LogItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#error.error-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="error.error-1">error<span class="tsd-signature-symbol">(</span>log_point<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, position<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, <span class="tsd-signature-symbol">...</span>otherData<span class="tsd-signature-symbol">: </span><a href="../interfaces/lib_logging.LogItem.html" class="tsd-signature-type" data-tsd-kind="Interface">LogItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#error.error-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Error level log.</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>message: <span class="tsd-signature-type">string</span></h5></li>
+<h5>log_point: <span class="tsd-signature-type">string</span></h5></li>
+<li>
+<h5>position: <span class="tsd-signature-type">string</span></h5></li>
 <li>
 <h5><code class="tsd-tag ts-flagRest">Rest</code> <span class="tsd-signature-symbol">...</span>otherData: <a href="../interfaces/lib_logging.LogItem.html" class="tsd-signature-type" data-tsd-kind="Interface">LogItem</a><span class="tsd-signature-symbol">[]</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/lib_logging.Logger.html">Logger</a>.<a href="../interfaces/lib_logging.Logger.html#error">error</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/132d985/lib/logging.ts#L53">lib/logging.ts:53</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/522fe39/lib/logging.ts#L111">lib/logging.ts:111</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="info" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>info</span><a href="#info" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature tsd-anchor-link" id="info.info-1">info<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, <span class="tsd-signature-symbol">...</span>otherData<span class="tsd-signature-symbol">: </span><a href="../interfaces/lib_logging.LogItem.html" class="tsd-signature-type" data-tsd-kind="Interface">LogItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#info.info-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="info.info-1">info<span class="tsd-signature-symbol">(</span>log_point<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, position<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, <span class="tsd-signature-symbol">...</span>otherData<span class="tsd-signature-symbol">: </span><a href="../interfaces/lib_logging.LogItem.html" class="tsd-signature-type" data-tsd-kind="Interface">LogItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#info.info-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Information level log.</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>message: <span class="tsd-signature-type">string</span></h5></li>
+<h5>log_point: <span class="tsd-signature-type">string</span></h5></li>
+<li>
+<h5>position: <span class="tsd-signature-type">string</span></h5></li>
 <li>
 <h5><code class="tsd-tag ts-flagRest">Rest</code> <span class="tsd-signature-symbol">...</span>otherData: <a href="../interfaces/lib_logging.LogItem.html" class="tsd-signature-type" data-tsd-kind="Interface">LogItem</a><span class="tsd-signature-symbol">[]</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/lib_logging.Logger.html">Logger</a>.<a href="../interfaces/lib_logging.Logger.html#info">info</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/132d985/lib/logging.ts#L54">lib/logging.ts:54</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/522fe39/lib/logging.ts#L112">lib/logging.ts:112</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="push" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>push</span><a href="#push" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="push.push-1">push<span class="tsd-signature-symbol">(</span>label<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, extra_info<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, <span class="tsd-signature-symbol">...</span>otherData<span class="tsd-signature-symbol">: </span><a href="../interfaces/lib_logging.LogItem.html" class="tsd-signature-type" data-tsd-kind="Interface">LogItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#push.push-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Entry point for a increase in stack level. This is issued at each function entry except the top level, and at some, more complex, cycles.
+Needed if the logger instance intends to create recursive logs or if the structure is complex.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>label: <span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>identification of the position in the code</p>
+</div></li>
+<li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> extra_info: <span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>possible extra information on the level increase</p>
+</div></li>
+<li>
+<h5><code class="tsd-tag ts-flagRest">Rest</code> <span class="tsd-signature-symbol">...</span>otherData: <a href="../interfaces/lib_logging.LogItem.html" class="tsd-signature-type" data-tsd-kind="Interface">LogItem</a><span class="tsd-signature-symbol">[]</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/lib_logging.Logger.html">Logger</a>.<a href="../interfaces/lib_logging.Logger.html#push">push</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/522fe39/lib/logging.ts#L113">lib/logging.ts:113</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="pop" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>pop</span><a href="#pop" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="pop.pop-1">pop<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#pop.pop-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Counterpart of the <a href="lib_logging.NopLogger.html#push">push</a> method.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/lib_logging.Logger.html">Logger</a>.<a href="../interfaces/lib_logging.Logger.html#pop">pop</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/522fe39/lib/logging.ts#L114">lib/logging.ts:114</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
@@ -165,8 +230,11 @@
 <ul>
 <li class="tsd-kind-constructor tsd-parent-kind-class"><a href="lib_logging.NopLogger.html#constructor" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-512-path"></use><use href="#icon-512-text"></use></svg>constructor</a></li>
 <li class="tsd-kind-property tsd-parent-kind-class"><a href="lib_logging.NopLogger.html#log" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>log</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="lib_logging.NopLogger.html#log_object" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>log_<wbr/>object</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="lib_logging.NopLogger.html#debug" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>debug</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="lib_logging.NopLogger.html#warn" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>warn</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="lib_logging.NopLogger.html#error" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>error</a></li>
-<li class="tsd-kind-method tsd-parent-kind-class"><a href="lib_logging.NopLogger.html#info" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>info</a></li></ul></li></ul></nav></div></div>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="lib_logging.NopLogger.html#info" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>info</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="lib_logging.NopLogger.html#push" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>push</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="lib_logging.NopLogger.html#pop" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>pop</a></li></ul></li></ul></nav></div></div>
 <div class="overlay"></div><script src="../assets/main.js"></script></body></html>

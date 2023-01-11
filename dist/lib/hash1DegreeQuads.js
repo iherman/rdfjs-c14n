@@ -22,7 +22,8 @@ const common_1 = require("./common");
  */
 function computeFirstDegreeHash(state, identifier) {
     /* @@@ */
-    state.logger.info("Entering Hash First Degree Quads function (4.7.3)", { identifier });
+    state.logger.push("h1dg");
+    state.logger.info("h1dg.1", "Entering Hash First Degree Quads function (4.7.3)", { identifier });
     /* @@@ */
     // Step 1
     const nquads = [];
@@ -49,11 +50,12 @@ function computeFirstDegreeHash(state, identifier) {
     // Step 5
     const the_hash = (0, common_1.hashNquads)(state, nquads);
     /* @@@ */
-    state.logger.info("Leaving Hash First Degree Quads function (4.7.3).", {
+    state.logger.info("h1dg.5", "Leaving Hash First Degree Quads function (4.7.3).", {
         identifier,
         "quads": nquads,
         "hash": the_hash
     });
+    state.logger.pop();
     /* @@@ */
     return the_hash;
 }

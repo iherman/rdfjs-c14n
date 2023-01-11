@@ -83,12 +83,11 @@ class IDIssuer {
      * Presentation for logging.
      */
     toLogItem() {
-        const values = [...this.issued_identifiers_map].map(([key, value]) => `${key}=>${value}`);
         const retval = {
             "issuer ID": `${this.id}`,
             "prefix": this.identifier_prefix,
             "counter": `${this.identifier_counter}`,
-            "mappings": values
+            "mappings": this.issued_identifiers_map
         };
         return retval;
     }
