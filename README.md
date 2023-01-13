@@ -28,7 +28,7 @@ The separate [testing folder](https://github.com/iherman/rdfjs-c14n/tree/main/te
 The usual `npm` installation can be used:
 
 ```
-npm rdf-c14n
+npm rdfjs-c14n
 ```
 
 The package has been written in TypeScript but is distributed in JavaScript; the type definition (i.e., `index.d.ts`) is included in the distribution.
@@ -84,7 +84,7 @@ The canonicalization algorithm has built-in logging points that can be followed 
 A built-in logger can be switched on which displays logging information in YAML. To use this YAML logger, do the following:
 
 ```js
-import { YamlLogger, LogLevels } from 'rdf-c14n';
+import { YamlLogger, LogLevels } from 'rdfjs-c14n';
 
 main() {
     …
