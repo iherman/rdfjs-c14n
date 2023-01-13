@@ -1,5 +1,5 @@
 {
-  "name": "rdf-c14n",
+  "name": "rdfjs-c14n",
   "version": "1.0.2",
   "description": "URDNA2015 RDF Canonicalization Algorithm Implementation in TypeScript",
   "homepage": "https://github.com/iherman/rdfjs-c14n",
