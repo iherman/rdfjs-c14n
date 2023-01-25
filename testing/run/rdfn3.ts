@@ -52,21 +52,11 @@ export function dataset_to_nquads(quads: Iterable<rdf.Quad>): string[] {
  * @param fname - file name
  * @returns 
  */
-export async function get_quads(fname: string): Promise<Set<rdf.Quad>> {
-    // The function is called by the parser for each quad; it is used to store the data in the final set of quads.
-    const add_quad = (error: Error, quad: rdf.Quad, prefixes: any): void => {
-        if (error) {
-            throw(error);
-        } else if( quad !== null) {
-            graph.add(quad);
-        } 
-    };
-    
-    const graph: Set<rdf.Quad> = new Set<rdf.Quad>;
+export async function get_quads(fname: string): Promise<Set<rdf.Quad>> {    
     const trig: string = await fs.readFile(fname, 'utf-8');
     const parser = new n3.Parser({blankNodePrefix: ''});
-    parser.parse(trig, add_quad);
-    return graph;
+    const quads: rdf.Quad[] = parser.parse(trig);
+    return new Set<rdf.Quad>(quads);
 }
 
 
