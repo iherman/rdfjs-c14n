@@ -1,6 +1,7 @@
 {
   "name": "rdfjs-c14n",
   "version": "1.0.3",
+  "date": "2013-01-10",
   "description": "URDNA2015 RDF Canonicalization Algorithm Implementation in TypeScript",
   "homepage": "https://github.com/iherman/rdfjs-c14n",
   "repository": {
