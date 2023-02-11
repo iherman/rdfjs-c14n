@@ -77,7 +77,9 @@ function quadToNquad(quad) {
 }
 exports.quadToNquad = quadToNquad;
 /**
- * Return a nquad serialization of a dataset. A utility that external user can use.
+ * Return a nquad serialization of a dataset. This is a utility that external user can use, the library
+ * doesn't rely on it.
+ *
  * @param quads
  * @param sort - whether the quads must be sorted before hash. Defaults to `true`.
  * @returns - array of nquads
@@ -107,11 +109,10 @@ function hashDataset(state, quads, sort = true) {
 exports.hashDataset = hashDataset;
 /**
  * A shell to provide a unified way of handling the various ways a graph can be represented: a full blown
- * [RDF Dataset core instance](https://rdf.js.org/dataset-spec/#datasetcore-interface), or an Array of Quads, or a Set of Quads.
+ * [RDF Dataset core instance](https://rdf.js.org/dataset-spec/#datasetcore-interface), an Array of Quads, or a Set of Quads.
  *
  * @remarks
- * The reason this is necessary is (1) the Array object in JS does not have a `add` property and (2) care should be taken
- * about creating new RDF Datasets, see the {@link new} method.
+ * The reason this is necessary is (1) the Array object in JS does not have a `add` property and (2) care should be taken about creating new RDF Datasets, see the {@link new} method.
  */
 class DatasetShell {
     the_dataset;

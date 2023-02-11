@@ -49,7 +49,7 @@ function computeCanonicalDataset(state, input) {
         }
     }
     /* @@@ */
-    state.logger.info("ca.2", "Entering the canonicalization function (4.5.3 (2)).", {
+    state.logger.info("ca.2", "Entering the canonicalization function (4.4.3 (2)).", {
         "Bnode to quads": (0, logging_1.bntqToLogItem)(state.bnode_to_quads)
     });
     /* @@@ */
@@ -73,7 +73,7 @@ function computeCanonicalDataset(state, input) {
         });
         /* @@@ */ state.logger.pop();
         /* @@@ */
-        state.logger.info("ca.3.2", "Calculated first degree hashes (4.5.3. (3))", {
+        state.logger.info("ca.3.2", "Calculated first degree hashes (4.4.3. (3))", {
             "Hash to bnodes": (0, logging_1.htbnToLogItem)(state.hash_to_bnodes)
         });
         state.logger.pop();
@@ -113,7 +113,7 @@ function computeCanonicalDataset(state, input) {
             delete state.hash_to_bnodes[hash];
         }
         /* @@@ */
-        state.logger.info("ca.4", "Canonicalization function (4.5.3 (4)).", ...logItems);
+        state.logger.info("ca.4", "Canonicalization function (4.4.3 (4)).", ...logItems);
         /* @@@ */
     }
     // Step 5
@@ -121,7 +121,7 @@ function computeCanonicalDataset(state, input) {
     // because their simple, first degree hashes are not unique.
     {
         /* @@@ */
-        state.logger.push("ca.5", "Calculate hashes for identifiers with shared hashes (4.5.3. (5)).");
+        state.logger.push("ca.5", "Calculate hashes for identifiers with shared hashes (4.4.3. (5)).");
         state.logger.debug("ca.5.extra", "", {
             "Hash to bnodes": (0, logging_1.htbnToLogItem)(state.hash_to_bnodes)
         });
@@ -164,7 +164,7 @@ function computeCanonicalDataset(state, input) {
                     return 0;
             });
             /* @@@ */
-            state.logger.debug("ca.5.2.extra", "Canonicalization function, after (4.5.3 (5.2)), ordered hash past list.", {
+            state.logger.debug("ca.5.2.extra", "Canonicalization function, after (4.4.3 (5.2)), ordered hash past list.", {
                 "computed for": hash,
                 "hash path list": (0, logging_1.ndhrToLogItem)(ordered_hash_path_list)
             });
@@ -200,12 +200,12 @@ function computeCanonicalDataset(state, input) {
             retval.add(state.dataFactory.quad(subject_copy, quad.predicate, object_copy, graph_copy));
         }
     }
-    // Step 7
     /* @@@ */
-    state.logger.info("ca.6", "Leaving the canonicalization function (4.5.3)", {
+    state.logger.info("ca.6", "Leaving the canonicalization function (4.4.3)", {
         "issuer": state.canonical_issuer.toLogItem(),
     });
     /* @@@ */
+    // Step 7
     return retval.dataset;
 }
 exports.computeCanonicalDataset = computeCanonicalDataset;
