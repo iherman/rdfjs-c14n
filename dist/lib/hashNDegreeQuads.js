@@ -28,7 +28,7 @@ const permutation = require('array-permutation');
 function computeHashRelatedBlankNode(state, related, quad, issuer, position) {
     /* @@@ */
     state.logger.push("hrbn");
-    state.logger.info("hrbn.1", "Entering Hash Related Blank Node function (4.8.3)", {
+    state.logger.info("hrbn.1", "Entering Hash Related Blank Node function (4.7.3)", {
         "related": related,
         "quad": (0, common_1.quadToNquad)(quad),
     });
@@ -57,7 +57,7 @@ function computeHashRelatedBlankNode(state, related, quad, issuer, position) {
     // Step 5
     const hash = (0, common_1.computeHash)(state, input);
     /* @@@ */
-    state.logger.debug("hrbn.5", "Leaving Hash Related Blank Node function (4.8.3 (4))", {
+    state.logger.debug("hrbn.5", "Leaving Hash Related Blank Node function (4.7.3 (4))", {
         "input to hash": input,
         hash
     });
@@ -77,7 +77,7 @@ function computeHashRelatedBlankNode(state, related, quad, issuer, position) {
 function computeNDegreeHash(state, identifier, issuer) {
     /* @@@ */
     state.logger.push("hndq");
-    state.logger.info("hndq.1", "Entering Hash N-Degree Quads function (4.9.3).", {
+    state.logger.info("hndq.1", "Entering Hash N-Degree Quads function (4.8.3).", {
         identifier,
         "issuer": state.canonical_issuer.toLogItem(),
     });
@@ -113,7 +113,7 @@ function computeNDegreeHash(state, identifier, issuer) {
             /* @@@ */ state.logger.pop();
         }
         /* @@@ */
-        state.logger.debug("hndq.3.extra", "Hash N-Degree Quads function (4.9.3 (3))", {
+        state.logger.debug("hndq.3.extra", "Hash N-Degree Quads function (4.8.3 (3))", {
             "Hash to bnodes": Hn
         });
         state.logger.pop();
@@ -127,7 +127,7 @@ function computeNDegreeHash(state, identifier, issuer) {
         const hashes = Object.keys(Hn).sort();
         for (const hash of hashes) {
             /* @@@ */
-            state.logger.info("hndq.5.1", "Hash N-Degree Quads function (4.9.3 (5)), entering loop", {
+            state.logger.info("hndq.5.1", "Hash N-Degree Quads function (4.8.3 (5)), entering loop", {
                 hash,
                 "data to hash": data_to_hash
             });
@@ -147,7 +147,7 @@ function computeNDegreeHash(state, identifier, issuer) {
             const perms = Hn[hash].length === 1 ? [Hn[hash]] : Array.from(permutation(Hn[hash]));
             perms: for (const p of perms) {
                 /* @@@ */
-                state.logger.info("hndq.5.4.1", "Hash N-Degree Quads function (4.9.3 (5.4)), entering loop", {
+                state.logger.info("hndq.5.4.1", "Hash N-Degree Quads function (4.8.3 (5.4)), entering loop", {
                     p,
                     "chosen path": chosen_path
                 });
@@ -162,7 +162,7 @@ function computeNDegreeHash(state, identifier, issuer) {
                 state.logger.push("hndq.5.4.4");
                 for (const related of p) {
                     /* @@@ */
-                    state.logger.info("hndq.5.4.4.1", "Hash N-Degree Quads function (4.9.3 (5.4.4)), entering loop", { related, path });
+                    state.logger.info("hndq.5.4.4.1", "Hash N-Degree Quads function (4.8.3 (5.4.4)), entering loop", { related, path });
                     /* @@@ */
                     if (state.canonical_issuer.isSet(related)) {
                         // Step 5.4.4.1
@@ -183,7 +183,7 @@ function computeNDegreeHash(state, identifier, issuer) {
                 }
                 state.logger.pop();
                 /* @@@ */
-                state.logger.debug("hndq.5.4.5.extra", "Hash N-Degree Quads function (4.9.3 (5.4.5)), before possible recursion.", {
+                state.logger.debug("hndq.5.4.5.extra", "Hash N-Degree Quads function (4.8.3 (5.4.5)), before possible recursion.", {
                     "recursion list": recursion_list,
                     path
                 });
@@ -201,7 +201,7 @@ function computeNDegreeHash(state, identifier, issuer) {
                     // Step 5.4.5.4
                     issuer_copy = result.issuer;
                     /* @@@ */
-                    state.logger.info("hndq.5.4.5.4", "Hash N-Degree Quads function (4.9.3 (5.4.5.4)), combine result of recursion.", {
+                    state.logger.info("hndq.5.4.5.4", "Hash N-Degree Quads function (4.8.3 (5.4.5.4)), combine result of recursion.", {
                         path,
                         "issuer copy": issuer_copy.toLogItem(),
                     });
@@ -223,7 +223,7 @@ function computeNDegreeHash(state, identifier, issuer) {
             // Step 5.5.
             data_to_hash = `${data_to_hash}${chosen_path}`;
             /* @@@ */
-            state.logger.info("hndq.5.5", "Hash N-Degree Quads function (4.9.3 (5.5). End of current loop with Hn hashes", {
+            state.logger.info("hndq.5.5", "Hash N-Degree Quads function (4.8.3 (5.5). End of current loop with Hn hashes", {
                 "chosen path": chosen_path,
                 "data to hash": data_to_hash
             });
@@ -239,7 +239,7 @@ function computeNDegreeHash(state, identifier, issuer) {
         issuer: issuer
     };
     /* @@@ */
-    state.logger.info("hndq.6", "Leaving Hash N-Degree Quads function (4.9.3).", {
+    state.logger.info("hndq.6", "Leaving Hash N-Degree Quads function (4.8.3).", {
         "hash": retval.hash,
         "issuer": retval.issuer.toLogItem()
     });
