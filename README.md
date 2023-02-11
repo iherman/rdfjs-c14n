@@ -1,8 +1,8 @@
 # RDF Canonicalization in TypeScript
 
-This is an implementation (under development) of the [RDF Dataset Canonicalization](https://www.w3.org/TR/rdf-canon/) algorithm. (The algorithm is being specified by the W3C [RDF Dataset Canonicalization and Hash Working Group](https://www.w3.org/groups/wg/rch))
+This is an implementation (under development) of the [RDF Dataset Canonicalization](https://www.w3.org/TR/rdf-canon/) algorithm, also referred to as URDNA2015. (The algorithm is being specified by the W3C [RDF Dataset Canonicalization and Hash Working Group](https://www.w3.org/groups/wg/rch).)
 
-> **The [specification](https://www.w3.org/TR/rdf-canon/) is not yet final. This implementations aims at reflecting _exactly_ the specification, which means it may evolve alongside the specification.**
+> **The [specification](https://www.w3.org/TR/rdf-canon/) is not yet final. This implementations aims at reflecting _exactly_ the specification, which means it may evolve alongside the specification even if changes are editorial only.**
 
 ## Requirements
 
@@ -88,7 +88,7 @@ import { YamlLogger, LogLevels } from 'rdfjs-c14n';
 
 main() {
     …
-    const canonicalizer = new RDFCanon(n3.DataFactory);
+    const canonicalizer = new RDFCanon();
     // `logLevel` may be LogLevels.error, LogLevels.warn, LogLevels.info, LogLevels.debug  
     const logger = new YamlLogger(logLevel);
     canonicalizer.setLogger(logger);
