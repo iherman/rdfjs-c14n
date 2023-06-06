@@ -55,9 +55,12 @@ export class RDFCanon {
 
     /**
      * Set the hash algorithm. The value can be anything that the underlying openssl, as used by node.js, accepts. The default is "sha256".
+     * If the algorithm is not listed as existing for openssl, the value is ignored.
      */
     setHashAlgorithm(algorithm: string): void {
-        this.state.hash_algorithm = algorithm;
+        if (Constants.HASH_ALGORITHMS.includes(algorithm)) {
+            this.state.hash_algorithm = algorithm;
+        }
     }
 
     /**

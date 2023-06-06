@@ -15,16 +15,28 @@ import { Logger }     from './logging';
 
 export namespace Constants {
     /** 
-     * The hashing algorithm's name used in the module
-     */
-    export const HASH_ALGORITHM = "sha256";
-
-    /** 
      * The prefix used for all generated canonical bnode IDs 
      * 
      * @readonly
      */
     export const BNODE_PREFIX = "c14n";
+
+    /** 
+     * The default hashing algorithm's name used in the module
+     */
+    export const HASH_ALGORITHM = "sha256";
+
+    /**
+     * List of openssl hash algorithms, as of June 2023
+     */
+    export const HASH_ALGORITHMS = [
+        "blake2b512", "blake2s256", "gost",     "md4",        
+        "md5",        "mdc2",       "rmd160",   "sha1",       
+        "sha224",     "sha256",     "sha3-224", "sha3-256",   
+        "sha3-384",   "sha3-512",   "sha384",   "sha512",                   
+        "sha512-224", "sha512-256", "shake128", "shake256",   
+        "sm3",
+    ];
 }
 
 export type Quads        = rdf.DatasetCore<rdf.Quad,rdf.Quad> | rdf.Quad[] | Set<rdf.Quad>;
