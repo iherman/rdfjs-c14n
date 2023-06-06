@@ -7,11 +7,12 @@
  */
 
 import * as rdf from 'rdf-js';
-import { GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, DatasetShell } from './common';
-import { computeFirstDegreeHash }                                             from './hash1DegreeQuads';
-import { computeNDegreeHash }                                                 from './hashNDegreeQuads';
-import { IDIssuer }                                                           from './issueIdentifier';
-import { bntqToLogItem, ndhrToLogItem, htbnToLogItem, LogItem }               from './logging';
+import { GlobalState, BNodeId, Hash, Quads, NDegreeHashResult } from './common';
+import { DatasetShell, parseNquads, InputDataset }              from './common';
+import { computeFirstDegreeHash }                               from './hash1DegreeQuads';
+import { computeNDegreeHash }                                   from './hashNDegreeQuads';
+import { IDIssuer }                                             from './issueIdentifier';
+import { bntqToLogItem, ndhrToLogItem, htbnToLogItem, LogItem } from './logging';
 
 
 /**
@@ -21,13 +22,24 @@ import { bntqToLogItem, ndhrToLogItem, htbnToLogItem, LogItem }               fr
  * @param input
  * @returns - A semantically identical set of Quads, with canonical BNode labels. The exact format of the output depends on the format of the input. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the `datasetFactory` field in the [global state](../interfaces/lib_common.GlobalState.html) is set, it will be a Dataset, otherwise a Set.
  */
-export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads {
+export function computeCanonicalDataset(state: GlobalState, input: InputDataset): Quads {
         // Re-initialize the state information: canonicalization should always start with a clean state
         state.bnode_to_quads   = {};
         state.hash_to_bnodes   = {};
         state.canonical_issuer = new IDIssuer();
 
-        const input_dataset: DatasetShell = new DatasetShell(input);
+        // The input to the algorithm can be either an nQuads document, or a dataset
+        // representation with Quads. This function makes the nQuad document "disappear" from
+        // the rest of the processing.
+        const convertToQuads = (inp: InputDataset): DatasetShell => {
+            if (typeof inp === 'string') {
+                return new DatasetShell(parseNquads(inp as string));
+            } else {
+                return new DatasetShell(inp as Quads);
+            }
+        }
+
+        const input_dataset: DatasetShell = convertToQuads(input);
         const retval: DatasetShell        = input_dataset.new(state);
 
         // Step 2

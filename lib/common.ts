@@ -7,6 +7,7 @@
  */
 
 import * as rdf       from 'rdf-js';
+import * as n3        from 'n3';
 import { createHash } from 'crypto';
 import { IDIssuer }   from './issueIdentifier';
 import { nquads }     from '@tpluscode/rdf-string';
@@ -26,10 +27,11 @@ export namespace Constants {
     export const BNODE_PREFIX = "c14n";
 }
 
-export type Quads       = rdf.DatasetCore<rdf.Quad,rdf.Quad> | rdf.Quad[] | Set<rdf.Quad>;
-export type BNodeId     = string;
-export type Hash        = string;
-export type QuadToNquad = (quad: rdf.Quad) => string;
+export type Quads        = rdf.DatasetCore<rdf.Quad,rdf.Quad> | rdf.Quad[] | Set<rdf.Quad>;
+export type InputDataset = Quads | string;
+export type BNodeId      = string;
+export type Hash         = string;
+export type QuadToNquad  = (quad: rdf.Quad) => string;
 
 /**
  * BNode labels to Quads mapping. Used in the canonicalization state: blank node to quad map. See
@@ -176,6 +178,18 @@ export function quadsToNquads(quads: Iterable<rdf.Quad>, sort:boolean = true): s
 export function hashDataset(state: C14nState, quads: Iterable<rdf.Quad>, sort: boolean = true): Hash {
     const nquads: string[] = quadsToNquads(quads, sort)
     return hashNquads(state, nquads)
+}
+
+/**
+ * Parse an nQuads document into a set of Quads
+ * 
+ * @param nquads 
+ * @returns parsed dataset
+ */
+export function parseNquads(nquads: string): Quads {
+    const parser = new n3.Parser({blankNodePrefix: ''});
+    const quads: rdf.Quad[] = parser.parse(nquads);
+    return new Set<rdf.Quad>(quads);
 }
 
 /**

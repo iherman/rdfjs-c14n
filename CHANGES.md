@@ -1,3 +1,10 @@
+# Version 1.0.5
+
+- Minor editorial changes to be in line with the newest version of eslint
+- Synching with the latest version of the official draft (June 2023), namely:
+  - The input to the algorithm can be either a Quads object (ie, a Set or Array or Quads, or an RDF Dataset) or a string, i.e., an nQuads document. If the latter, it is parsed into a Quad object, keeping the BNode identifiers as used in the nQuad source.
+
+
 # Version 1.0.4
 
 - The section number references in the logs have been synced with the official spec version Febr. 2023

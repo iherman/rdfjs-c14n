@@ -2,6 +2,10 @@ import { Command }                                 from 'commander';
 import { RDFCanon, YamlLogger, LogLevels, Logger } from '../../index';
 import * as rdfn3                                  from './rdfn3';
 
+
+import {promises as fs} from 'fs';
+
+
 const number_of_tests: number = 63;
 const extra_tests: string[] = ['900', '901']
 
@@ -43,6 +47,10 @@ async function singleTest(canonicalizer: RDFCanon, num: string, dump: boolean = 
         rdfn3.get_quads(input_fname),
         rdfn3.get_quads(expected_fname),
     ]);
+
+    // Just for testing the direct nquad input...
+    // const trig: string = await fs.readFile(input_fname, 'utf-8');
+    // const c14n_input     = canonicalizer.canonicalize(trig);
 
     const c14n_input     = canonicalizer.canonicalize(input);
     const input_quads    = rdfn3.dataset_to_nquads(input).sort();
@@ -127,7 +135,7 @@ async function main(): Promise<void> {
             // filter the successful tests:
             .filter( (value: [string,boolean]): boolean => !value[1])
             // Keep the names only
-            .map( ([test,result]: [string,boolean]): string => test);
+            .map( ([test,_result]: [string,boolean]): string => test);
         
         if (failed_tests.length === 0) {
             console.log('All tests passed')

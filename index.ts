@@ -10,12 +10,12 @@
 import * as rdf from 'rdf-js';
 import * as n3  from 'n3';
 
-import { GlobalState, Quads, hashDataset, Hash, Constants, quadsToNquads } from './lib/common';
-import { IDIssuer }                                                        from './lib/issueIdentifier';
-import { computeCanonicalDataset }                                         from './lib/canonicalization';
-import { Logger, NopLogger}                                                from './lib/logging';
+import { GlobalState, Quads, hashDataset, Hash, Constants, quadsToNquads, InputDataset } from './lib/common';
+import { IDIssuer }                                                                      from './lib/issueIdentifier';
+import { computeCanonicalDataset }                                                       from './lib/canonicalization';
+import { Logger, NopLogger}                                                              from './lib/logging';
 
-export { Quads }                         from './lib/common';
+export { Quads, InputDataset }           from './lib/common';
 export { Hash }                          from './lib/common';
 export { YamlLogger, LogLevels, Logger } from './lib/logging';
 
@@ -68,9 +68,12 @@ export class RDFCanon {
      * real work is done in the [separate function](../functions/lib_canonicalization.compute_canonicalized_graph.html).
      * 
      * @param input_dataset 
-     * @returns - the exact type of the output depends on the type of the input dataset. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the dataset_factory has been set set, it will be a Dataset, otherwise a Set.
+     * @returns - the exact type of the output depends on the type of the input dataset. 
+     * If the input is a string (i.e., an nQuad document), the return will be a Set (of Quads).
+     * If the input is a Set or an Array, so will be the return. If it is a Dataset, and 
+     * the dataset_factory has been set set, it will be a Dataset, otherwise a Set.
      */
-    canonicalize(input_dataset: Quads): Quads {
+    canonicalize(input_dataset: InputDataset): Quads {
         return computeCanonicalDataset(this.state, input_dataset);
     }
 
