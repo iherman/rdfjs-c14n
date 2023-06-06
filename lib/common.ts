@@ -89,8 +89,8 @@ export interface GlobalState extends C14nState {
  * Return structure from a N-degree quad's hash computation, see [the specification](https://www.w3.org/TR/rdf-canon/#hash-nd-quads-algorithm).
  */
 export interface NDegreeHashResult {
-    hash: Hash;
-    issuer: IDIssuer
+    hash   : Hash;
+    issuer : IDIssuer
 }
 
 
@@ -183,7 +183,9 @@ export function hashDataset(state: C14nState, quads: Iterable<rdf.Quad>, sort: b
  * [RDF Dataset core instance](https://rdf.js.org/dataset-spec/#datasetcore-interface), an Array of Quads, or a Set of Quads.
  * 
  * @remarks
- * The reason this is necessary is (1) the Array object in JS does not have a `add` property and (2) care should be taken about creating new RDF Datasets, see the {@link new} method.
+ * The reason this is necessary is (1) the Array object in JS does not have a `add` 
+ * property and (2) care should be taken about creating new RDF Datasets, 
+ * see the {@link new} method.
  */
 export class DatasetShell {
     private the_dataset: Quads ;
@@ -204,7 +206,8 @@ export class DatasetShell {
      * Create a new instance whose exact type reflects the current type. 
      * 
      * @remarks
-     * If the global state days not provide a [RDF Dataset core factory instance](https://rdf.js.org/dataset-spec/#datasetcorefactory-interface),
+     * If the global state days not provide a
+     * [RDF Dataset core factory instance](https://rdf.js.org/dataset-spec/#datasetcorefactory-interface),
      * a Set of Quads will be used instead.
      * 
      * @param state 

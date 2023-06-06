@@ -63,7 +63,8 @@ export class RDFCanon {
     /**
      * Canonicalize a Dataset.
      * 
-     * Implementation of the main algorithmic steps, see [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
+     * Implementation of the main algorithmic steps, see
+     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
      * real work is done in the [separate function](../functions/lib_canonicalization.compute_canonicalized_graph.html).
      * 
      * @param input_dataset 

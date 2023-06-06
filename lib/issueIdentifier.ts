@@ -22,19 +22,19 @@ export class IDIssuer {
     private id                : number;
 
     // See [the specification](https://www.w3.org/TR/rdf-canon/#issue-identifier-algorithm)
-    private identifier_prefix        : string;
-    private identifier_counter       : number;
-    private issued_identifiers_map   : Map<BNodeId,BNodeId>;
+    private identifier_prefix      : string;
+    private identifier_counter     : number;
+    private issued_identifiers_map : Map<BNodeId,BNodeId>;
 
     /**
      * 
      * @param prefix - the prefix used for the generated IDs
      */
     constructor(prefix: string = Constants.BNODE_PREFIX) {
-        this.id                        = IDIssuer.IDIssuerID++;
-        this.identifier_prefix         = prefix;
-        this.identifier_counter        = 0;
-        this.issued_identifiers_map    = new Map();
+        this.id                     = IDIssuer.IDIssuerID++;
+        this.identifier_prefix      = prefix;
+        this.identifier_counter     = 0;
+        this.issued_identifiers_map = new Map();
     }
 
     /**

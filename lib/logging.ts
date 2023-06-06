@@ -106,11 +106,11 @@ export interface Logger {
 export class NopLogger implements Logger {
     log: string = '';
     log_object: LogItem = {};
-    debug(log_point: string, position: string, ...otherData: LogItem[]): void {};
-    warn(log_point: string, position: string, ...otherData: LogItem[]): void {};
-    error(log_point: string, position: string, ...otherData: LogItem[]): void {};
-    info(log_point: string, position: string, ...otherData: LogItem[]): void {};
-    push(label: string, extra_info ?: string, ...otherData: LogItem[]): void {};
+    debug(_log_point: string, _position: string, ..._otherData: LogItem[]): void {};
+    warn(_log_point: string, _position: string, ..._otherData: LogItem[]): void {};
+    error(_log_point: string, _position: string, ..._otherData: LogItem[]): void {};
+    info(_log_point: string, _position: string, ..._otherData: LogItem[]): void {};
+    push(_label: string, _extra_info ?: string, ..._otherData: LogItem[]): void {};
     pop(): void {};
 }
 
@@ -119,8 +119,8 @@ export class NopLogger implements Logger {
  * Simple logger, storing the individual log messages as an array of {@link LogItem} objects. The logger
  * follows the recommendations on severity levels as described in {@link Logger}.
  * 
- * The "current" log is an array of {@link LogItem} instances, filled by subsequent logger calls. In case of a call to `push` this instance is 
- * pushed on an internal stack and a new array is created.
+ * The "current" log is an array of {@link LogItem} instances, filled by subsequent logger calls. 
+ * In case of a call to `push` this instance is pushed on an internal stack and a new array is created.
  * 
  * The final log can be retrieved either as the array of Objects via the `log_object`, or
  * as a YAML string via the `log` attributes, respectively.
@@ -130,9 +130,9 @@ export class NopLogger implements Logger {
 export class YamlLogger implements Logger {
     private level: LogLevels;
 
-    private top_log: LogItem = {};
+    private top_log:     LogItem = {};
     private current_log: LogItem[];
-    private log_stack: LogItem[][] = [];
+    private log_stack:   LogItem[][] = [];
 
     constructor(level: LogLevels = LogLevels.info) {
         this.level = level;
