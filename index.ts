@@ -31,16 +31,14 @@ export class RDFCanon {
     /**
      * @constructor
      * @param data_factory  An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface). If undefined, the DataFactory of the [n3 package](https://www.npmjs.com/package/n3) is used.
-     * @param dataset_factory An implementation of the generic RDF DatasetCoreFactory interface, see [the specification](https://rdf.js.org/dataset-spec/#datasetcorefactory-interface). If undefined, the canonicalized graph will automatically be a Set of quads.
      */
-    constructor(data_factory?: rdf.DataFactory, dataset_factory?: rdf.DatasetCoreFactory) {
+    constructor(data_factory?: rdf.DataFactory) {
         this.state = {
             bnode_to_quads   : {},
             hash_to_bnodes   : {},
             canonical_issuer : new IDIssuer(),
             hash_algorithm   : Constants.HASH_ALGORITHM,
             dataFactory      : data_factory ? data_factory : n3.DataFactory,
-            datasetFactory   : dataset_factory,
             logger           : new NopLogger(),
         }
     }
@@ -72,9 +70,8 @@ export class RDFCanon {
      * 
      * @param input_dataset 
      * @returns - the exact type of the output depends on the type of the input dataset. 
-     * If the input is a string (i.e., an nQuad document), the return will be a Set (of Quads).
-     * If the input is a Set or an Array, so will be the return. If it is a Dataset, and 
-     * the dataset_factory has been set set, it will be a Dataset, otherwise a Set.
+     * If the input is a string (i.e., an N-Quads document), the return will be a Set (of Quads).
+     * If the input is a Set or an Array, so will be the return.
      */
     canonicalize(input_dataset: InputDataset): Quads {
         return computeCanonicalDataset(this.state, input_dataset);

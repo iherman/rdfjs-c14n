@@ -11,9 +11,8 @@ declare class RDFCanon {
     /**
      * @constructor
      * @param data_factory  An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface). If undefined, the DataFactory of the [`n3` package](https://www.npmjs.com/package/n3) is used.
-     * @param dataset_factory An implementation of the generic RDF DatasetCoreFactory interface, see [the specification](https://rdf.js.org/dataset-spec/#datasetcorefactory-interface). If undefined, the canonicalized graph will automatically be a Set of quads.
      */
-    constructor(data_factory?: rdf.DataFactory, dataset_factory?: rdf.DatasetCoreFactory);
+    constructor(data_factory?: rdf.DataFactory);
 
     /**
      * Set a logger instance. By default it is an "empty" logger, ie, no logging happens

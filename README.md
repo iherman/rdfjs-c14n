@@ -14,12 +14,12 @@ An input RDF Dataset may be represented by:
 
 - A Set of [Quad instances](https://rdf.js.org/data-model-spec/#quad-interface); or
 - An Array of [Quad instances](https://rdf.js.org/data-model-spec/#quad-interface); or
-- An instance of a [Core Dataset](https://rdf.js.org/dataset-spec/#datasetcore-interface)
+- A string representing an [N-Quads](http://www.w3.org/TR/n-quads/) document.
 
 The canonicalization process returns 
 
 - A Set or an Array of Quad instances, if the input was a Set or an Array, respectively;
-- An instance of a Core Dataset if the input was a Core Dataset _**and**_ the canonicalization is initialized with an instance of the [Dataset Core Factory](https://rdf.js.org/dataset-spec/#datasetcorefactory-interface); otherwise it is a Set of Quad instances.
+- A Set of Quad instances if the input was an N-Quads document.
 
 The separate [testing folder](https://github.com/iherman/rdfjs-c14n/tree/main/testing) includes a tiny application that runs the official specification tests, and can be used as an example for the additional packages that are required. 
 

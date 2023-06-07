@@ -1,7 +1,8 @@
-# Version 1.0.5
+# Version 2.0.0
 
 - Minor editorial changes to be in line with the newest version of eslint
 - The name of the hash algorithm, if set explicitly, is checked against a list of names as returned from `openssl list -digest-commands`
+- Removed the references to dataset factories. It is not a widely implemented feature, and just creates extra complications (e.g., is an `Iteratable`? The union of Set or Array of quads is, in this respect much more usable...)
 - Synching with the latest version of the official draft (June 2023), namely:
   - The input to the algorithm can be either a Quads object (ie, a Set or Array or Quads, or an RDF Dataset) or a string, i.e., an nQuads document. If the latter, it is parsed into a Quad object, keeping the BNode identifiers as used in the nQuad source.
 

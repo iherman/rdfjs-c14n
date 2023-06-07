@@ -20,7 +20,7 @@ import { bntqToLogItem, ndhrToLogItem, htbnToLogItem, LogItem } from './logging'
  * 
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
- * @returns - A semantically identical set of Quads, with canonical BNode labels. The exact format of the output depends on the format of the input. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the `datasetFactory` field in the [global state](../interfaces/lib_common.GlobalState.html) is set, it will be a Dataset, otherwise a Set.
+ * @returns - A semantically identical set of Quads, with canonical BNode labels. The exact format of the output depends on the format of the input. If the input is a Set or an Array, so will be the return. If it is an N-Quads document (string) then the return is a Set of Quads.
  */
 export function computeCanonicalDataset(state: GlobalState, input: InputDataset): Quads {
         // Re-initialize the state information: canonicalization should always start with a clean state
@@ -40,7 +40,7 @@ export function computeCanonicalDataset(state: GlobalState, input: InputDataset)
         }
 
         const input_dataset: DatasetShell = convertToQuads(input);
-        const retval: DatasetShell        = input_dataset.new(state);
+        const retval: DatasetShell        = input_dataset.new();
 
         // Step 2
         // All quads are 'classified' depending on what bnodes they contain

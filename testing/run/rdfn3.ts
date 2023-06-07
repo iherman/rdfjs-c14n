@@ -11,20 +11,6 @@ import * as rdf         from 'rdf-js';
 import {promises as fs} from 'fs';
 import { nquads }       from '@tpluscode/rdf-string';
 
-
-type Dataset = rdf.DatasetCore<rdf.Quad,rdf.Quad>;
-
-// This has been defined as a possible way of simulating the Dataset Factory, which is not present in n3.
-class n3_DatasetCoreFactory implements rdf.DatasetCoreFactory {
-    dataset(quads?: rdf.Quad[]): Dataset {
-        const store = new n3.Store();
-        if (quads) {
-            store.addQuads(quads);
-        }
-        return store;
-    }
-}
-
 /**
  * Convert the graph into NQuads, more exactly into an array of individual NQuad statement
  * @param quads 
@@ -60,5 +46,4 @@ export async function get_quads(fname: string): Promise<Set<rdf.Quad>> {
 }
 
 
-export const DataFactory: rdf.DataFactory               = n3.DataFactory;
-export const DatasetCoreFactory: rdf.DatasetCoreFactory = new n3_DatasetCoreFactory();
+export const DataFactory: rdf.DataFactory = n3.DataFactory;

@@ -39,7 +39,7 @@ export namespace Constants {
     ];
 }
 
-export type Quads        = rdf.DatasetCore<rdf.Quad,rdf.Quad> | rdf.Quad[] | Set<rdf.Quad>;
+export type Quads        = rdf.Quad[] | Set<rdf.Quad>;
 export type InputDataset = Quads | string;
 export type BNodeId      = string;
 export type Hash         = string;
@@ -88,12 +88,6 @@ export interface GlobalState extends C14nState {
      * [RDF data factory instance](http://rdf.js.org/data-model-spec/#datafactory-interface), to be used to create new terms and quads 
      */
     dataFactory     : rdf.DataFactory;
-
-    /** 
-     * [RDF Dataset core factory instance](https://rdf.js.org/dataset-spec/#datasetcorefactory-interface), to be used to create new datasets.
-     * If undefined, the return value of canonicalization is a Set of quads. 
-     */
-    datasetFactory ?: rdf.DatasetCoreFactory;
 
     /** A logger instance */
     logger          : Logger;
@@ -231,25 +225,14 @@ export class DatasetShell {
     /**
      * Create a new instance whose exact type reflects the current type. 
      * 
-     * @remarks
-     * If the global state days not provide a
-     * [RDF Dataset core factory instance](https://rdf.js.org/dataset-spec/#datasetcorefactory-interface),
-     * a Set of Quads will be used instead.
-     * 
      * @param state 
      * @returns - a new (empty) dataset
      */
-    new(state: GlobalState): DatasetShell {
+    new(): DatasetShell {
         if (Array.isArray(this.the_dataset)) {
             return new DatasetShell([]);
-        } else if(this.the_dataset instanceof Set) {
-            return new DatasetShell(new Set<rdf.Quad>());
         } else {
-            if (state.datasetFactory) {
-                return new DatasetShell(state.datasetFactory.dataset());    
-            } else {
-                return new DatasetShell(new Set<rdf.Quad>());
-            }
+            return new DatasetShell(new Set<rdf.Quad>());
         }
     }
 
