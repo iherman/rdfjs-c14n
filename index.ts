@@ -10,14 +10,15 @@
 import * as rdf from 'rdf-js';
 import * as n3  from 'n3';
 
-import { GlobalState, Quads, hashDataset, Hash, Constants, quadsToNquads, InputDataset } from './lib/common';
+import { GlobalState, Quads, hashDataset, Hash, Constants, quadsToNquads, InputDataset, computeHash } from './lib/common';
+import { C14nResult }                                                                    from './lib/common';
 import { IDIssuer }                                                                      from './lib/issueIdentifier';
 import { computeCanonicalDataset }                                                       from './lib/canonicalization';
 import { Logger, NopLogger}                                                              from './lib/logging';
 
-export { Quads, InputDataset }           from './lib/common';
-export { Hash }                          from './lib/common';
-export { YamlLogger, LogLevels, Logger } from './lib/logging';
+export { Quads, InputDataset, C14nResult } from './lib/common';
+export { Hash, BNodeId }                   from './lib/common';
+export { YamlLogger, LogLevels, Logger }   from './lib/logging';
 
 /**
  * Just a shell around the algorithm, consisting of a state, and the call for the real implementation.
@@ -62,20 +63,35 @@ export class RDFCanon {
     }
 
     /**
-     * Canonicalize a Dataset.
+     * Canonicalize a Dataset into an N-Quads document.
      * 
      * Implementation of the main algorithmic steps, see
      * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
-     * real work is done in the [separate function](../functions/lib_canonicalization.compute_canonicalized_graph.html).
+     * real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html).
      * 
      * @param input_dataset 
-     * @returns - the exact type of the output depends on the type of the input dataset. 
-     * If the input is a string (i.e., an N-Quads document), the return will be a Set (of Quads).
-     * If the input is a Set or an Array, so will be the return.
+     * @returns - N-Quads document using the canonical ID-s.
      */
-    canonicalize(input_dataset: InputDataset): Quads {
-        return computeCanonicalDataset(this.state, input_dataset);
+    canonicalize(input_dataset: InputDataset): string {
+        return this.canonicalizeDetailed(input_dataset).dataset_nquad;
     }
+
+    /**
+     * Canonicalize a Dataset into a full set of information.
+     * 
+     * Implementation of the main algorithmic steps, see
+     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
+     * real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html).
+     * 
+     * The result is an Object containing the serialized version and the Quads version of the canonicalization result, 
+     * as well as a bnode mapping from the original to the canonical equivalents
+     * 
+     * @param input_dataset 
+     * @returns - Detailed results of the canonicalization
+     */
+    canonicalizeDetailed(input_dataset: InputDataset): C14nResult {
+        return computeCanonicalDataset(this.state, input_dataset);
+    } 
 
     /**
      * Serialize the dataset into a (possibly sorted) Array of nquads.
@@ -91,7 +107,7 @@ export class RDFCanon {
     /**
      * Hash a dataset:
      * 
-     * 1. Serialize the dataset into nquads and sort the result
+     * 1. Serialize the dataset into nquads and sort the result (unless the input is an N-Quads document)
      * 2. Compute the hash of the concatenated nquads.
      * 
      * This method is typically used on the result of the canonicalization to compute the canonical hash of a dataset.
@@ -99,8 +115,12 @@ export class RDFCanon {
      * @param input_dataset 
      * @returns
      */
-    hash(input_dataset: Quads): Hash {
-        return hashDataset(this.state, input_dataset, true);
+    hash(input_dataset: InputDataset): Hash {
+        if (typeof input_dataset === 'string') {
+            return computeHash(this.state, input_dataset);
+        } else {
+            return hashDataset(this.state, input_dataset, true);
+        }
     }
 }
 

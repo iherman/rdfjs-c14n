@@ -1,7 +1,15 @@
 import * as rdf from 'rdf-js';
-export type Quads = rdf.DatasetCore<rdf.Quad,rdf.Quad> | rdf.Quad[] | Set<rdf.Quad>;
+
+export type Quads        = rdf.Quad[] | Set<rdf.Quad>;
 export type InputDataset = Quads | string;
-export type Hash  = string;
+export type BNodeId      = string;
+export type Hash         = string;
+
+declare interface C14nResult {
+    dataset       : Quads;
+    dataset_nquad : string;
+    bnode_id_map  : Map<BNodeId,BNodeId>;
+}
 
 /*********************************************************
 The main class encapsulating the library's functionalities
@@ -26,12 +34,31 @@ declare class RDFCanon {
     setHashAlgorithm(algorithm: string): void;
 
     /**
-     * Implementation of the main algorithmic steps
+     * Canonicalize a Dataset into an N-Quads document.
+     * 
+     * Implementation of the main algorithmic steps, see
+     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
+     * real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html).
      * 
      * @param input_dataset 
-     * @returns - the exact type of the output depends on the type of the input dataset. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the dataset_factory has been set set, it will be a Dataset, otherwise a Set.
+     * @returns - N-Quads document using the canonical ID-s.
      */
-    canonicalize(input_dataset: InputDataset): Quads;
+    canonicalize(input_dataset: InputDataset): string;
+
+    /**
+     * Canonicalize a Dataset into a full set of information.
+     * 
+     * Implementation of the main algorithmic steps, see
+     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
+     * real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html).
+     * 
+     * The result is an Object containing the serialized version and the Quads version of the canonicalization result, 
+     * as well as a bnode mapping from the original to the canonical equivalents
+     * 
+     * @param input_dataset 
+     * @returns - Detailed results of the canonicalization
+     */
+    canonicalizeDetailed(input_dataset: InputDataset): C14nResult ; 
 
     /**
      * Serialize the dataset into a (possibly sorted) Array of nquads.
@@ -45,15 +72,15 @@ declare class RDFCanon {
     /**
      * Hash a dataset:
      * 
-     * 1. Serialize the dataset into nquads and sort the result
+     * 1. Serialize the dataset into nquads and sort the result (unless the input is an N-Quads document)
      * 2. Compute the hash of the concatenated nquads.
      * 
      * This method is typically used on the result of the canonicalization to compute the canonical hash of a dataset.
      * 
      * @param input_dataset 
-     * @returns 
+     * @returns
      */
-     hash(input_dataset: Quads): Hash;
+    hash(input_dataset: InputDataset): Hash;
 }
 
 

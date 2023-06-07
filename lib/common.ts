@@ -62,6 +62,20 @@ export interface HashToBNodes {
 }
 
 /**
+ * This is the result of the algorithm. Note that this definition is slightly simpler
+ * then in the spec, because the rdf Terms, in this implementation, carry the bnode ID
+ * in them through the `term.value` attribute.
+ */
+export interface C14nResult {
+    /** Dataset as Set or Array of rdf Quads */
+    dataset       : Quads;
+    /** N-Quads serialization of the dataset */
+    dataset_nquad : string;
+    /** Mapping of the blank nodes from original to the canonical equivalent */
+    bnode_id_map  : Map<BNodeId,BNodeId>;
+} 
+
+/**
  * Canonicalization state. See
  * the [specification](https://www.w3.org/TR/rdf-canon/#canon-state).
  * 
@@ -117,6 +131,19 @@ Various utility functions used by the rest of the code.
 }
 
 /**
+ * Return a single N-Quads document out of an array of nquad statements. Per specification, 
+ * this means concatenating all nquads into a long string. Care should be taken that each
+ * quad must end with a single `/n`.
+ * 
+ * @param nquads
+ * @returns - hash value
+ * 
+ */
+export function concatNquads(nquads: string[]): string {
+    return nquads.map((q:string): string => q.endsWith('\n') ? q : `${q}\n`).join('');
+}
+
+/**
  * Return the hash of an array of nquad statements; per specification, this means
  * concatenating all nquads into a long string. Care should be taken that each
  * quad must end with a single `/n`.
@@ -128,8 +155,7 @@ Various utility functions used by the rest of the code.
 export function hashNquads(state: C14nState, nquads: string[]): Hash {
     // Care should be taken that the final data to be hashed include a single `/n`
     // for every quad, before joining the quads into a string that must be hashed
-    const data: string = nquads.map((q:string): string => q.endsWith('\n') ? q : `${q}\n`).join('');
-    return computeHash(state, data);
+    return computeHash(state, concatNquads(nquads));
 }
 
 /**

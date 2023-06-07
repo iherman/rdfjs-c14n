@@ -16,7 +16,13 @@ An input RDF Dataset may be represented by:
 - An Array of [Quad instances](https://rdf.js.org/data-model-spec/#quad-interface); or
 - A string representing an [N-Quads](http://www.w3.org/TR/n-quads/) document.
 
-The canonicalization process returns 
+The canonicalization process can be invoked by
+
+- the `canonicalize` method, that returns an N-Quads document containing the (sorted) quads of the dataset, and using the canonical blank node ids
+- the `canonicalizeDetailed` method, that returns an Object of the form:
+  - `dataset`: a Set or Array of Quad instances, using the canonical blank node ids
+  - `dataset_nquad`: an N-Quads document containing the (sorted) quads of the dataset, and using the canonical blank node ids
+  - `bnode_id_map`: a `Map` object, mapping the original blank node ids (as used in the input) to their canonical equivalents
 
 - A Set or an Array of Quad instances, if the input was a Set or an Array, respectively;
 - A Set of Quad instances if the input was an N-Quads document.
@@ -55,7 +61,7 @@ main() {
 
     // "normalized" is a dataset of quads with "canonical" blank node labels
     // per the specification 
-    const normalized: Quads = canonicalizer.canonicalize(input)
+    const normalized: Quads = canonicalizer.canonicalizeDetailed(input).dataset
 
     // "hash" is the hash value of the canonical dataset, per specification
     const hash = canonicalizer.hash(normalized);

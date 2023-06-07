@@ -5,6 +5,8 @@
 - Removed the references to dataset factories. It is not a widely implemented feature, and just creates extra complications (e.g., is an `Iteratable`? The union of Set or Array of quads is, in this respect much more usable...)
 - Synching with the latest version of the official draft (June 2023), namely:
   - The input to the algorithm can be either a Quads object (ie, a Set or Array or Quads, or an RDF Dataset) or a string, i.e., an nQuads document. If the latter, it is parsed into a Quad object, keeping the BNode identifiers as used in the nQuad source.
+  - The simple output of the algorithm is an N-Quads document; alternatively, the detailed output is a structure containing the N-Quads and rdf.Quads versions of the data, as well as a mapping of blank node identifiers.
+  - The hash function can use the same type of input as the core input.
 
 
 # Version 1.0.4

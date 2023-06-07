@@ -7,8 +7,8 @@
  */
 
 import * as rdf from 'rdf-js';
-import { GlobalState, BNodeId, Hash, Quads, NDegreeHashResult } from './common';
-import { DatasetShell, parseNquads, InputDataset }              from './common';
+import { GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, concatNquads, quadsToNquads } from './common';
+import { DatasetShell, parseNquads, InputDataset, C14nResult }  from './common';
 import { computeFirstDegreeHash }                               from './hash1DegreeQuads';
 import { computeNDegreeHash }                                   from './hashNDegreeQuads';
 import { IDIssuer }                                             from './issueIdentifier';
@@ -22,7 +22,7 @@ import { bntqToLogItem, ndhrToLogItem, htbnToLogItem, LogItem } from './logging'
  * @param input
  * @returns - A semantically identical set of Quads, with canonical BNode labels. The exact format of the output depends on the format of the input. If the input is a Set or an Array, so will be the return. If it is an N-Quads document (string) then the return is a Set of Quads.
  */
-export function computeCanonicalDataset(state: GlobalState, input: InputDataset): Quads {
+export function computeCanonicalDataset(state: GlobalState, input: InputDataset): C14nResult {
         // Re-initialize the state information: canonicalization should always start with a clean state
         state.bnode_to_quads   = {};
         state.hash_to_bnodes   = {};
@@ -194,7 +194,7 @@ export function computeCanonicalDataset(state: GlobalState, input: InputDataset)
                 /* @@@ */ 
                 for (const result of ordered_hash_path_list) {
                     // Step 5.3.1
-                    for (const [existing,temporary] of result.issuer) {
+                    for (const [existing,_temporary] of result.issuer) {
                         state.canonical_issuer.issueID(existing)
                     }
                 }
@@ -230,6 +230,11 @@ export function computeCanonicalDataset(state: GlobalState, input: InputDataset)
         /* @@@ */
          
         // Step 7
-        return retval.dataset;
+        const return_value: C14nResult = {
+            dataset              : retval.dataset,
+            dataset_nquad   : concatNquads(quadsToNquads(retval.dataset)),
+            bnode_id_map : state.canonical_issuer.identifier_map,
+        }
+        return return_value;
     }
 

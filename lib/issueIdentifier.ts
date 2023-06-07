@@ -57,6 +57,10 @@ export class IDIssuer {
         }
     }
 
+    get identifier_map(): Map<BNodeId,BNodeId> {
+        return this.issued_identifiers_map;
+    }
+
     /**
      * Has a bnode label been assigned a canonical alternative?
      * 

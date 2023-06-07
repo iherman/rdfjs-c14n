@@ -2,10 +2,6 @@ import { Command }                                 from 'commander';
 import { RDFCanon, YamlLogger, LogLevels, Logger } from '../../index';
 import * as rdfn3                                  from './rdfn3';
 
-
-import {promises as fs} from 'fs';
-
-
 const number_of_tests: number = 63;
 const extra_tests: string[] = ['900', '901']
 
@@ -52,7 +48,16 @@ async function singleTest(canonicalizer: RDFCanon, num: string, dump: boolean = 
     // const trig: string = await fs.readFile(input_fname, 'utf-8');
     // const c14n_input     = canonicalizer.canonicalize(trig);
 
-    const c14n_input     = canonicalizer.canonicalize(input);
+    const c14n_result    = canonicalizer.canonicalizeDetailed(input);
+    
+    console.log('>>>>')
+    console.log(c14n_result.dataset_nquad);
+    console.log(c14n_result.bnode_id_map);
+    console.log(`Hash on nquad: ${canonicalizer.hash(c14n_result.dataset_nquad)}`);
+    console.log(`Hash on dataset: ${canonicalizer.hash(c14n_result.dataset)}`);
+    console.log('>>>>');
+
+    const c14n_input     = c14n_result.dataset;
     const input_quads    = rdfn3.dataset_to_nquads(input).sort();
     const c14_quads      = rdfn3.dataset_to_nquads(c14n_input).sort();
     const expected_quads = rdfn3.dataset_to_nquads(expected).sort();
