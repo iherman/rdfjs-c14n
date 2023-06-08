@@ -9,6 +9,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.computeCanonicalDataset = void 0;
 const common_1 = require("./common");
+const common_2 = require("./common");
 const hash1DegreeQuads_1 = require("./hash1DegreeQuads");
 const hashNDegreeQuads_1 = require("./hashNDegreeQuads");
 const issueIdentifier_1 = require("./issueIdentifier");
@@ -18,18 +19,33 @@ const logging_1 = require("./logging");
  *
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
- * @returns - A semantically identical set of Quads, with canonical BNode labels. The exact format of the output depends on the format of the input. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the `datasetFactory` field in the [global state](../interfaces/lib_common.GlobalState.html) is set, it will be a Dataset, otherwise a Set.
+ * @returns - A semantically identical set of Quads, with canonical BNode labels. The exact format of the output depends on the format of the input. If the input is a Set or an Array, so will be the return. If it is an N-Quads document (string) then the return is a Set of Quads.
  */
 function computeCanonicalDataset(state, input) {
     // Re-initialize the state information: canonicalization should always start with a clean state
     state.bnode_to_quads = {};
     state.hash_to_bnodes = {};
     state.canonical_issuer = new issueIdentifier_1.IDIssuer();
-    const input_dataset = new common_1.DatasetShell(input);
-    const retval = input_dataset.new(state);
+    // The input to the algorithm can be either an nQuads document, or a dataset
+    // representation with Quads. This function makes the nQuad document "disappear" from
+    // the rest of the processing.
+    const convertToQuads = (inp) => {
+        if (typeof inp === 'string') {
+            return new common_2.DatasetShell((0, common_2.parseNquads)(inp));
+        }
+        else {
+            return new common_2.DatasetShell(inp);
+        }
+    };
+    const input_dataset = convertToQuads(input);
+    const retval = input_dataset.new();
     // Step 2
     // All quads are 'classified' depending on what bnodes they contain
     // Results in a mapping from bnodes to all quads that they are part of.
+    //
+    // Note that the algorithm is slightly simpler than in the spec, because there
+    // no need for a separate "map entry" because in RDF-JS each term carries its
+    // own ID directly
     {
         for (const quad of input_dataset) {
             const bnode_map = (t) => {
@@ -147,7 +163,9 @@ function computeCanonicalDataset(state, input) {
                     // Step 5.2.2
                     const temporary_issuer = new issueIdentifier_1.IDIssuer('b');
                     // Step 5.2.3
-                    const bn = temporary_issuer.issueID(n);
+                    // Note that bn is not used as a separate value; putting the variable declaration in comment
+                    // to make eslint happy
+                    /* const bn = */ temporary_issuer.issueID(n);
                     // Step 5.2.4
                     const result = (0, hashNDegreeQuads_1.computeNDegreeHash)(state, n, temporary_issuer);
                     hash_path_list.push(result);
@@ -171,7 +189,7 @@ function computeCanonicalDataset(state, input) {
             /* @@@ */
             for (const result of ordered_hash_path_list) {
                 // Step 5.3.1
-                for (const [existing, temporary] of result.issuer) {
+                for (const [existing, _temporary] of result.issuer) {
                     state.canonical_issuer.issueID(existing);
                 }
             }
@@ -206,6 +224,11 @@ function computeCanonicalDataset(state, input) {
     });
     /* @@@ */
     // Step 7
-    return retval.dataset;
+    const return_value = {
+        dataset: retval.dataset,
+        dataset_nquad: (0, common_1.concatNquads)((0, common_1.quadsToNquads)(retval.dataset)),
+        bnode_id_map: state.canonical_issuer.identifier_map,
+    };
+    return return_value;
 }
 exports.computeCanonicalDataset = computeCanonicalDataset;

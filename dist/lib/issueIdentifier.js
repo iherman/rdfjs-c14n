@@ -54,6 +54,9 @@ class IDIssuer {
             return newly_issued;
         }
     }
+    get identifier_map() {
+        return this.issued_identifiers_map;
+    }
     /**
      * Has a bnode label been assigned a canonical alternative?
      *

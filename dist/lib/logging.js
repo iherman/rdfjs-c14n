@@ -21,7 +21,7 @@ var LogLevels;
     LogLevels[LogLevels["warn"] = 1] = "warn";
     LogLevels[LogLevels["info"] = 2] = "info";
     LogLevels[LogLevels["debug"] = 3] = "debug";
-})(LogLevels = exports.LogLevels || (exports.LogLevels = {}));
+})(LogLevels || (exports.LogLevels = LogLevels = {}));
 ;
 /**
  * A default, no-operation logger instance, used by default. All methods are empty, ie, all messages are lost...
@@ -29,15 +29,15 @@ var LogLevels;
 class NopLogger {
     log = '';
     log_object = {};
-    debug(log_point, position, ...otherData) { }
+    debug(_log_point, _position, ..._otherData) { }
     ;
-    warn(log_point, position, ...otherData) { }
+    warn(_log_point, _position, ..._otherData) { }
     ;
-    error(log_point, position, ...otherData) { }
+    error(_log_point, _position, ..._otherData) { }
     ;
-    info(log_point, position, ...otherData) { }
+    info(_log_point, _position, ..._otherData) { }
     ;
-    push(label, extra_info, ...otherData) { }
+    push(_label, _extra_info, ..._otherData) { }
     ;
     pop() { }
     ;
@@ -47,8 +47,8 @@ exports.NopLogger = NopLogger;
  * Simple logger, storing the individual log messages as an array of {@link LogItem} objects. The logger
  * follows the recommendations on severity levels as described in {@link Logger}.
  *
- * The "current" log is an array of {@link LogItem} instances, filled by subsequent logger calls. In case of a call to `push` this instance is
- * pushed on an internal stack and a new array is created.
+ * The "current" log is an array of {@link LogItem} instances, filled by subsequent logger calls.
+ * In case of a call to `push` this instance is pushed on an internal stack and a new array is created.
  *
  * The final log can be retrieved either as the array of Objects via the `log_object`, or
  * as a YAML string via the `log` attributes, respectively.

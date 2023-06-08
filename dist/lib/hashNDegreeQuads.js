@@ -193,6 +193,7 @@ function computeNDegreeHash(state, identifier, issuer) {
                     state.logger.push("hndq.5.4.5.");
                 for (const related of recursion_list) {
                     // Step 5.4.5.1
+                    // This is the computationally dangerous point in the algorithm!
                     const result = computeNDegreeHash(state, related, issuer_copy);
                     // Step 5.4.5.2
                     path = `${path}_:${issuer_copy.issueID(related)}`;

@@ -7,22 +7,36 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DatasetShell = exports.hashDataset = exports.quadsToNquads = exports.quadToNquad = exports.sortAndHashNquads = exports.hashNquads = exports.computeHash = exports.Constants = void 0;
+exports.DatasetShell = exports.parseNquads = exports.hashDataset = exports.quadsToNquads = exports.quadToNquad = exports.hashNquads = exports.concatNquads = exports.computeHash = exports.Constants = void 0;
+const n3 = require("n3");
 const crypto_1 = require("crypto");
 const rdf_string_1 = require("@tpluscode/rdf-string");
 var Constants;
 (function (Constants) {
-    /**
-     * The hashing algorithm's name used in the module
-     */
-    Constants.HASH_ALGORITHM = "sha256";
     /**
      * The prefix used for all generated canonical bnode IDs
      *
      * @readonly
      */
     Constants.BNODE_PREFIX = "c14n";
-})(Constants = exports.Constants || (exports.Constants = {}));
+    /**
+     * The default hash algorithm's name
+     */
+    Constants.HASH_ALGORITHM = "sha256";
+    /**
+     * List of openssl hash algorithms, as of June 2023;
+     * used to filter out invalid hash names in case the user
+     * sets it explicitly.
+     */
+    Constants.HASH_ALGORITHMS = [
+        "blake2b512", "blake2s256", "gost", "md4",
+        "md5", "mdc2", "rmd160", "sha1",
+        "sha224", "sha256", "sha3-224", "sha3-256",
+        "sha3-384", "sha3-512", "sha384", "sha512",
+        "sha512-224", "sha512-256", "shake128", "shake256",
+        "sm3",
+    ];
+})(Constants || (exports.Constants = Constants = {}));
 /***********************************************************
 Various utility functions used by the rest of the code.
 ***********************************************************/
@@ -37,6 +51,19 @@ function computeHash(state, data) {
 }
 exports.computeHash = computeHash;
 /**
+ * Return a single N-Quads document out of an array of nquad statements. Per specification,
+ * this means concatenating all nquads into a long string. Care should be taken that each
+ * quad must end with a single `/n`.
+ *
+ * @param nquads
+ * @returns - hash value
+ *
+ */
+function concatNquads(nquads) {
+    return nquads.map((q) => q.endsWith('\n') ? q : `${q}\n`).join('');
+}
+exports.concatNquads = concatNquads;
+/**
  * Return the hash of an array of nquad statements; per specification, this means
  * concatenating all nquads into a long string. Care should be taken that each
  * quad must end with a single `/n`.
@@ -48,23 +75,9 @@ exports.computeHash = computeHash;
 function hashNquads(state, nquads) {
     // Care should be taken that the final data to be hashed include a single `/n`
     // for every quad, before joining the quads into a string that must be hashed
-    const data = nquads.map((q) => q.endsWith('\n') ? q : `${q}\n`).join('');
-    return computeHash(state, data);
+    return computeHash(state, concatNquads(nquads));
 }
 exports.hashNquads = hashNquads;
-/**
- * Return the hash of an array of nquad statements after being sorted. Per spec, this means
- * concatenating all nquads into a long string. Care should be taken that each
- * quad must end with a single `/n`.
- *
- * @param nquads
- * @returns - hash value
- */
-function sortAndHashNquads(state, nquads) {
-    nquads.sort();
-    return hashNquads(state, nquads);
-}
-exports.sortAndHashNquads = sortAndHashNquads;
 /**
  * Return an nquad version for a single quad.
  *
@@ -108,11 +121,25 @@ function hashDataset(state, quads, sort = true) {
 }
 exports.hashDataset = hashDataset;
 /**
+ * Parse an nQuads document into a set of Quads
+ *
+ * @param nquads
+ * @returns parsed dataset
+ */
+function parseNquads(nquads) {
+    const parser = new n3.Parser({ blankNodePrefix: '' });
+    const quads = parser.parse(nquads);
+    return new Set(quads);
+}
+exports.parseNquads = parseNquads;
+/**
  * A shell to provide a unified way of handling the various ways a graph can be represented: a full blown
  * [RDF Dataset core instance](https://rdf.js.org/dataset-spec/#datasetcore-interface), an Array of Quads, or a Set of Quads.
  *
  * @remarks
- * The reason this is necessary is (1) the Array object in JS does not have a `add` property and (2) care should be taken about creating new RDF Datasets, see the {@link new} method.
+ * The reason this class is necessary is (1) the Array object in JS does not have a `add`
+ * property and (2) care should be taken about creating new RDF Datasets to reproduce the same "choice" for Quads
+ * (see the {@link new} method).
  */
 class DatasetShell {
     the_dataset;
@@ -130,27 +157,15 @@ class DatasetShell {
     /**
      * Create a new instance whose exact type reflects the current type.
      *
-     * @remarks
-     * If the global state days not provide a [RDF Dataset core factory instance](https://rdf.js.org/dataset-spec/#datasetcorefactory-interface),
-     * a Set of Quads will be used instead.
-     *
      * @param state
      * @returns - a new (empty) dataset
      */
-    new(state) {
+    new() {
         if (Array.isArray(this.the_dataset)) {
             return new DatasetShell([]);
         }
-        else if (this.the_dataset instanceof Set) {
-            return new DatasetShell(new Set());
-        }
         else {
-            if (state.datasetFactory) {
-                return new DatasetShell(state.datasetFactory.dataset());
-            }
-            else {
-                return new DatasetShell(new Set());
-            }
+            return new DatasetShell(new Set());
         }
     }
     get dataset() {
