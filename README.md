@@ -1,6 +1,6 @@
 # RDF Canonicalization in TypeScript
 
-This is an implementation (under development) of the [RDF Dataset Canonicalization](https://www.w3.org/TR/rdf-canon/) algorithm, also referred to as URDNA2015. (The algorithm is being specified by the W3C [RDF Dataset Canonicalization and Hash Working Group](https://www.w3.org/groups/wg/rch).)
+This is an implementation (under development) of the [RDF Dataset Canonicalization](https://www.w3.org/TR/rdf-canon/) algorithm, also referred to as RDFC-1.0. (The algorithm is being specified by the W3C [RDF Dataset Canonicalization and Hash Working Group](https://www.w3.org/groups/wg/rch).)
 
 > **The [specification](https://www.w3.org/TR/rdf-canon/) is not yet final. This implementations aims at reflecting _exactly_ the specification, which means it may evolve alongside the specification even if changes are editorial only.**
 
@@ -48,14 +48,14 @@ import * as n3  from 'n3';
 import * as rdf from 'rdf-js';
 // The definition of "Quads" is:
 // export type Quads = rdf.DatasetCore<rdf.Quad,rdf.Quad> | rdf.Quad[] | Set<rdf.Quad>; 
-import {RDFCanon, Quads, quadsToNquads } from 'rdf-c14n';
+import {RDFC10, Quads, quadsToNquads } from 'rdf-c14n';
 
 main() {
     // Any implementation of the data factory will do in the call below.
     // By default, the Data Factory of the `n3` package (i.e., the argument in the call
     // below is not strictly necessary).
     // Optionally, an instance of a Dataset Core Factory may be added as a second argument.
-    const canonicalizer = new RDFCanon(n3.DataFactory);  
+    const canonicalizer = new RDFC10(n3.DataFactory);  
 
     const input = parseYourFavoriteTriGIntoQuads();
 
@@ -94,7 +94,7 @@ import { YamlLogger, LogLevels } from 'rdfjs-c14n';
 
 main() {
     …
-    const canonicalizer = new RDFCanon();
+    const canonicalizer = new RDFC10();
     // `logLevel` may be LogLevels.error, LogLevels.warn, LogLevels.info, LogLevels.debug  
     const logger = new YamlLogger(logLevel);
     canonicalizer.setLogger(logger);

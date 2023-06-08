@@ -15,7 +15,7 @@ declare interface C14nResult {
 The main class encapsulating the library's functionalities
 **********************************************************/
 
-declare class RDFCanon {
+declare class RDFC10 {
     /**
      * @constructor
      * @param data_factory  An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface). If undefined, the DataFactory of the [`n3` package](https://www.npmjs.com/package/n3) is used.
@@ -83,6 +83,7 @@ declare class RDFCanon {
     hash(input_dataset: InputDataset): Hash;
 }
 
+declare class RDFCanon extends RDFC10 {};
 
 /*****************************************************************************
 Type and class declarations for logging; can be ignored if no logging is used

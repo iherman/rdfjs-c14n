@@ -1,6 +1,6 @@
-import { Command }                                 from 'commander';
-import { RDFCanon, YamlLogger, LogLevels, Logger } from '../../index';
-import * as rdfn3                                  from './rdfn3';
+import { Command }                               from 'commander';
+import { RDFC10, YamlLogger, LogLevels, Logger } from '../../index';
+import * as rdfn3                                from './rdfn3';
 
 const number_of_tests: number = 63;
 const extra_tests: string[] = ['900', '901']
@@ -36,7 +36,7 @@ function printQuads(nquads: string[], label: string): void {
  * 
  * @param dump - whether the results should be printed on the screen
  */
-async function singleTest(canonicalizer: RDFCanon, num: string, dump: boolean = true): Promise<boolean> {
+async function singleTest(canonicalizer: RDFC10, num: string, dump: boolean = true): Promise<boolean> {
     const input_fname    = `testing/tests/test${num}-in.nq`;
     const expected_fname = `testing/tests/test${num}-urdna2015.nq`
     const [input, expected] = await Promise.all([
@@ -110,7 +110,7 @@ async function main(): Promise<void> {
         }
     };
 
-    const canonicalizer = new RDFCanon();  
+    const canonicalizer = new RDFC10();  
 
     const program = new Command();
     program

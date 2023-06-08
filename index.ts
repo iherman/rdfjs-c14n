@@ -25,9 +25,9 @@ export { YamlLogger, LogLevels, Logger }   from './lib/logging';
  * 
  * The variable parts of the state, as [defined in the spec](https://www.w3.org/TR/rdf-canon/#dfn-canonicalization-state), 
  * are re-initialized at a call to the canonicalize call. Ie, the same class instance can be reused for
- * {@link RDFCanon#canonicalize} for different graphs.
+ * {@link RDFC10#canonicalize} for different graphs.
  */
-export class RDFCanon {
+export class RDFC10 {
     private state: GlobalState;
     /**
      * @constructor
@@ -124,4 +124,7 @@ export class RDFCanon {
     }
 }
 
-
+// This is only for possible backward compatibility's sake; this was the old name of the class
+// The WG has decided what the final name of the algorithm is (RDFC 1.0), hence the renaming of the core
+// class...
+export class RDFCanon extends RDFC10 {};
