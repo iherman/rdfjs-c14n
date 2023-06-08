@@ -45,6 +45,10 @@ export function computeCanonicalDataset(state: GlobalState, input: InputDataset)
         // Step 2
         // All quads are 'classified' depending on what bnodes they contain
         // Results in a mapping from bnodes to all quads that they are part of.
+        //
+        // Note that the algorithm is slightly simpler than in the spec, because there
+        // no need for a separate "map entry" because in RDF-JS each term carries its
+        // own ID directly
         {
             for (const quad of input_dataset) {
                 const bnode_map = (t: rdf.Term): void => {
@@ -135,7 +139,6 @@ export function computeCanonicalDataset(state: GlobalState, input: InputDataset)
             /* @@@ */ 
             state.logger.info("ca.4", "Canonicalization function (4.4.3 (4)).", ...logItems);
             /* @@@ */ 
-           
         }
 
         // Step 5
@@ -171,7 +174,9 @@ export function computeCanonicalDataset(state: GlobalState, input: InputDataset)
                         // Step 5.2.2
                         const temporary_issuer = new IDIssuer('b');
                         // Step 5.2.3
-                        const bn = temporary_issuer.issueID(n);
+                        // Note that bn is not used as a separate value; putting the variable declaration in comment
+                        // to make eslint happy
+                        /* const bn = */ temporary_issuer.issueID(n);
                         // Step 5.2.4
                         const result: NDegreeHashResult = computeNDegreeHash(state, n, temporary_issuer);
                         hash_path_list.push(result);

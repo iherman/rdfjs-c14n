@@ -216,6 +216,7 @@ const permutation = require('array-permutation');
                 /* @@@ */ if (recursion_list.length !== 0) state.logger.push("hndq.5.4.5.");
                 for (const related of recursion_list) {
                     // Step 5.4.5.1
+                    // This is the computationally dangerous point in the algorithm!
                     const result: NDegreeHashResult = computeNDegreeHash(state, related, issuer_copy);
 
                     // Step 5.4.5.2

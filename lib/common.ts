@@ -22,12 +22,14 @@ export namespace Constants {
     export const BNODE_PREFIX = "c14n";
 
     /** 
-     * The default hashing algorithm's name used in the module
+     * The default hash algorithm's name
      */
     export const HASH_ALGORITHM = "sha256";
 
     /**
-     * List of openssl hash algorithms, as of June 2023
+     * List of openssl hash algorithms, as of June 2023;
+     * used to filter out invalid hash names in case the user
+     * sets it explicitly.
      */
     export const HASH_ALGORITHMS = [
         "blake2b512", "blake2s256", "gost",     "md4",        
@@ -39,14 +41,22 @@ export namespace Constants {
     ];
 }
 
+/** 
+ * According to the RDF semantics, the correct representation of a dataset is a Set
+ * but, for convenience, many applications use arrays. Hence this type.
+ */
 export type Quads        = rdf.Quad[] | Set<rdf.Quad>;
+
+/*
+ * Per spec, the input can be an abstract dataset (ie, Quads) or an N-Quads document (ie, a string)
+ */
 export type InputDataset = Quads | string;
 export type BNodeId      = string;
 export type Hash         = string;
 export type QuadToNquad  = (quad: rdf.Quad) => string;
 
 /**
- * BNode labels to Quads mapping. Used in the canonicalization state: blank node to quad map. See
+ * BNode labels to Quads mapping. Used in the canonicalization state as the blank node to quad map. See
  * the [specification](https://www.w3.org/TR/rdf-canon/#canon-state).
  */
 export interface BNodeToQuads {
@@ -54,7 +64,7 @@ export interface BNodeToQuads {
 }
 
 /**
- * Hash values to BNode labels mapping. Used in the canonicalization state: hash to bnode map. See
+ * Hash values to BNode labels mapping. Used in the canonicalization state as the hash to bnode map. See
  * the [specification](https://www.w3.org/TR/rdf-canon/#canon-state).
  */
 export interface HashToBNodes {
@@ -69,8 +79,10 @@ export interface HashToBNodes {
 export interface C14nResult {
     /** Dataset as Set or Array of rdf Quads */
     dataset       : Quads;
+
     /** N-Quads serialization of the dataset */
     dataset_nquad : string;
+
     /** Mapping of the blank nodes from original to the canonical equivalent */
     bnode_id_map  : Map<BNodeId,BNodeId>;
 } 
@@ -91,7 +103,7 @@ export interface C14nState {
 
 /**
  * Extensions to the state. These extensions are not defined by the specification, but are necessary to
- * run.
+ * run the code
  * 
  * @remarks
  * The class instances in this extension are necessary to create/modify RDF terms, or to provide logging. These instances
@@ -159,19 +171,6 @@ export function hashNquads(state: C14nState, nquads: string[]): Hash {
 }
 
 /**
- * Return the hash of an array of nquad statements after being sorted. Per spec, this means
- * concatenating all nquads into a long string. Care should be taken that each
- * quad must end with a single `/n`.
- * 
- * @param nquads 
- * @returns - hash value
- */
-export function sortAndHashNquads(state: C14nState, nquads: string[]): Hash {
-    nquads.sort();
-    return hashNquads(state, nquads)
-}
-
-/**
  * Return an nquad version for a single quad.
  * 
  * @param quad 
@@ -229,9 +228,9 @@ export function parseNquads(nquads: string): Quads {
  * [RDF Dataset core instance](https://rdf.js.org/dataset-spec/#datasetcore-interface), an Array of Quads, or a Set of Quads.
  * 
  * @remarks
- * The reason this is necessary is (1) the Array object in JS does not have a `add` 
- * property and (2) care should be taken about creating new RDF Datasets, 
- * see the {@link new} method.
+ * The reason this class is necessary is (1) the Array object in JS does not have a `add` 
+ * property and (2) care should be taken about creating new RDF Datasets to reproduce the same "choice" for Quads  
+ * (see the {@link new} method).
  */
 export class DatasetShell {
     private the_dataset: Quads ;
