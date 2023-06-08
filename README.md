@@ -1,6 +1,6 @@
 # RDF Canonicalization in TypeScript
 
-This is an implementation (under development) of the [RDF Dataset Canonicalization](https://www.w3.org/TR/rdf-canon/) algorithm, also referred to as RDFC-1.0. (The algorithm is being specified by the W3C [RDF Dataset Canonicalization and Hash Working Group](https://www.w3.org/groups/wg/rch).)
+This is an implementation of the [RDF Dataset Canonicalization](https://www.w3.org/TR/rdf-canon/) algorithm, also referred to as RDFC-1.0. (The algorithm is being specified by the W3C [RDF Dataset Canonicalization and Hash Working Group](https://www.w3.org/groups/wg/rch).)
 
 > **The [specification](https://www.w3.org/TR/rdf-canon/) is not yet final. This implementations aims at reflecting _exactly_ the specification, which means it may evolve alongside the specification even if changes are editorial only.**
 
@@ -47,29 +47,56 @@ There is a more detailed documentation of the classes and types [on github](http
 import * as n3  from 'n3';
 import * as rdf from 'rdf-js';
 // The definition of "Quads" is:
-// export type Quads = rdf.DatasetCore<rdf.Quad,rdf.Quad> | rdf.Quad[] | Set<rdf.Quad>; 
-import {RDFC10, Quads, quadsToNquads } from 'rdf-c14n';
+// export type Quads = rdf.Quad[] | Set<rdf.Quad>; 
+import {RDFC10, Quads } from 'rdf-c14n';
 
 main() {
     // Any implementation of the data factory will do in the call below.
     // By default, the Data Factory of the `n3` package (i.e., the argument in the call
     // below is not strictly necessary).
     // Optionally, an instance of a Dataset Core Factory may be added as a second argument.
-    const canonicalizer = new RDFC10(n3.DataFactory);  
+    const rdfc10 = new RDFC10(n3.DataFactory);  
 
-    const input = parseYourFavoriteTriGIntoQuads();
+    const input: Quads = createYourQuads();
 
     // "normalized" is a dataset of quads with "canonical" blank node labels
-    // per the specification 
-    const normalized: Quads = canonicalizer.canonicalizeDetailed(input).dataset
+    // per the specification. 
+    const normalized: Quads = rdfc10.canonicalizeDetailed(input).dataset;
+
+    // If you care only of the N-Quads results only, you can make it simpler
+    const normalized_N_Quads: string = rdfc10.canonicalizeDetailed(input).dataset_nquad;
+
+    // Or even simpler, using a shortcut:
+    const normalized_N_Quads_bis: string = rdfc10.canonicalize(input);
 
     // "hash" is the hash value of the canonical dataset, per specification
-    const hash = canonicalizer.hash(normalized);
-
-    // Generate a sorted array of nquads for the normalized dataset
-    const nquads = canonicalizer.toNquads(normalized);
+    const hash: string = rdfc10.hash(normalized);
 }
 ```
+
+Alternatively, the canonicalization can rely on N-Quads documents only, with all other details hidden:
+
+```js
+import * as n3  from 'n3';
+import * as rdf from 'rdf-js';
+// The definition of "Quads" is:
+// export type Quads = rdf.Quad[] | Set<rdf.Quad>; 
+import {RDFC10, Quads, quadsToNquads } from 'rdf-c14n';
+
+main() {
+    // Any implementation of the data factory will do in the call below.
+    const rdfc10 = new RDFC10();  
+
+    const input: string = fetchYourNQuadsDocument();
+
+    // "normalized" is an N-Quads document with all blank nodes canonicalized 
+    const normalized: string = rdfc10.canonicalize(input);
+
+    // "hash" is the hash value of the canonical dataset, per specification
+    const hash = rdfc10.hash(normalized);
+}
+```
+
 
 ### Additional features
 

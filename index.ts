@@ -24,7 +24,7 @@ export { YamlLogger, LogLevels, Logger }   from './lib/logging';
  * Just a shell around the algorithm, consisting of a state, and the call for the real implementation.
  * 
  * The variable parts of the state, as [defined in the spec](https://www.w3.org/TR/rdf-canon/#dfn-canonicalization-state), 
- * are re-initialized at a call to the canonicalize call. Ie, the same class instance can be reused for
+ * are re-initialized at a call to the canonicalize call. Ie, the same class instance can be reused to
  * {@link RDFC10#canonicalize} for different graphs.
  */
 export class RDFC10 {
@@ -124,7 +124,12 @@ export class RDFC10 {
     }
 }
 
-// This is only for possible backward compatibility's sake; this was the old name of the class
-// The WG has decided what the final name of the algorithm is (RDFC 1.0), hence the renaming of the core
-// class...
+/** 
+ * Alternative name for {@link RDFC10}.
+ * 
+ * @remark
+ * This is only for possible backward compatibility's sake; this was the old name of the class
+ * The WG has decided what the final name of the algorithm is (RDFC 1.0), hence the renaming of the core
+ * class.
+ */
 export class RDFCanon extends RDFC10 {};
