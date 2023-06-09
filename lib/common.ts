@@ -72,19 +72,27 @@ export interface HashToBNodes {
 }
 
 /**
- * This is the result of the algorithm. Note that this definition is slightly simpler
- * then in the spec, because the rdf Terms, in this implementation, carry the bnode ID
- * in them through the `term.value` attribute.
+ * 
+ */
+export interface IdentifierMap<Tin,Tout> {
+    map : (t: Tin) => Tout|undefined; 
+}
+
+/**
+ * Canonicalization result; ie, the result structure of the algorithm. 
  */
 export interface C14nResult {
     /** Dataset as Set or Array of rdf Quads */
-    dataset       : Quads;
+    dataset          : Quads;
 
     /** N-Quads serialization of the dataset */
-    dataset_nquad : string;
+    dataset_nquad    : string;
 
-    /** Mapping of the blank nodes from original to the canonical equivalent */
-    bnode_id_map  : Map<BNodeId,BNodeId>;
+    /** Mapping of a blank node to its identifier */
+    bnode_id_map     : IdentifierMap<rdf.BlankNode,BNodeId>;
+
+    /** Mapping of an (original) blank node id to its canonical equivalent */
+    bnodeid_c14n_map : IdentifierMap<BNodeId,BNodeId>;
 } 
 
 /**

@@ -5,10 +5,15 @@ export type InputDataset = Quads | string;
 export type BNodeId      = string;
 export type Hash         = string;
 
+declare interface IdentifierMap<Tin,Tout> {
+    map : (t: Tin) => Tout|undefined; 
+}
+
 declare interface C14nResult {
-    dataset       : Quads;
-    dataset_nquad : string;
-    bnode_id_map  : Map<BNodeId,BNodeId>;
+    dataset          : Quads;
+    dataset_nquad    : string;
+    bnode_id_map     : IdentifierMap<rdf.BlankNode,BNodeId>;
+    bnodeid_c14n_map : IdentifierMap<BNodeId,BNodeId>;
 }
 
 /*********************************************************
@@ -40,6 +45,9 @@ declare class RDFC10 {
      * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
      * real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html).
      * 
+     * @remarks
+     * Note that the N-Quads parser throws an exception in case of syntax error.
+     * 
      * @param input_dataset 
      * @returns - N-Quads document using the canonical ID-s.
      */
@@ -54,6 +62,9 @@ declare class RDFC10 {
      * 
      * The result is an Object containing the serialized version and the Quads version of the canonicalization result, 
      * as well as a bnode mapping from the original to the canonical equivalents
+     * 
+     * @remarks
+     * Note that the N-Quads parser throws an exception in case of syntax error.
      * 
      * @param input_dataset 
      * @returns - Detailed results of the canonicalization

@@ -17,9 +17,7 @@
 <li><a href="lib_common.C14nResult.html">C14nResult</a></li></ul>
 <h1>Interface C14nResult</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>This is the result of the algorithm. Note that this definition is slightly simpler
-then in the spec, because the rdf Terms, in this implementation, carry the bnode ID
-in them through the <code>term.value</code> attribute.</p>
+<div class="tsd-comment tsd-typography"><p>Canonicalization result; ie, the result structure of the algorithm.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></section>
 <section class="tsd-panel tsd-hierarchy">
@@ -27,7 +25,7 @@ in them through the <code>term.value</code> attribute.</p>
 <ul class="tsd-hierarchy">
 <li><span class="target">C14nResult</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/9cfb39c/lib/common.ts#L79">lib/common.ts:79</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/c0f49bc/lib/common.ts#L84">lib/common.ts:84</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -38,6 +36,7 @@ in them through the <code>term.value</code> attribute.</p>
 <div class="tsd-index-list"><a href="lib_common.C14nResult.html#dataset" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-1024"><rect fill="var(--color-icon-background)" stroke="#FF984D" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.354 16V7.24H12.174C12.99 7.24 13.638 7.476 14.118 7.948C14.606 8.412 14.85 9.036 14.85 9.82C14.85 10.604 14.606 11.232 14.118 11.704C13.638 12.168 12.99 12.4 12.174 12.4H10.434V16H9.354ZM10.434 11.428H12.174C12.646 11.428 13.022 11.284 13.302 10.996C13.59 10.7 13.734 10.308 13.734 9.82C13.734 9.324 13.59 8.932 13.302 8.644C13.022 8.356 12.646 8.212 12.174 8.212H10.434V11.428Z" fill="var(--color-text)"></path></g></svg><span>dataset</span></a>
 <a href="lib_common.C14nResult.html#dataset_nquad" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>dataset_<wbr/>nquad</span></a>
 <a href="lib_common.C14nResult.html#bnode_id_map" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>bnode_<wbr/>id_<wbr/>map</span></a>
+<a href="lib_common.C14nResult.html#bnodeid_c14n_map" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>bnodeid_<wbr/>c14n_<wbr/>map</span></a>
 </div></section></div></details></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
@@ -48,7 +47,7 @@ in them through the <code>term.value</code> attribute.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/9cfb39c/lib/common.ts#L81">lib/common.ts:81</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/c0f49bc/lib/common.ts#L86">lib/common.ts:86</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="dataset_nquad" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>dataset_<wbr/>nquad</span><a href="#dataset_nquad" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">dataset_<wbr/>nquad</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
@@ -56,15 +55,23 @@ in them through the <code>term.value</code> attribute.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/9cfb39c/lib/common.ts#L84">lib/common.ts:84</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/c0f49bc/lib/common.ts#L89">lib/common.ts:89</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="bnode_id_map" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>bnode_<wbr/>id_<wbr/>map</span><a href="#bnode_id_map" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">bnode_<wbr/>id_<wbr/>map</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
-<div class="tsd-comment tsd-typography"><p>Mapping of the blank nodes from original to the canonical equivalent</p>
+<div class="tsd-signature"><span class="tsd-kind-property">bnode_<wbr/>id_<wbr/>map</span><span class="tsd-signature-symbol">:</span> <a href="lib_common.IdentifierMap.html" class="tsd-signature-type tsd-kind-interface">IdentifierMap</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">BlankNode</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
+<div class="tsd-comment tsd-typography"><p>Mapping of a blank node to its identifier</p>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/9cfb39c/lib/common.ts#L87">lib/common.ts:87</a></li></ul></aside></section></section></div>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/c0f49bc/lib/common.ts#L92">lib/common.ts:92</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member"><a id="bnodeid_c14n_map" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>bnodeid_<wbr/>c14n_<wbr/>map</span><a href="#bnodeid_c14n_map" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">bnodeid_<wbr/>c14n_<wbr/>map</span><span class="tsd-signature-symbol">:</span> <a href="lib_common.IdentifierMap.html" class="tsd-signature-type tsd-kind-interface">IdentifierMap</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
+<div class="tsd-comment tsd-typography"><p>Mapping of an (original) blank node id to its canonical equivalent</p>
+</div>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/c0f49bc/lib/common.ts#L95">lib/common.ts:95</a></li></ul></aside></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -84,7 +91,8 @@ in them through the <code>term.value</code> attribute.</p>
 <ul>
 <li><a href="#dataset" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>dataset</span></a></li>
 <li><a href="#dataset_nquad" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>dataset_<wbr/>nquad</span></a></li>
-<li><a href="#bnode_id_map" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>bnode_<wbr/>id_<wbr/>map</span></a></li></ul></div></details></div>
+<li><a href="#bnode_id_map" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>bnode_<wbr/>id_<wbr/>map</span></a></li>
+<li><a href="#bnodeid_c14n_map" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>bnodeid_<wbr/>c14n_<wbr/>map</span></a></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../index.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)"></path></g></svg><span>Implementation of the RDF <wbr/>Canonicalization algorithm RDFC-<wbr/>1.0 -<wbr/> v2.0.0</span></a>
 <ul class="tsd-small-nested-navigation">
@@ -109,6 +117,7 @@ in them through the <code>term.value</code> attribute.</p>
 <li><a href="../types/lib_common.QuadToNquad-1.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Quad<wbr/>To<wbr/>Nquad</span></a></li>
 <li><a href="lib_common.BNodeToQuads.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-256"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-interface)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.51 16V15.016H11.298V8.224H9.51V7.24H14.19V8.224H12.402V15.016H14.19V16H9.51Z" fill="var(--color-text)"></path></g></svg><span>BNode<wbr/>To<wbr/>Quads</span></a></li>
 <li><a href="lib_common.HashToBNodes.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Hash<wbr/>ToBNodes</span></a></li>
+<li><a href="lib_common.IdentifierMap.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Identifier<wbr/>Map</span></a></li>
 <li><a href="lib_common.C14nResult.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>C14n<wbr/>Result</span></a></li>
 <li><a href="lib_common.C14nState.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>C14n<wbr/>State</span></a></li>
 <li><a href="lib_common.GlobalState.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Global<wbr/>State</span></a></li>

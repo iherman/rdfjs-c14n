@@ -7,13 +7,25 @@
  */
 
 import * as rdf from 'rdf-js';
-import { GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, concatNquads, quadsToNquads } from './common';
-import { DatasetShell, parseNquads, InputDataset, C14nResult }  from './common';
+import { 
+    GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, concatNquads, quadsToNquads,
+    DatasetShell, parseNquads, InputDataset, IdentifierMap, C14nResult 
+} from './common';
+
 import { computeFirstDegreeHash }                               from './hash1DegreeQuads';
 import { computeNDegreeHash }                                   from './hashNDegreeQuads';
 import { IDIssuer }                                             from './issueIdentifier';
 import { bntqToLogItem, ndhrToLogItem, htbnToLogItem, LogItem } from './logging';
 
+/**
+ * A trivial mapping from a blank node to its ID; an instance of this class
+ * is necessary as part of the canonicalization return structure
+ */
+class IdMap implements IdentifierMap<rdf.BlankNode,BNodeId> {
+    map(t: rdf.BlankNode): BNodeId {
+        return t.value;
+    }
+}
 
 /**
  * Implementation of the main [steps on the top level](https://www.w3.org/TR/rdf-canon/#canon-algo-algo) of the algorithm specification.
@@ -236,9 +248,10 @@ export function computeCanonicalDataset(state: GlobalState, input: InputDataset)
          
         // Step 7
         const return_value: C14nResult = {
-            dataset              : retval.dataset,
-            dataset_nquad   : concatNquads(quadsToNquads(retval.dataset)),
-            bnode_id_map : state.canonical_issuer.identifier_map,
+            dataset          : retval.dataset,
+            dataset_nquad    : concatNquads(quadsToNquads(retval.dataset)),
+            bnode_id_map     : new IdMap(),
+            bnodeid_c14n_map : state.canonical_issuer,   
         }
         return return_value;
     }

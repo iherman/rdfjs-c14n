@@ -9,11 +9,19 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.computeCanonicalDataset = void 0;
 const common_1 = require("./common");
-const common_2 = require("./common");
 const hash1DegreeQuads_1 = require("./hash1DegreeQuads");
 const hashNDegreeQuads_1 = require("./hashNDegreeQuads");
 const issueIdentifier_1 = require("./issueIdentifier");
 const logging_1 = require("./logging");
+/**
+ * A trivial mapping from a blank node to its ID; an instance of this class
+ * is necessary as part of the canonicalization return structure
+ */
+class IdMap {
+    map(t) {
+        return t.value;
+    }
+}
 /**
  * Implementation of the main [steps on the top level](https://www.w3.org/TR/rdf-canon/#canon-algo-algo) of the algorithm specification.
  *
@@ -31,10 +39,10 @@ function computeCanonicalDataset(state, input) {
     // the rest of the processing.
     const convertToQuads = (inp) => {
         if (typeof inp === 'string') {
-            return new common_2.DatasetShell((0, common_2.parseNquads)(inp));
+            return new common_1.DatasetShell((0, common_1.parseNquads)(inp));
         }
         else {
-            return new common_2.DatasetShell(inp);
+            return new common_1.DatasetShell(inp);
         }
     };
     const input_dataset = convertToQuads(input);
@@ -227,7 +235,8 @@ function computeCanonicalDataset(state, input) {
     const return_value = {
         dataset: retval.dataset,
         dataset_nquad: (0, common_1.concatNquads)((0, common_1.quadsToNquads)(retval.dataset)),
-        bnode_id_map: state.canonical_issuer.identifier_map,
+        bnode_id_map: new IdMap(),
+        bnodeid_c14n_map: state.canonical_issuer,
     };
     return return_value;
 }

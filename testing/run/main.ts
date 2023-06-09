@@ -46,8 +46,6 @@ async function singleTest(canonicalizer: RDFC10, num: string, dump: boolean = tr
 
     // Just for testing the direct nquad input...
     // const trig: string = await fs.readFile(input_fname, 'utf-8');
-    // const c14n_input     = canonicalizer.canonicalize(trig);
-
     const c14n_result    = canonicalizer.canonicalizeDetailed(input);
     
     console.log('>>>>')

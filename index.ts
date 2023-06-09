@@ -10,11 +10,14 @@
 import * as rdf from 'rdf-js';
 import * as n3  from 'n3';
 
-import { GlobalState, Quads, hashDataset, Hash, Constants, quadsToNquads, InputDataset, computeHash } from './lib/common';
-import { C14nResult }                                                                    from './lib/common';
-import { IDIssuer }                                                                      from './lib/issueIdentifier';
-import { computeCanonicalDataset }                                                       from './lib/canonicalization';
-import { Logger, NopLogger}                                                              from './lib/logging';
+import { 
+    GlobalState, Quads, hashDataset, Hash, Constants, quadsToNquads, 
+    InputDataset, computeHash 
+} from './lib/common';
+import { C14nResult }               from './lib/common';
+import { IDIssuer }                 from './lib/issueIdentifier';
+import { computeCanonicalDataset }  from './lib/canonicalization';
+import { Logger, NopLogger}         from './lib/logging';
 
 export { Quads, InputDataset, C14nResult } from './lib/common';
 export { Hash, BNodeId }                   from './lib/common';
@@ -69,8 +72,12 @@ export class RDFC10 {
      * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
      * real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html).
      * 
+     * @remarks
+     * Note that the N-Quads parser throws an exception in case of syntax error.
+     * 
      * @param input_dataset 
      * @returns - N-Quads document using the canonical ID-s.
+     * 
      */
     canonicalize(input_dataset: InputDataset): string {
         return this.canonicalizeDetailed(input_dataset).dataset_nquad;
@@ -85,6 +92,9 @@ export class RDFC10 {
      * 
      * The result is an Object containing the serialized version and the Quads version of the canonicalization result, 
      * as well as a bnode mapping from the original to the canonical equivalents
+     * 
+     * @remarks
+     * Note that the N-Quads parser throws an exception in case of syntax error.
      * 
      * @param input_dataset 
      * @returns - Detailed results of the canonicalization

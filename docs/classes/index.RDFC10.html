@@ -30,7 +30,7 @@ are re-initialized at a call to the canonicalize call. Ie, the same class instan
 <ul class="tsd-hierarchy">
 <li><a href="index.RDFCanon.html" class="tsd-signature-type tsd-kind-class">RDFCanon</a></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/9cfb39c/index.ts#L30">index.ts:30</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/c0f49bc/index.ts#L33">index.ts:33</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -67,7 +67,7 @@ are re-initialized at a call to the canonicalize call. Ie, the same class instan
 <h4 class="tsd-returns-title">Returns <a href="index.RDFC10.html" class="tsd-signature-type tsd-kind-class">RDFC10</a></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/9cfb39c/index.ts#L36">index.ts:36</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/c0f49bc/index.ts#L39">index.ts:39</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member"><a id="setLogger" class="tsd-anchor"></a>
@@ -86,7 +86,7 @@ are re-initialized at a call to the canonicalize call. Ie, the same class instan
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/9cfb39c/index.ts#L51">index.ts:51</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/c0f49bc/index.ts#L54">index.ts:54</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="setHashAlgorithm" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>set<wbr/>Hash<wbr/>Algorithm</span><a href="#setHashAlgorithm" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -103,7 +103,7 @@ If the algorithm is not listed as existing for openssl, the value is ignored.</p
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/9cfb39c/index.ts#L59">index.ts:59</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/c0f49bc/index.ts#L62">index.ts:62</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="canonicalize" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>canonicalize</span><a href="#canonicalize" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -124,9 +124,11 @@ real work is done in the <a href="../functions/lib_canonicalization.computeCanon
 <li>N-Quads document using the canonical ID-s.</li>
 </ul>
 
-<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<div class="tsd-comment tsd-typography">
+<h4>Remarks</h4><p>Note that the N-Quads parser throws an exception in case of syntax error.</p>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/9cfb39c/index.ts#L75">index.ts:75</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/c0f49bc/index.ts#L82">index.ts:82</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="canonicalizeDetailed" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>canonicalize<wbr/>Detailed</span><a href="#canonicalizeDetailed" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -149,9 +151,11 @@ as well as a bnode mapping from the original to the canonical equivalents</p>
 <li>Detailed results of the canonicalization</li>
 </ul>
 
-<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<div class="tsd-comment tsd-typography">
+<h4>Remarks</h4><p>Note that the N-Quads parser throws an exception in case of syntax error.</p>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/9cfb39c/index.ts#L92">index.ts:92</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/c0f49bc/index.ts#L102">index.ts:102</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="toNquads" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>to<wbr/>Nquads</span><a href="#toNquads" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -173,7 +177,7 @@ as well as a bnode mapping from the original to the canonical equivalents</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/9cfb39c/index.ts#L103">index.ts:103</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/c0f49bc/index.ts#L113">index.ts:113</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="hash" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>hash</span><a href="#hash" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -195,7 +199,7 @@ as well as a bnode mapping from the original to the canonical equivalents</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/9cfb39c/index.ts#L118">index.ts:118</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/c0f49bc/index.ts#L128">index.ts:128</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

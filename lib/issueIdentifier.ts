@@ -6,8 +6,8 @@
  * @packageDocumentation
  */
 
-import { Constants, BNodeId } from './common';
-import { LogItem }            from './logging';
+import { Constants, BNodeId, IdentifierMap } from './common';
+import { LogItem }                           from './logging';
 
 /**
  * Issue Identifier.
@@ -15,8 +15,8 @@ import { LogItem }            from './logging';
  * See [the specification](https://www.w3.org/TR/rdf-canon/#issue-identifier-algorithm) for the details, except that all
  * functionalities are encapsulated in a class.
  */
-export class IDIssuer {
-    // This is mainly used to provide a readable ID at debug/logging time...
+export class IDIssuer implements IdentifierMap<BNodeId,BNodeId> {
+    // This is used to provide a readable ID at debug/logging time...
     private static IDIssuerID : number = 1234;
     // ... for each instance; it is only used for debugging purposes.
     private id                : number;
@@ -43,7 +43,7 @@ export class IDIssuer {
      * See [the specification](https://www.w3.org/TR/rdf-canon/#issue-identifier-algorithm).
      * 
      * @param existing the original bnode id
-     * @returns the canonical equivalent
+     * @returns the canonical equivalent (which may have been newly minted in the process)
      */
     issueID(existing: BNodeId): BNodeId {
         const issued = this.issued_identifiers_map.get(existing);
@@ -57,8 +57,17 @@ export class IDIssuer {
         }
     }
 
-    get identifier_map(): Map<BNodeId,BNodeId> {
-        return this.issued_identifiers_map;
+    /**
+     * Mapping from a blank node to its canonical equivalent; 
+     * this method is necessary to use this instance as part
+     * of the return structure for the canonicalizer function
+     */
+    map(id: BNodeId): BNodeId {
+        if (this.isSet(id)) {
+            return this.issued_identifiers_map.get(id);
+        } else {
+            return undefined;
+        }
     }
 
     /**

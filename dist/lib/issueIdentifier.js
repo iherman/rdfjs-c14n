@@ -16,7 +16,7 @@ const common_1 = require("./common");
  * functionalities are encapsulated in a class.
  */
 class IDIssuer {
-    // This is mainly used to provide a readable ID at debug/logging time...
+    // This is used to provide a readable ID at debug/logging time...
     static IDIssuerID = 1234;
     // ... for each instance; it is only used for debugging purposes.
     id;
@@ -40,7 +40,7 @@ class IDIssuer {
      * See [the specification](https://www.w3.org/TR/rdf-canon/#issue-identifier-algorithm).
      *
      * @param existing the original bnode id
-     * @returns the canonical equivalent
+     * @returns the canonical equivalent (which may have been newly minted in the process)
      */
     issueID(existing) {
         const issued = this.issued_identifiers_map.get(existing);
@@ -54,8 +54,18 @@ class IDIssuer {
             return newly_issued;
         }
     }
-    get identifier_map() {
-        return this.issued_identifiers_map;
+    /**
+     * Mapping from a blank node to its canonical equivalent;
+     * this method is necessary to use this instance as part
+     * of the return structure for the canonicalizer function
+     */
+    map(id) {
+        if (this.isSet(id)) {
+            return this.issued_identifiers_map.get(id);
+        }
+        else {
+            return undefined;
+        }
     }
     /**
      * Has a bnode label been assigned a canonical alternative?

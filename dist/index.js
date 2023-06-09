@@ -63,8 +63,12 @@ class RDFC10 {
      * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
      * real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html).
      *
+     * @remarks
+     * Note that the N-Quads parser throws an exception in case of syntax error.
+     *
      * @param input_dataset
      * @returns - N-Quads document using the canonical ID-s.
+     *
      */
     canonicalize(input_dataset) {
         return this.canonicalizeDetailed(input_dataset).dataset_nquad;
@@ -78,6 +82,9 @@ class RDFC10 {
      *
      * The result is an Object containing the serialized version and the Quads version of the canonicalization result,
      * as well as a bnode mapping from the original to the canonical equivalents
+     *
+     * @remarks
+     * Note that the N-Quads parser throws an exception in case of syntax error.
      *
      * @param input_dataset
      * @returns - Detailed results of the canonicalization
