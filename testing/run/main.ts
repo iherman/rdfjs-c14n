@@ -44,7 +44,13 @@ async function singleTest(canonicalizer: RDFC10, num: string, dump: boolean = tr
         rdfn3.get_quads(expected_fname),
     ]);
 
-    canonicalizer.setMaximumRecursionLevel(1);
+    // console.log(`Current maximal level of recursion: ${canonicalizer.maximum_recursion_level}`);
+    // canonicalizer.maximum_recursion_level = 6;
+    // console.log(`Set maximal level of recursion: ${canonicalizer.maximum_recursion_level}`);
+    // console.log(`System wide maximum recursion level: ${canonicalizer.maximum_allowed_recursion_level}`)
+
+    // console.log(`Hash algorithm: ${canonicalizer.hash_algorithm}`);
+    // console.log(`available hash algorithms: ${canonicalizer.available_hash_algorithms}`)
 
     // Just for testing the direct nquad input...
     // const trig: string = await fs.readFile(input_fname, 'utf-8');
@@ -153,7 +159,7 @@ async function main(): Promise<void> {
 
         if (logLevel) {
             logger = new YamlLogger(logLevel);
-            canonicalizer.setLogger(logger);
+            canonicalizer.logger = logger;
         }
     
         const num = (program.args.length === 0) ? testNumber(options.number) : testNumber(program.args[0]);

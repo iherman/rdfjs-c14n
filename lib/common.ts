@@ -29,7 +29,7 @@ export namespace Constants {
     /**
      * Default maximal value for recursion
      */
-    export const DEFAULT_MAXIMUM_RECURSION = 20;
+    export const DEFAULT_MAXIMUM_RECURSION = 50;
 
     /**
      * List of openssl hash algorithms, as of June 2023;

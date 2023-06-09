@@ -34,7 +34,6 @@ function computeCanonicalDataset(state, input) {
     state.bnode_to_quads = {};
     state.hash_to_bnodes = {};
     state.canonical_issuer = new issueIdentifier_1.IDIssuer();
-    state.maximum_recursion = Number.MAX_SAFE_INTEGER;
     state.current_recursion = 0;
     // The input to the algorithm can be either an nQuads document, or a dataset
     // representation with Quads. This function makes the nQuad document "disappear" from
