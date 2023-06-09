@@ -36,9 +36,10 @@ class IdMap implements IdentifierMap<rdf.BlankNode,BNodeId> {
  */
 export function computeCanonicalDataset(state: GlobalState, input: InputDataset): C14nResult {
         // Re-initialize the state information: canonicalization should always start with a clean state
-        state.bnode_to_quads   = {};
-        state.hash_to_bnodes   = {};
-        state.canonical_issuer = new IDIssuer();
+        state.bnode_to_quads    = {};
+        state.hash_to_bnodes    = {};
+        state.canonical_issuer  = new IDIssuer();
+        state.current_recursion = 0;
 
         // The input to the algorithm can be either an nQuads document, or a dataset
         // representation with Quads. This function makes the nQuad document "disappear" from

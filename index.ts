@@ -38,12 +38,14 @@ export class RDFC10 {
      */
     constructor(data_factory?: rdf.DataFactory) {
         this.state = {
-            bnode_to_quads   : {},
-            hash_to_bnodes   : {},
-            canonical_issuer : new IDIssuer(),
-            hash_algorithm   : Constants.HASH_ALGORITHM,
-            dataFactory      : data_factory ? data_factory : n3.DataFactory,
-            logger           : new NopLogger(),
+            bnode_to_quads    : {},
+            hash_to_bnodes    : {},
+            canonical_issuer  : new IDIssuer(),
+            hash_algorithm    : Constants.HASH_ALGORITHM,
+            dataFactory       : data_factory ? data_factory : n3.DataFactory,
+            logger            : new NopLogger(),
+            maximum_recursion : Constants.DEFAULT_MAXIMUM_RECURSION,
+            current_recursion : 0
         }
     }
 
@@ -62,6 +64,19 @@ export class RDFC10 {
     setHashAlgorithm(algorithm: string): void {
         if (Constants.HASH_ALGORITHMS.includes(algorithm)) {
             this.state.hash_algorithm = algorithm;
+        }
+    }
+
+    /**
+     * Set the maximal level of recursion this canonicalization should use. Setting this number to a reasonably low number (say, 3),
+     * ensures that some "poison graphs" would not result in an unreasonably long canonicalization process.
+     * See the [security consideration section](https://www.w3.org/TR/rdf-canon/#security-considerations) in the specification.
+     * 
+     * The default value set by this implementation is 20; any number _greater_ then this number is ignored.
+     */
+    setMaximumRecursionLevel(level: number): void {
+        if (!Number.isNaN(level) && Number.isInteger(level) && level > 0 && level < Constants.DEFAULT_MAXIMUM_RECURSION) {
+            this.state.maximum_recursion = level;
         }
     }
 

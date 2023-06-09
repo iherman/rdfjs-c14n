@@ -77,10 +77,11 @@ function computeHashRelatedBlankNode(state, related, quad, issuer, position) {
 function computeNDegreeHash(state, identifier, issuer) {
     /* @@@ */
     state.logger.push("hndq");
-    state.logger.info("hndq.1", "Entering Hash N-Degree Quads function (4.8.3).", {
+    state.logger.info("hndq.1", `Entering Hash N-Degree Quads function (4.8.3), with a recursion level of ${state.current_recursion}.`, {
         identifier,
-        "issuer": state.canonical_issuer.toLogItem(),
+        "issuer": state.canonical_issuer.toLogItem()
     });
+    console.log(`>>>>>>+++ Recursion level ${state.current_recursion} +++<<<<<<<`);
     /* @@@ */
     // Step 1
     const Hn = {};
@@ -193,8 +194,9 @@ function computeNDegreeHash(state, identifier, issuer) {
                     state.logger.push("hndq.5.4.5.");
                 for (const related of recursion_list) {
                     // Step 5.4.5.1
-                    // This is the computationally dangerous point in the algorithm!
+                    state.current_recursion += 1;
                     const result = computeNDegreeHash(state, related, issuer_copy);
+                    state.current_recursion -= 1;
                     // Step 5.4.5.2
                     path = `${path}_:${issuer_copy.issueID(related)}`;
                     // Step 5.4.5.3

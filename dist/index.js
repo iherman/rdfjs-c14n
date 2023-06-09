@@ -38,6 +38,8 @@ class RDFC10 {
             hash_algorithm: common_1.Constants.HASH_ALGORITHM,
             dataFactory: data_factory ? data_factory : n3.DataFactory,
             logger: new logging_1.NopLogger(),
+            maximum_recursion: Number.MAX_SAFE_INTEGER,
+            current_recursion: 0
         };
     }
     /**
