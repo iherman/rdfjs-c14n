@@ -38,7 +38,7 @@ function printQuads(nquads: string[], label: string): void {
  */
 async function singleTest(canonicalizer: RDFC10, num: string, dump: boolean = true): Promise<boolean> {
     const input_fname    = `testing/tests/test${num}-in.nq`;
-    const expected_fname = `testing/tests/test${num}-urdna2015.nq`
+    const expected_fname = `testing/tests/test${num}-rdfc10.nq`
     const [input, expected] = await Promise.all([
         rdfn3.get_quads(input_fname),
         rdfn3.get_quads(expected_fname),
