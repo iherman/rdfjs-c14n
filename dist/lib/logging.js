@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.htbnToLogItem = exports.ndhrToLogItem = exports.bntqToLogItem = exports.YamlLogger = exports.NopLogger = exports.LogLevels = void 0;
+exports.htbnToLogItem = exports.ndhrToLogItem = exports.bntqToLogItem = exports.LoggerFactory = exports.LogLevels = void 0;
 /**
  * Logging environment, used by the rest of the code. By default, no logging occurs; the user can set his/her own
  * logging environment. This module also includes a logger to create a recursive log in YAML.
@@ -24,11 +24,13 @@ var LogLevels;
 })(LogLevels || (exports.LogLevels = LogLevels = {}));
 ;
 /**
- * A default, no-operation logger instance, used by default. All methods are empty, ie, all messages are lost...
+ * A default, no-operation logger instance, used by default.
+ * All methods are empty, ie, all messages are lost, and the final log is an empty string.
  */
-class NopLogger {
-    log = '';
-    log_object = {};
+class DefaultLogger {
+    _level;
+    constructor() { }
+    ;
     debug(_log_point, _position, ..._otherData) { }
     ;
     warn(_log_point, _position, ..._otherData) { }
@@ -41,8 +43,12 @@ class NopLogger {
     ;
     pop() { }
     ;
+    get log() {
+        return '';
+    }
+    set level(l) { this._level = l; }
+    get level() { return this._level; }
 }
-exports.NopLogger = NopLogger;
 /**
  * Simple logger, storing the individual log messages as an array of {@link LogItem} objects. The logger
  * follows the recommendations on severity levels as described in {@link Logger}.
@@ -50,18 +56,16 @@ exports.NopLogger = NopLogger;
  * The "current" log is an array of {@link LogItem} instances, filled by subsequent logger calls.
  * In case of a call to `push` this instance is pushed on an internal stack and a new array is created.
  *
- * The final log can be retrieved either as the array of Objects via the `log_object`, or
- * as a YAML string via the `log` attributes, respectively.
+ * The final log can be retrieved either in a YAML format using the {@link getFinalLog} method.
  *
  * By default, the logger level is set to `LogLevels.info`.
  */
-class YamlLogger {
-    level;
+class YamlLogger extends DefaultLogger {
     top_log = {};
     current_log;
     log_stack = [];
-    constructor(level = LogLevels.info) {
-        this.level = level;
+    constructor() {
+        super();
         const ca_level = [];
         this.top_log["ca"] = ca_level;
         this.current_log = ca_level;
@@ -79,19 +83,19 @@ class YamlLogger {
         this.current_log.push(full_item);
     }
     debug(log_id, position, ...extras) {
-        if (this.level >= LogLevels.debug)
+        if (this._level >= LogLevels.debug)
             this.emitMessage("debug", log_id, position, extras);
     }
     info(log_id, position, ...extras) {
-        if (this.level >= LogLevels.info)
+        if (this._level >= LogLevels.info)
             this.emitMessage("info", log_id, position, extras);
     }
     warn(log_id, position, ...extras) {
-        if (this.level >= LogLevels.warn)
+        if (this._level >= LogLevels.warn)
             this.emitMessage("warn", log_id, position, extras);
     }
     error(log_id, position, ...extras) {
-        if (this.level >= LogLevels.error)
+        if (this._level >= LogLevels.error)
             this.emitMessage("error", log_id, position, extras);
     }
     push(label, extra_info, ...extras) {
@@ -115,14 +119,48 @@ class YamlLogger {
     pop() {
         this.current_log = this.log_stack.pop();
     }
-    get log_object() {
-        return this.top_log;
-    }
     get log() {
-        return yaml.stringify(this.log_object, { aliasDuplicateObjects: false });
+        return yaml.stringify(this.top_log, { aliasDuplicateObjects: false });
     }
 }
-exports.YamlLogger = YamlLogger;
+/**
+ * Logger factory: to create new instances of a logger.
+ */
+class LoggerFactory {
+    static DEFAULT_LOGGER = "DefaultLogger";
+    static #logger_protos = {
+        "YamlLogger": new YamlLogger(),
+        "DefaultLogger": new DefaultLogger(),
+    };
+    /**
+     *
+     * @param id Identification string for a new logger type.
+     * @param level
+     * @returns new logger instance.
+     */
+    static createLogger(id = LoggerFactory.DEFAULT_LOGGER, level = LogLevels.debug) {
+        if (id in LoggerFactory.#logger_protos) {
+            const new_logger = Object.create(LoggerFactory.#logger_protos[id]);
+            new_logger.level = level;
+            return new_logger;
+        }
+        else {
+            console.log(`>>> Not found logger ${id}`);
+            return undefined;
+        }
+    }
+    /**
+     * List of available logger types.
+     */
+    static loggerTypes() {
+        const retval = [];
+        for (const key in LoggerFactory.#logger_protos) {
+            retval.push(key);
+        }
+        return retval;
+    }
+}
+exports.LoggerFactory = LoggerFactory;
 /**
  * Return a log item version of a `BNodeToQuads` instance, used to build up a full log message.
  *

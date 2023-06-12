@@ -14,14 +14,15 @@ import {
     GlobalState, Quads, hashDataset, Hash, Constants, quadsToNquads, 
     InputDataset, computeHash 
 } from './lib/common';
-import { C14nResult }               from './lib/common';
-import { IDIssuer }                 from './lib/issueIdentifier';
-import { computeCanonicalDataset }  from './lib/canonicalization';
-import { Logger, NopLogger}         from './lib/logging';
+
+import { C14nResult }                       from './lib/common';
+import { IDIssuer }                         from './lib/issueIdentifier';
+import { computeCanonicalDataset }          from './lib/canonicalization';
+import { Logger, LoggerFactory, LogLevels } from './lib/logging';
 
 export { Quads, InputDataset, C14nResult } from './lib/common';
 export { Hash, BNodeId }                   from './lib/common';
-export { YamlLogger, LogLevels, Logger }   from './lib/logging';
+export { LogLevels, Logger }               from './lib/logging';
 
 /**
  * Just a shell around the algorithm, consisting of a state, and the call for the real implementation.
@@ -43,22 +44,45 @@ export class RDFC10 {
             canonical_issuer  : new IDIssuer(),
             hash_algorithm    : Constants.HASH_ALGORITHM,
             dataFactory       : data_factory ? data_factory : n3.DataFactory,
-            logger            : new NopLogger(),
+            logger            : LoggerFactory.createLogger(LoggerFactory.DEFAULT_LOGGER),
+            logger_id         : LoggerFactory.DEFAULT_LOGGER,
             maximum_recursion : Constants.DEFAULT_MAXIMUM_RECURSION,
             current_recursion : 0
         }
     }
 
     /**
-     * Set a logger instance. 
+     * Create and set a logger instance
+     *  
      * @param logger 
      */
-    set logger(logger: Logger) {
-        this.state.logger = logger;
+    setLogger(id: string = LoggerFactory.DEFAULT_LOGGER, level: LogLevels = LogLevels.debug): Logger | undefined {
+        const new_logger = LoggerFactory.createLogger(id, level);
+        if (new_logger !== undefined) {
+            this.state.logger_id = id;
+            this.state.logger    = new_logger;
+            return new_logger;
+        } else {
+            return undefined
+        }
     }
 
     /**
-     * Set the hash algorithm. The value can be anything that the underlying openssl, as used by node.js, accepts. The default is "sha256".
+     * Current logger type
+     */
+    get logger_type(): string {
+        return this.state.logger_id;
+    }
+
+    /**
+     * List of available logger types.
+     */
+    get available_logger_types(): string[] {
+        return LoggerFactory.loggerTypes();
+    }
+
+    /**
+     * Set Hash algorithm. The value can be anything that the underlying openssl, as used by node.js, accepts. The default is "sha256".
      * If the algorithm is not listed as existing for openssl, the value is ignored (and an exception is thrown).
      */
     set hash_algorithm(algorithm: string) {

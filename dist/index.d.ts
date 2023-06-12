@@ -16,6 +16,13 @@ declare interface C14nResult {
     bnodeid_c14n_map : IdentifierMap<BNodeId,BNodeId>;
 }
 
+declare enum LogLevels {
+    error,
+    warn,
+    info,
+    debug
+}
+
 /*********************************************************
 The main class encapsulating the library's functionalities
 **********************************************************/
@@ -31,7 +38,18 @@ declare class RDFC10 {
      * Set a logger instance. By default it is an "empty" logger, ie, no logging happens
      * @param logger 
      */
-    set logger(logger: Logger);
+    setLogger(id: string, level: LogLevels);
+
+    /**
+     * Current logger type
+     */
+    get logger_type(): string;
+
+    /**
+     * List of available logger types.
+     */
+    get available_logger_types(): string[];
+
 
     /**
      * Set the hash algorithm. The value can be anything that the underlying openssl, as used by node.js, accepts. The default is "sha256".
@@ -112,12 +130,6 @@ declare class RDFCanon extends RDFC10 {};
 /*****************************************************************************
 Type and class declarations for logging; can be ignored if no logging is used
 ******************************************************************************/
-declare enum LogLevels {
-    error,
-    warn,
-    info,
-    debug
-}
 
 declare interface LogItem {
     [index: string]: string|string[]|Map<string,string>|boolean|LogItem|LogItem[];
@@ -137,8 +149,8 @@ declare interface LogItem {
  * 
  */
 declare interface Logger {
-    log: string;
-    log_object: LogItem;
+    level: LogLevels;
+
     debug(log_point: string, position: string, ...otherData: LogItem[]): void;
     warn(log_point: string, position: string, ...otherData: LogItem[]): void;
     error(log_point: string, position: string, ...otherData: LogItem[]): void;
@@ -156,16 +168,10 @@ declare interface Logger {
      * Counterpart of the {@link push} method.
      */
     pop(): void;
+
+    /**
+     * Accessor to the (readonly) log;
+     */
+    get log(): string;
 }
 
-declare class YamlLogger implements Logger {
-    log: string;
-    log_object: LogItem;
-    constructor(level?: LogLevels);
-    debug(log_point: string, position: string, ...otherData: LogItem[]): void;
-    warn(log_point: string, position: string, ...otherData: LogItem[]): void;
-    error(log_point: string, position: string, ...otherData: LogItem[]): void;
-    info(log_point: string, position: string, ...otherData: LogItem[]): void;
-    push(label: string, extra_info ?: string, ...otherData: LogItem[]): void;
-    pop(): void;
-}

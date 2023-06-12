@@ -8,14 +8,13 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RDFCanon = exports.RDFC10 = exports.LogLevels = exports.YamlLogger = void 0;
+exports.RDFCanon = exports.RDFC10 = exports.LogLevels = void 0;
 const n3 = require("n3");
 const common_1 = require("./lib/common");
 const issueIdentifier_1 = require("./lib/issueIdentifier");
 const canonicalization_1 = require("./lib/canonicalization");
 const logging_1 = require("./lib/logging");
 var logging_2 = require("./lib/logging");
-Object.defineProperty(exports, "YamlLogger", { enumerable: true, get: function () { return logging_2.YamlLogger; } });
 Object.defineProperty(exports, "LogLevels", { enumerable: true, get: function () { return logging_2.LogLevels; } });
 /**
  * Just a shell around the algorithm, consisting of a state, and the call for the real implementation.
@@ -37,20 +36,42 @@ class RDFC10 {
             canonical_issuer: new issueIdentifier_1.IDIssuer(),
             hash_algorithm: common_1.Constants.HASH_ALGORITHM,
             dataFactory: data_factory ? data_factory : n3.DataFactory,
-            logger: new logging_1.NopLogger(),
+            logger: logging_1.LoggerFactory.createLogger(logging_1.LoggerFactory.DEFAULT_LOGGER),
+            logger_id: logging_1.LoggerFactory.DEFAULT_LOGGER,
             maximum_recursion: common_1.Constants.DEFAULT_MAXIMUM_RECURSION,
             current_recursion: 0
         };
     }
     /**
-     * Set a logger instance.
+     * Create and set a logger instance
+     *
      * @param logger
      */
-    set logger(logger) {
-        this.state.logger = logger;
+    setLogger(id = logging_1.LoggerFactory.DEFAULT_LOGGER, level = logging_1.LogLevels.debug) {
+        const new_logger = logging_1.LoggerFactory.createLogger(id, level);
+        if (new_logger !== undefined) {
+            this.state.logger_id = id;
+            this.state.logger = new_logger;
+            return new_logger;
+        }
+        else {
+            return undefined;
+        }
     }
     /**
-     * Set the hash algorithm. The value can be anything that the underlying openssl, as used by node.js, accepts. The default is "sha256".
+     * Current logger type
+     */
+    get logger_type() {
+        return this.state.logger_id;
+    }
+    /**
+     * List of available logger types.
+     */
+    get available_logger_types() {
+        return logging_1.LoggerFactory.loggerTypes();
+    }
+    /**
+     * Set Hash algorithm. The value can be anything that the underlying openssl, as used by node.js, accepts. The default is "sha256".
      * If the algorithm is not listed as existing for openssl, the value is ignored (and an exception is thrown).
      */
     set hash_algorithm(algorithm) {

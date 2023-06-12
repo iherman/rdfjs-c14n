@@ -102,36 +102,57 @@ main() {
 
 #### Choice of hash
 
-The [RDF Dataset Canonicalization](https://www.w3.org/TR/rdf-canon/) algorithm is based on an extensive usage of hashing. By default, as specified by the document, the hash function is 'sha256'. This default hash function can be changed via the
+The [RDFC 1.0](https://www.w3.org/TR/rdf-canon/) algorithm is based on an extensive usage of hashing. By default, as specified by the document, the hash function is 'sha256'. This default hash function can be changed via the
 
 ```js
-    canonicalizer.setHashAlgorithm(algorithm);
+    rdfc10.hash_algorithm = algorithm;
 ```
 
-method, where `algorithm` can be any hash function identification that the underlying openssl environment (as used by `node.js`) accepts. Examples are 'sha256', 'sha512', etc. On recent releases of OpenSSL, `openssl list -digest-algorithms` will display the available algorithms.
+attribute, where `algorithm` can be any hash function identification that the underlying openssl environment (as used by `node.js`) accepts. Examples are 'sha256', 'sha512', etc. On recent releases of OpenSSL, `openssl list -digest-algorithms` will display the available algorithms; the list of available hash algorithms can also be accessed via the (read only) `available_hash_algorithm` attribute of the `rdfc10` instance.
+
+#### Controlling the recursion level
+
+On rare occasion, the [RDFC 1.0](https://www.w3.org/TR/rdf-canon/) algorithm has to go through some recursive steps. On even more extreme situations, the running of the algorithm could result in an unreasonably long canonicalization process. Although this practically never occurs in practice, attackers may use some "poison graphs" to create such a situation (see the [security consideration section](https://www.w3.org/TR/rdf-canon/#security-considerations) in the specification).
+
+This implementation sets a maximum level; this level can be accessed by the
+
+```js
+    rdfc10.maximum_allowed_recursion_level;
+```
+
+(read-only) attribute. This number can be lowered by setting the 
+
+```js
+    rdfc10.maximum_recursion_level
+```
+
+attribute. The value of this attribute cannot exceed the system wide maximum allowed level.
 
 #### Logging
 
-The canonicalization algorithm has built-in logging points that can be followed via a logger. This is  only of interest for debugging the algorithm itself; it can be safely ignored by the average user. By default, no logging happens.
+The canonicalization algorithm has built-in logging points that can be followed via a logger. This is only of interest for debugging the algorithm itself; it can be safely ignored by the average user. By default, no logging happens.
 
 A built-in logger can be switched on which displays logging information in YAML. To use this YAML logger, do the following:
 
 ```js
-import { YamlLogger, LogLevels } from 'rdfjs-c14n';
-
+import { LogLevels } from 'rdfjs-c14n';
+…
 main() {
     …
-    const canonicalizer = new RDFC10();
+    const rdfc10 = new RDFC10();
     // `logLevel` may be LogLevels.error, LogLevels.warn, LogLevels.info, LogLevels.debug  
-    const logger = new YamlLogger(logLevel);
-    canonicalizer.setLogger(logger);
+    const logger = rdfc10.setLogger("YamlLogger", logLevel);
     …
     // "logger.log" is a string containing the full log in YAML format
     console.log(logger.log);
 }
 ```
 
-See the [interface specification for Logger](https://iherman.github.io/rdfjs-c14n/interfaces/lib_logging.Logger.html) to possibly implement your own logger.
+Implementers may add their own loggers to the system by implementing a new Logger instance. See the [interface specification for Logger](https://iherman.github.io/rdfjs-c14n/interfaces/lib_logging.Logger.html) to possibly implement your own logger, and the general documentation on how to add this logger to the list of available loggers. In case there are more loggers, the list of available loggers is also available to the end user via:
+
+```js
+    rdfc10.available_logger_types;
+```
 
 
 ---

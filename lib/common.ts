@@ -131,6 +131,9 @@ export interface GlobalState extends C14nState {
     /** A logger instance */
     logger          : Logger;
 
+    /** Logger instance's identifier name */
+    logger_id       : string;
+
     /** 
      * Maximal number of recursions allowed. Initialized to the maximum integer value in Javascript.
      * This value may be modified by the caller

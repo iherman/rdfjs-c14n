@@ -1,6 +1,6 @@
-import { Command }                               from 'commander';
-import { RDFC10, YamlLogger, LogLevels, Logger } from '../../index';
-import * as rdfn3                                from './rdfn3';
+import { Command }                   from 'commander';
+import { RDFC10, LogLevels, Logger } from '../../index';
+import * as rdfn3                    from './rdfn3';
 
 const number_of_tests: number = 63;
 const extra_tests: string[] = ['900', '901']
@@ -157,9 +157,9 @@ async function main(): Promise<void> {
         let logger : Logger|undefined = undefined; // = new SimpleYamlLogger(logLevel);
         const logLevel = (debug) ? LogLevels.debug : ((trace) ? LogLevels.info : undefined);
 
+        console.log(`Available logger types: ${canonicalizer.available_logger_types}`);
         if (logLevel) {
-            logger = new YamlLogger(logLevel);
-            canonicalizer.logger = logger;
+            logger = canonicalizer.setLogger("YamlLogger", logLevel)
         }
     
         const num = (program.args.length === 0) ? testNumber(options.number) : testNumber(program.args[0]);
