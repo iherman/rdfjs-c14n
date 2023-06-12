@@ -38,12 +38,14 @@ export class RDFC10 {
      */
     constructor(data_factory?: rdf.DataFactory) {
         this.state = {
-            bnode_to_quads   : {},
-            hash_to_bnodes   : {},
-            canonical_issuer : new IDIssuer(),
-            hash_algorithm   : Constants.HASH_ALGORITHM,
-            dataFactory      : data_factory ? data_factory : n3.DataFactory,
-            logger           : new NopLogger(),
+            bnode_to_quads    : {},
+            hash_to_bnodes    : {},
+            canonical_issuer  : new IDIssuer(),
+            hash_algorithm    : Constants.HASH_ALGORITHM,
+            dataFactory       : data_factory ? data_factory : n3.DataFactory,
+            logger            : new NopLogger(),
+            maximum_recursion : Constants.DEFAULT_MAXIMUM_RECURSION,
+            current_recursion : 0
         }
     }
 
@@ -51,18 +53,57 @@ export class RDFC10 {
      * Set a logger instance. 
      * @param logger 
      */
-    setLogger(logger: Logger): void {
+    set logger(logger: Logger) {
         this.state.logger = logger;
     }
 
     /**
      * Set the hash algorithm. The value can be anything that the underlying openssl, as used by node.js, accepts. The default is "sha256".
-     * If the algorithm is not listed as existing for openssl, the value is ignored.
+     * If the algorithm is not listed as existing for openssl, the value is ignored (and an exception is thrown).
      */
-    setHashAlgorithm(algorithm: string): void {
+    set hash_algorithm(algorithm: string) {
         if (Constants.HASH_ALGORITHMS.includes(algorithm)) {
             this.state.hash_algorithm = algorithm;
+        } else {
+            const error_message = `"${algorithm}" is not a valid Hash Algorithm name`;
+            throw TypeError(error_message);
         }
+    }
+    get hash_algorithm(): string {
+        return this.state.hash_algorithm;
+    }
+
+    /**
+     * List of available hash algorithm names.
+     */
+    get available_hash_algorithms(): string[] {
+        return Constants.HASH_ALGORITHMS;
+    }
+
+    /**
+     * Set the maximal level of recursion this canonicalization should use. Setting this number to a reasonably low number (say, 3),
+     * ensures that some "poison graphs" would not result in an unreasonably long canonicalization process.
+     * See the [security consideration section](https://www.w3.org/TR/rdf-canon/#security-considerations) in the specification.
+     * 
+     * The default value set by this implementation is 50; any number _greater_ then this number is ignored (and an exception is thrown).
+     */
+    set maximum_recursion_level(level: number) {
+        if (!Number.isNaN(level) && Number.isInteger(level) && level > 0 && level < Constants.DEFAULT_MAXIMUM_RECURSION) {
+            this.state.maximum_recursion = level;
+        } else {
+            const error_message = `Required recursion level is not an integer between 0 and ${Constants.DEFAULT_MAXIMUM_RECURSION}`;
+            throw RangeError(error_message);
+        }
+    }
+    get maximum_recursion_level(): number {
+        return this.state.maximum_recursion
+    }
+
+    /**
+     * The system-wide maximum value for the recursion level. The current maximum recursion level cannot exceed this value.
+     */
+    get maximum_allowed_recursion_level(): number {
+        return Constants.DEFAULT_MAXIMUM_RECURSION;
     }
 
     /**

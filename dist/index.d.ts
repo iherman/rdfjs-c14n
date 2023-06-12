@@ -31,12 +31,25 @@ declare class RDFC10 {
      * Set a logger instance. By default it is an "empty" logger, ie, no logging happens
      * @param logger 
      */
-    setLogger(logger: Logger): void;
+    set logger(logger: Logger);
 
     /**
      * Set the hash algorithm. The value can be anything that the underlying openssl, as used by node.js, accepts. The default is "sha256".
      */
-    setHashAlgorithm(algorithm: string): void;
+    set hash_algorithm(algorithm: string);
+    get hash_algorithm(): string;
+    get available_hash_algorithms(): string[]
+
+    /**
+     * Set the maximal level of recursion this canonicalization should use. Setting this number to a reasonably low number (say, 3),
+     * ensures that some "poison graphs" would not result in an unreasonably long canonicalization process.
+     * See the [security consideration section](https://www.w3.org/TR/rdf-canon/#security-considerations) in the specification.
+     * 
+     * The default value set by this implementation is 50; any number _greater_ then this number is ignored (and an exception is thrown).
+     */
+    set maximum_recursion_level(level: number);
+    get maximum_recursion_level(): number;
+    get maximum_allowed_recursion_level(): number
 
     /**
      * Canonicalize a Dataset into an N-Quads document.

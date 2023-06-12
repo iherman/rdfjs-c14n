@@ -27,6 +27,11 @@ export namespace Constants {
     export const HASH_ALGORITHM = "sha256";
 
     /**
+     * Default maximal value for recursion
+     */
+    export const DEFAULT_MAXIMUM_RECURSION = 50;
+
+    /**
      * List of openssl hash algorithms, as of June 2023;
      * used to filter out invalid hash names in case the user
      * sets it explicitly.
@@ -125,6 +130,17 @@ export interface GlobalState extends C14nState {
 
     /** A logger instance */
     logger          : Logger;
+
+    /** 
+     * Maximal number of recursions allowed. Initialized to the maximum integer value in Javascript.
+     * This value may be modified by the caller
+     */
+    maximum_recursion : number;
+    
+    /**
+     * Current recursion level. Initialized to zero, increased every time a recursion occurs
+     */
+    current_recursion : number;
 }
 
 /**

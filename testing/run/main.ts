@@ -44,16 +44,24 @@ async function singleTest(canonicalizer: RDFC10, num: string, dump: boolean = tr
         rdfn3.get_quads(expected_fname),
     ]);
 
+    // console.log(`Current maximal level of recursion: ${canonicalizer.maximum_recursion_level}`);
+    // canonicalizer.maximum_recursion_level = 6;
+    // console.log(`Set maximal level of recursion: ${canonicalizer.maximum_recursion_level}`);
+    // console.log(`System wide maximum recursion level: ${canonicalizer.maximum_allowed_recursion_level}`)
+
+    // console.log(`Hash algorithm: ${canonicalizer.hash_algorithm}`);
+    // console.log(`available hash algorithms: ${canonicalizer.available_hash_algorithms}`)
+
     // Just for testing the direct nquad input...
     // const trig: string = await fs.readFile(input_fname, 'utf-8');
     const c14n_result    = canonicalizer.canonicalizeDetailed(input);
     
-    console.log('>>>>')
-    console.log(c14n_result.dataset_nquad);
-    console.log(c14n_result.bnode_id_map);
-    console.log(`Hash on nquad: ${canonicalizer.hash(c14n_result.dataset_nquad)}`);
-    console.log(`Hash on dataset: ${canonicalizer.hash(c14n_result.dataset)}`);
-    console.log('>>>>');
+    // console.log('>>>>')
+    // console.log(c14n_result.dataset_nquad);
+    // console.log(c14n_result.bnode_id_map);
+    // console.log(`Hash on nquad: ${canonicalizer.hash(c14n_result.dataset_nquad)}`);
+    // console.log(`Hash on dataset: ${canonicalizer.hash(c14n_result.dataset)}`);
+    // console.log('>>>>');
 
     const c14n_input     = c14n_result.dataset;
     const input_quads    = rdfn3.dataset_to_nquads(input).sort();
@@ -151,7 +159,7 @@ async function main(): Promise<void> {
 
         if (logLevel) {
             logger = new YamlLogger(logLevel);
-            canonicalizer.setLogger(logger);
+            canonicalizer.logger = logger;
         }
     
         const num = (program.args.length === 0) ? testNumber(options.number) : testNumber(program.args[0]);

@@ -24,6 +24,10 @@ var Constants;
      */
     Constants.HASH_ALGORITHM = "sha256";
     /**
+     * Default maximal value for recursion
+     */
+    Constants.DEFAULT_MAXIMUM_RECURSION = 50;
+    /**
      * List of openssl hash algorithms, as of June 2023;
      * used to filter out invalid hash names in case the user
      * sets it explicitly.
