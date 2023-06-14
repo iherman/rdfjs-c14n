@@ -8,63 +8,149 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RDFCanon = exports.LogLevels = exports.YamlLogger = void 0;
+exports.RDFCanon = exports.RDFC10 = exports.LogLevels = void 0;
 const n3 = require("n3");
 const common_1 = require("./lib/common");
 const issueIdentifier_1 = require("./lib/issueIdentifier");
 const canonicalization_1 = require("./lib/canonicalization");
 const logging_1 = require("./lib/logging");
 var logging_2 = require("./lib/logging");
-Object.defineProperty(exports, "YamlLogger", { enumerable: true, get: function () { return logging_2.YamlLogger; } });
 Object.defineProperty(exports, "LogLevels", { enumerable: true, get: function () { return logging_2.LogLevels; } });
 /**
  * Just a shell around the algorithm, consisting of a state, and the call for the real implementation.
  *
  * The variable parts of the state, as [defined in the spec](https://www.w3.org/TR/rdf-canon/#dfn-canonicalization-state),
- * are re-initialized at a call to the canonicalize call. Ie, the same class instance can be reused for
- * {@link RDFCanon#canonicalize} for different graphs.
+ * are re-initialized at a call to the canonicalize call. Ie, the same class instance can be reused to
+ * {@link RDFC10#canonicalize} for different graphs.
  */
-class RDFCanon {
+class RDFC10 {
     state;
     /**
      * @constructor
      * @param data_factory  An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface). If undefined, the DataFactory of the [n3 package](https://www.npmjs.com/package/n3) is used.
-     * @param dataset_factory An implementation of the generic RDF DatasetCoreFactory interface, see [the specification](https://rdf.js.org/dataset-spec/#datasetcorefactory-interface). If undefined, the canonicalized graph will automatically be a Set of quads.
      */
-    constructor(data_factory, dataset_factory) {
+    constructor(data_factory) {
         this.state = {
             bnode_to_quads: {},
             hash_to_bnodes: {},
             canonical_issuer: new issueIdentifier_1.IDIssuer(),
             hash_algorithm: common_1.Constants.HASH_ALGORITHM,
             dataFactory: data_factory ? data_factory : n3.DataFactory,
-            datasetFactory: dataset_factory,
-            logger: new logging_1.NopLogger(),
+            logger: logging_1.LoggerFactory.createLogger(logging_1.LoggerFactory.DEFAULT_LOGGER),
+            logger_id: logging_1.LoggerFactory.DEFAULT_LOGGER,
+            maximum_recursion: common_1.Constants.DEFAULT_MAXIMUM_RECURSION,
+            current_recursion: 0
         };
     }
     /**
-     * Set a logger instance.
+     * Create and set a logger instance
+     *
      * @param logger
      */
-    setLogger(logger) {
-        this.state.logger = logger;
+    setLogger(id = logging_1.LoggerFactory.DEFAULT_LOGGER, level = logging_1.LogLevels.debug) {
+        const new_logger = logging_1.LoggerFactory.createLogger(id, level);
+        if (new_logger !== undefined) {
+            this.state.logger_id = id;
+            this.state.logger = new_logger;
+            return new_logger;
+        }
+        else {
+            return undefined;
+        }
     }
     /**
-     * Set the hash algorithm. The value can be anything that the underlying openssl, as used by node.js, accepts. The default is "sha256".
+     * Current logger type
      */
-    setHashAlgorithm(algorithm) {
-        this.state.hash_algorithm = algorithm;
+    get logger_type() {
+        return this.state.logger_id;
     }
     /**
-     * Canonicalize a Dataset.
+     * List of available logger types.
+     */
+    get available_logger_types() {
+        return logging_1.LoggerFactory.loggerTypes();
+    }
+    /**
+     * Set Hash algorithm. The value can be anything that the underlying openssl, as used by node.js, accepts. The default is "sha256".
+     * If the algorithm is not listed as existing for openssl, the value is ignored (and an exception is thrown).
+     */
+    set hash_algorithm(algorithm) {
+        if (common_1.Constants.HASH_ALGORITHMS.includes(algorithm)) {
+            this.state.hash_algorithm = algorithm;
+        }
+        else {
+            const error_message = `"${algorithm}" is not a valid Hash Algorithm name`;
+            throw TypeError(error_message);
+        }
+    }
+    get hash_algorithm() {
+        return this.state.hash_algorithm;
+    }
+    /**
+     * List of available hash algorithm names.
+     */
+    get available_hash_algorithms() {
+        return common_1.Constants.HASH_ALGORITHMS;
+    }
+    /**
+     * Set the maximal level of recursion this canonicalization should use. Setting this number to a reasonably low number (say, 3),
+     * ensures that some "poison graphs" would not result in an unreasonably long canonicalization process.
+     * See the [security consideration section](https://www.w3.org/TR/rdf-canon/#security-considerations) in the specification.
      *
-     * Implementation of the main algorithmic steps, see [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
-     * real work is done in the [separate function](../functions/lib_canonicalization.compute_canonicalized_graph.html).
+     * The default value set by this implementation is 50; any number _greater_ then this number is ignored (and an exception is thrown).
+     */
+    set maximum_recursion_level(level) {
+        if (!Number.isNaN(level) && Number.isInteger(level) && level > 0 && level < common_1.Constants.DEFAULT_MAXIMUM_RECURSION) {
+            this.state.maximum_recursion = level;
+        }
+        else {
+            const error_message = `Required recursion level is not an integer between 0 and ${common_1.Constants.DEFAULT_MAXIMUM_RECURSION}`;
+            throw RangeError(error_message);
+        }
+    }
+    get maximum_recursion_level() {
+        return this.state.maximum_recursion;
+    }
+    /**
+     * The system-wide maximum value for the recursion level. The current maximum recursion level cannot exceed this value.
+     */
+    get maximum_allowed_recursion_level() {
+        return common_1.Constants.DEFAULT_MAXIMUM_RECURSION;
+    }
+    /**
+     * Canonicalize a Dataset into an N-Quads document.
+     *
+     * Implementation of the main algorithmic steps, see
+     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
+     * real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html).
+     *
+     * @remarks
+     * Note that the N-Quads parser throws an exception in case of syntax error.
      *
      * @param input_dataset
-     * @returns - the exact type of the output depends on the type of the input dataset. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the dataset_factory has been set set, it will be a Dataset, otherwise a Set.
+     * @returns - N-Quads document using the canonical ID-s.
+     *
      */
     canonicalize(input_dataset) {
+        return this.canonicalizeDetailed(input_dataset).dataset_nquad;
+    }
+    /**
+     * Canonicalize a Dataset into a full set of information.
+     *
+     * Implementation of the main algorithmic steps, see
+     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
+     * real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html).
+     *
+     * The result is an Object containing the serialized version and the Quads version of the canonicalization result,
+     * as well as a bnode mapping from the original to the canonical equivalents
+     *
+     * @remarks
+     * Note that the N-Quads parser throws an exception in case of syntax error.
+     *
+     * @param input_dataset
+     * @returns - Detailed results of the canonicalization
+     */
+    canonicalizeDetailed(input_dataset) {
         return (0, canonicalization_1.computeCanonicalDataset)(this.state, input_dataset);
     }
     /**
@@ -80,7 +166,7 @@ class RDFCanon {
     /**
      * Hash a dataset:
      *
-     * 1. Serialize the dataset into nquads and sort the result
+     * 1. Serialize the dataset into nquads and sort the result (unless the input is an N-Quads document)
      * 2. Compute the hash of the concatenated nquads.
      *
      * This method is typically used on the result of the canonicalization to compute the canonical hash of a dataset.
@@ -89,7 +175,24 @@ class RDFCanon {
      * @returns
      */
     hash(input_dataset) {
-        return (0, common_1.hashDataset)(this.state, input_dataset, true);
+        if (typeof input_dataset === 'string') {
+            return (0, common_1.computeHash)(this.state, input_dataset);
+        }
+        else {
+            return (0, common_1.hashDataset)(this.state, input_dataset, true);
+        }
     }
 }
+exports.RDFC10 = RDFC10;
+/**
+ * Alternative name for {@link RDFC10}.
+ *
+ * @remark
+ * This is only for possible backward compatibility's sake; this was the old name of the class
+ * The WG has decided what the final name of the algorithm is (RDFC 1.0), hence the renaming of the core
+ * class.
+ */
+class RDFCanon extends RDFC10 {
+}
 exports.RDFCanon = RDFCanon;
+;

@@ -7,32 +7,61 @@
  */
 
 import * as rdf from 'rdf-js';
-import { GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, DatasetShell } from './common';
-import { computeFirstDegreeHash }                                             from './hash1DegreeQuads';
-import { computeNDegreeHash }                                                 from './hashNDegreeQuads';
-import { IDIssuer }                                                           from './issueIdentifier';
-import { bntqToLogItem, ndhrToLogItem, htbnToLogItem, LogItem }               from './logging';
+import { 
+    GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, concatNquads, quadsToNquads,
+    DatasetShell, parseNquads, InputDataset, IdentifierMap, C14nResult 
+} from './common';
 
+import { computeFirstDegreeHash }                               from './hash1DegreeQuads';
+import { computeNDegreeHash }                                   from './hashNDegreeQuads';
+import { IDIssuer }                                             from './issueIdentifier';
+import { bntqToLogItem, ndhrToLogItem, htbnToLogItem, LogItem } from './logging';
+
+/**
+ * A trivial mapping from a blank node to its ID; an instance of this class
+ * is necessary as part of the canonicalization return structure
+ */
+class IdMap implements IdentifierMap<rdf.BlankNode,BNodeId> {
+    map(t: rdf.BlankNode): BNodeId {
+        return t.value;
+    }
+}
 
 /**
  * Implementation of the main [steps on the top level](https://www.w3.org/TR/rdf-canon/#canon-algo-algo) of the algorithm specification.
  * 
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
- * @returns - A semantically identical set of Quads, with canonical BNode labels. The exact format of the output depends on the format of the input. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the `datasetFactory` field in the [global state](../interfaces/lib_common.GlobalState.html) is set, it will be a Dataset, otherwise a Set.
+ * @returns - A semantically identical set of Quads, with canonical BNode labels. The exact format of the output depends on the format of the input. If the input is a Set or an Array, so will be the return. If it is an N-Quads document (string) then the return is a Set of Quads.
  */
-export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads {
+export function computeCanonicalDataset(state: GlobalState, input: InputDataset): C14nResult {
         // Re-initialize the state information: canonicalization should always start with a clean state
-        state.bnode_to_quads   = {};
-        state.hash_to_bnodes   = {};
-        state.canonical_issuer = new IDIssuer();
+        state.bnode_to_quads    = {};
+        state.hash_to_bnodes    = {};
+        state.canonical_issuer  = new IDIssuer();
+        state.current_recursion = 0;
 
-        const input_dataset: DatasetShell = new DatasetShell(input);
-        const retval: DatasetShell        = input_dataset.new(state);
+        // The input to the algorithm can be either an nQuads document, or a dataset
+        // representation with Quads. This function makes the nQuad document "disappear" from
+        // the rest of the processing.
+        const convertToQuads = (inp: InputDataset): DatasetShell => {
+            if (typeof inp === 'string') {
+                return new DatasetShell(parseNquads(inp as string));
+            } else {
+                return new DatasetShell(inp as Quads);
+            }
+        }
+
+        const input_dataset: DatasetShell = convertToQuads(input);
+        const retval: DatasetShell        = input_dataset.new();
 
         // Step 2
         // All quads are 'classified' depending on what bnodes they contain
         // Results in a mapping from bnodes to all quads that they are part of.
+        //
+        // Note that the algorithm is slightly simpler than in the spec, because there
+        // no need for a separate "map entry" because in RDF-JS each term carries its
+        // own ID directly
         {
             for (const quad of input_dataset) {
                 const bnode_map = (t: rdf.Term): void => {
@@ -123,7 +152,6 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
             /* @@@ */ 
             state.logger.info("ca.4", "Canonicalization function (4.4.3 (4)).", ...logItems);
             /* @@@ */ 
-           
         }
 
         // Step 5
@@ -159,7 +187,9 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
                         // Step 5.2.2
                         const temporary_issuer = new IDIssuer('b');
                         // Step 5.2.3
-                        const bn = temporary_issuer.issueID(n);
+                        // Note that bn is not used as a separate value; putting the variable declaration in comment
+                        // to make eslint happy
+                        /* const bn = */ temporary_issuer.issueID(n);
                         // Step 5.2.4
                         const result: NDegreeHashResult = computeNDegreeHash(state, n, temporary_issuer);
                         hash_path_list.push(result);
@@ -182,7 +212,7 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
                 /* @@@ */ 
                 for (const result of ordered_hash_path_list) {
                     // Step 5.3.1
-                    for (const [existing,temporary] of result.issuer) {
+                    for (const [existing,_temporary] of result.issuer) {
                         state.canonical_issuer.issueID(existing)
                     }
                 }
@@ -218,6 +248,12 @@ export function computeCanonicalDataset(state: GlobalState, input: Quads): Quads
         /* @@@ */
          
         // Step 7
-        return retval.dataset;
+        const return_value: C14nResult = {
+            dataset          : retval.dataset,
+            dataset_nquad    : concatNquads(quadsToNquads(retval.dataset)),
+            bnode_id_map     : new IdMap(),
+            bnodeid_c14n_map : state.canonical_issuer,   
+        }
+        return return_value;
     }
 

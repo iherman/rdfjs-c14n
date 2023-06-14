@@ -1,8 +1,8 @@
 {
   "name": "rdfjs-c14n",
-  "version": "1.0.4",
-  "date": "2013-02-11",
-  "description": "Implementation in Typescript of the RDF Canonicalization Algorithm URDNA2015, relying on the RDF/JS interfaces",
+  "version": "2.0.0",
+  "date": "2013-06-14",
+  "description": "Implementation in Typescript of the RDF Canonicalization Algorithm RDFC-1.0, on top of the RDF/JS interfaces",
   "homepage": "https://github.com/iherman/rdfjs-c14n",
   "repository": {
     "type": "git",
@@ -35,23 +35,23 @@
   "author": "Ivan Herman <ivan@w3.org> (https://www.w3.org/People/Ivan/)",
   "license": "W3C-20150513",
   "dependencies": {
-    "@tpluscode/rdf-string": "^0.2.26",
+    "@tpluscode/rdf-string": "^0.2.27",
     "@types/rdf-js": "^4.0.2",
     "array-permutation": "^0.2.0",
     "rdf-js": "^4.0.2",
+    "n3": "^1.16.3",
     "yaml": "^2.2.1"
   },
   "devDependencies": {
     "@types/commander": "^2.12.2",
     "@types/n3": "^1.10.4",
-    "@types/node": "^18.11.9",
-    "@typescript-eslint/eslint-plugin": "^5.42.1",
-    "@typescript-eslint/parser": "^5.42.1",
-    "commander": "^9.4.1",
-    "eslint": "^8.27.0",
-    "n3": "^1.16.3",
+    "@types/node": "^20.2.5",
+    "@typescript-eslint/eslint-plugin": "^5.59.9",
+    "@typescript-eslint/parser": "^5.59.9",
+    "commander": "^2.12.2",
+    "eslint": "^8.42.0",
     "ts-node": "^10.9.1",
-    "typedoc": "^0.23.21",
-    "typescript": "^4.8.4"
+    "typedoc": "^0.24.8",
+    "typescript": "^5.1.3"
   }
 }

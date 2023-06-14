@@ -1,37 +1,106 @@
 import * as rdf from 'rdf-js';
-export type Quads = rdf.DatasetCore<rdf.Quad,rdf.Quad> | rdf.Quad[] | Set<rdf.Quad>;
-export type Hash  = string;
+
+export type Quads        = rdf.Quad[] | Set<rdf.Quad>;
+export type InputDataset = Quads | string;
+export type BNodeId      = string;
+export type Hash         = string;
+
+declare interface IdentifierMap<Tin,Tout> {
+    map : (t: Tin) => Tout|undefined; 
+}
+
+declare interface C14nResult {
+    dataset          : Quads;
+    dataset_nquad    : string;
+    bnode_id_map     : IdentifierMap<rdf.BlankNode,BNodeId>;
+    bnodeid_c14n_map : IdentifierMap<BNodeId,BNodeId>;
+}
+
+declare enum LogLevels {
+    error,
+    warn,
+    info,
+    debug
+}
 
 /*********************************************************
 The main class encapsulating the library's functionalities
 **********************************************************/
 
-declare class RDFCanon {
+declare class RDFC10 {
     /**
      * @constructor
-     * @param data_factory  An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface). If undefined, the DataFactory of the [`n3` pacakge](https://www.npmjs.com/package/n3) is used.
-     * @param dataset_factory An implementation of the generic RDF DatasetCoreFactory interface, see [the specification](https://rdf.js.org/dataset-spec/#datasetcorefactory-interface). If undefined, the canonicalized graph will automatically be a Set of quads.
+     * @param data_factory  An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface). If undefined, the DataFactory of the [`n3` package](https://www.npmjs.com/package/n3) is used.
      */
-    constructor(data_factory?: rdf.DataFactory, dataset_factory?: rdf.DatasetCoreFactory);
+    constructor(data_factory?: rdf.DataFactory);
 
     /**
      * Set a logger instance. By default it is an "empty" logger, ie, no logging happens
      * @param logger 
      */
-    setLogger(logger: Logger): void;
+    setLogger(id: string, level: LogLevels);
+
+    /**
+     * Current logger type
+     */
+    get logger_type(): string;
+
+    /**
+     * List of available logger types.
+     */
+    get available_logger_types(): string[];
+
 
     /**
      * Set the hash algorithm. The value can be anything that the underlying openssl, as used by node.js, accepts. The default is "sha256".
      */
-    setHashAlgorithm(algorithm: string): void;
+    set hash_algorithm(algorithm: string);
+    get hash_algorithm(): string;
+    get available_hash_algorithms(): string[]
 
     /**
-     * Implementation of the main algorithmic steps
+     * Set the maximal level of recursion this canonicalization should use. Setting this number to a reasonably low number (say, 3),
+     * ensures that some "poison graphs" would not result in an unreasonably long canonicalization process.
+     * See the [security consideration section](https://www.w3.org/TR/rdf-canon/#security-considerations) in the specification.
+     * 
+     * The default value set by this implementation is 50; any number _greater_ then this number is ignored (and an exception is thrown).
+     */
+    set maximum_recursion_level(level: number);
+    get maximum_recursion_level(): number;
+    get maximum_allowed_recursion_level(): number
+
+    /**
+     * Canonicalize a Dataset into an N-Quads document.
+     * 
+     * Implementation of the main algorithmic steps, see
+     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
+     * real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html).
+     * 
+     * @remarks
+     * Note that the N-Quads parser throws an exception in case of syntax error.
      * 
      * @param input_dataset 
-     * @returns - the exact type of the output depends on the type of the input dataset. If the input is a Set or an Array, so will be the return. If it is a Dataset, and the dataset_factory has been set set, it will be a Dataset, otherwise a Set.
+     * @returns - N-Quads document using the canonical ID-s.
      */
-    canonicalize(input_dataset: Quads): Quads;
+    canonicalize(input_dataset: InputDataset): string;
+
+    /**
+     * Canonicalize a Dataset into a full set of information.
+     * 
+     * Implementation of the main algorithmic steps, see
+     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
+     * real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html).
+     * 
+     * The result is an Object containing the serialized version and the Quads version of the canonicalization result, 
+     * as well as a bnode mapping from the original to the canonical equivalents
+     * 
+     * @remarks
+     * Note that the N-Quads parser throws an exception in case of syntax error.
+     * 
+     * @param input_dataset 
+     * @returns - Detailed results of the canonicalization
+     */
+    canonicalizeDetailed(input_dataset: InputDataset): C14nResult ; 
 
     /**
      * Serialize the dataset into a (possibly sorted) Array of nquads.
@@ -45,27 +114,22 @@ declare class RDFCanon {
     /**
      * Hash a dataset:
      * 
-     * 1. Serialize the dataset into nquads and sort the result
+     * 1. Serialize the dataset into nquads and sort the result (unless the input is an N-Quads document)
      * 2. Compute the hash of the concatenated nquads.
      * 
      * This method is typically used on the result of the canonicalization to compute the canonical hash of a dataset.
      * 
      * @param input_dataset 
-     * @returns 
+     * @returns
      */
-     hash(input_dataset: Quads): Hash;
+    hash(input_dataset: InputDataset): Hash;
 }
 
+declare class RDFCanon extends RDFC10 {};
 
 /*****************************************************************************
 Type and class declarations for logging; can be ignored if no logging is used
 ******************************************************************************/
-declare enum LogLevels {
-    error,
-    warn,
-    info,
-    debug
-}
 
 declare interface LogItem {
     [index: string]: string|string[]|Map<string,string>|boolean|LogItem|LogItem[];
@@ -85,8 +149,8 @@ declare interface LogItem {
  * 
  */
 declare interface Logger {
-    log: string;
-    log_object: LogItem;
+    level: LogLevels;
+
     debug(log_point: string, position: string, ...otherData: LogItem[]): void;
     warn(log_point: string, position: string, ...otherData: LogItem[]): void;
     error(log_point: string, position: string, ...otherData: LogItem[]): void;
@@ -104,16 +168,10 @@ declare interface Logger {
      * Counterpart of the {@link push} method.
      */
     pop(): void;
+
+    /**
+     * Accessor to the (readonly) log;
+     */
+    get log(): string;
 }
 
-declare class YamlLogger implements Logger {
-    log: string;
-    log_object: LogItem;
-    constructor(level?: LogLevels);
-    debug(log_point: string, position: string, ...otherData: LogItem[]): void;
-    warn(log_point: string, position: string, ...otherData: LogItem[]): void;
-    error(log_point: string, position: string, ...otherData: LogItem[]): void;
-    info(log_point: string, position: string, ...otherData: LogItem[]): void;
-    push(label: string, extra_info ?: string, ...otherData: LogItem[]): void;
-    pop(): void;
-}

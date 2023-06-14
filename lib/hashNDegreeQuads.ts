@@ -19,6 +19,8 @@ const permutation = require('array-permutation');
  * 
  * See the [specification](https://www.w3.org/TR/rdf-canon/#hash-related-algorithm) for the details.
  * 
+ * @throws RangeError, if the maximum recursion level has been reached.
+ * 
  * @param state 
  * @param related 
  * @param quad 
@@ -86,10 +88,12 @@ const permutation = require('array-permutation');
  export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issuer: IDIssuer): NDegreeHashResult {
     /* @@@ */
     state.logger.push("hndq");
-    state.logger.info("hndq.1", "Entering Hash N-Degree Quads function (4.8.3).", {
+    state.logger.info("hndq.1", `Entering Hash N-Degree Quads function (4.8.3), with a recursion level of ${state.current_recursion}.`, {
         identifier,
-        "issuer": state.canonical_issuer.toLogItem(),
+        "issuer": state.canonical_issuer.toLogItem()
     });
+
+    // console.log(`>>>>>++ ${state.current_recursion}`)
     /* @@@ */
  
     // Step 1
@@ -216,7 +220,13 @@ const permutation = require('array-permutation');
                 /* @@@ */ if (recursion_list.length !== 0) state.logger.push("hndq.5.4.5.");
                 for (const related of recursion_list) {
                     // Step 5.4.5.1
+                    state.current_recursion += 1;
+                    if (state.current_recursion > state.maximum_recursion) {
+                        const error_message = `Maximum allowed recursion level reached. It must be below ${state.maximum_recursion}.`;
+                        throw new RangeError(error_message);
+                    }
                     const result: NDegreeHashResult = computeNDegreeHash(state, related, issuer_copy);
+                    state.current_recursion -= 1;
 
                     // Step 5.4.5.2
                     path = `${path}_:${issuer_copy.issueID(related)}`;
