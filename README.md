@@ -108,7 +108,13 @@ The [RDFC 1.0](https://www.w3.org/TR/rdf-canon/) algorithm is based on an extens
     rdfc10.hash_algorithm = algorithm;
 ```
 
-attribute, where `algorithm` can be any hash function identification that the underlying openssl environment (as used by `node.js`) accepts. Examples are 'sha256', 'sha512', etc. On recent releases of OpenSSL, `openssl list -digest-algorithms` will display the available algorithms; the list of available hash algorithms can also be accessed via the (read only) `available_hash_algorithm` attribute of the `rdfc10` instance.
+attribute, where `algorithm` can be any hash function identification. Examples are 'sha256', 'sha512', etc. The list of available hash algorithms can be retrieved as:
+
+```js
+    rdfc10.available_hash_algorithms;
+```
+
+which corresponds to what the underlying OpenSSL library of `node.js` implements (as of June 2023, i.e., version 18.16.0).
 
 #### Controlling the recursion level
 

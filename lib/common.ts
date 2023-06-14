@@ -18,31 +18,36 @@ export namespace Constants {
      * The prefix used for all generated canonical bnode IDs 
      * 
      * @readonly
+     * 
      */
     export const BNODE_PREFIX = "c14n";
 
     /** 
      * The default hash algorithm's name
+     * 
+     * @readonly
+     * 
      */
     export const HASH_ALGORITHM = "sha256";
 
     /**
      * Default maximal value for recursion
+     *
+     * @readonly
+     * 
      */
     export const DEFAULT_MAXIMUM_RECURSION = 50;
 
     /**
-     * List of openssl hash algorithms, as of June 2023;
-     * used to filter out invalid hash names in case the user
-     * sets it explicitly.
+     * List of available OpenSSL hash algorithms, as of June 2023 (`node.js` version 18.16.0).
+     * 
      */
     export const HASH_ALGORITHMS = [
-        "blake2b512", "blake2s256", "gost",     "md4",        
-        "md5",        "mdc2",       "rmd160",   "sha1",       
-        "sha224",     "sha256",     "sha3-224", "sha3-256",   
-        "sha3-384",   "sha3-512",   "sha384",   "sha512",                   
-        "sha512-224", "sha512-256", "shake128", "shake256",   
-        "sm3",
+        "blake2b512", "blake2s256", "md5",        "rmd160",  
+        "sha1",       "sha224",     "sha256",     "sha3-224", 
+        "sha3-256",   "sha3-384",   "sha3-512",   "sha384",   
+        "sha512",     "sha512-224", "sha512-256", "shake128", 
+        "shake256",   "sm3",
     ];
 }
 
@@ -50,7 +55,7 @@ export namespace Constants {
  * According to the RDF semantics, the correct representation of a dataset is a Set
  * but, for convenience, many applications use arrays. Hence this type.
  */
-export type Quads        = rdf.Quad[] | Set<rdf.Quad>;
+export type Quads = rdf.Quad[] | Set<rdf.Quad>;
 
 /*
  * Per spec, the input can be an abstract dataset (ie, Quads) or an N-Quads document (ie, a string)

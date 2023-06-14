@@ -17,28 +17,33 @@ var Constants;
      * The prefix used for all generated canonical bnode IDs
      *
      * @readonly
+     *
      */
     Constants.BNODE_PREFIX = "c14n";
     /**
      * The default hash algorithm's name
+     *
+     * @readonly
+     *
      */
     Constants.HASH_ALGORITHM = "sha256";
     /**
      * Default maximal value for recursion
+     *
+     * @readonly
+     *
      */
     Constants.DEFAULT_MAXIMUM_RECURSION = 50;
     /**
-     * List of openssl hash algorithms, as of June 2023;
-     * used to filter out invalid hash names in case the user
-     * sets it explicitly.
+     * List of available OpenSSL hash algorithms, as of June 2023 (`node.js` version 18.16.0).
+     *
      */
     Constants.HASH_ALGORITHMS = [
-        "blake2b512", "blake2s256", "gost", "md4",
-        "md5", "mdc2", "rmd160", "sha1",
-        "sha224", "sha256", "sha3-224", "sha3-256",
-        "sha3-384", "sha3-512", "sha384", "sha512",
-        "sha512-224", "sha512-256", "shake128", "shake256",
-        "sm3",
+        "blake2b512", "blake2s256", "md5", "rmd160",
+        "sha1", "sha224", "sha256", "sha3-224",
+        "sha3-256", "sha3-384", "sha3-512", "sha384",
+        "sha512", "sha512-224", "sha512-256", "shake128",
+        "shake256", "sm3",
     ];
 })(Constants || (exports.Constants = Constants = {}));
 /***********************************************************
