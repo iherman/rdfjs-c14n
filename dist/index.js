@@ -132,7 +132,7 @@ class RDFC10 {
      *
      */
     canonicalize(input_dataset) {
-        return this.canonicalizeDetailed(input_dataset).dataset_nquad;
+        return this.canonicalizeDetailed(input_dataset).canonical_form;
     }
     /**
      * Canonicalize a Dataset into a full set of information.

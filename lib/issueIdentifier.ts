@@ -15,7 +15,7 @@ import { LogItem }                           from './logging';
  * See [the specification](https://www.w3.org/TR/rdf-canon/#issue-identifier-algorithm) for the details, except that all
  * functionalities are encapsulated in a class.
  */
-export class IDIssuer implements IdentifierMap<BNodeId,BNodeId> {
+export class IDIssuer implements IdentifierMap<BNodeId> {
     // This is used to provide a readable ID at debug/logging time...
     private static IDIssuerID : number = 1234;
     // ... for each instance; it is only used for debugging purposes.

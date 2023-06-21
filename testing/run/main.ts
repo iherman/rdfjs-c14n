@@ -63,7 +63,7 @@ async function singleTest(canonicalizer: RDFC10, num: string, dump: boolean = tr
     // console.log(`Hash on dataset: ${canonicalizer.hash(c14n_result.dataset)}`);
     // console.log('>>>>');
 
-    const c14n_input     = c14n_result.dataset;
+    const c14n_input     = c14n_result.canonicalized_dataset;
     const input_quads    = rdfn3.dataset_to_nquads(input).sort();
     const c14_quads      = rdfn3.dataset_to_nquads(c14n_input).sort();
     const expected_quads = rdfn3.dataset_to_nquads(expected).sort();
