@@ -20,9 +20,10 @@ The canonicalization process can be invoked by
 
 - the `canonicalize` method, that returns an N-Quads document containing the (sorted) quads of the dataset, and using the canonical blank node ids
 - the `canonicalizeDetailed` method, that returns an Object of the form:
-  - `dataset`: a Set or Array of Quad instances, using the canonical blank node ids
-  - `dataset_nquad`: an N-Quads document containing the (sorted) quads of the dataset, and using the canonical blank node ids
-  - `bnode_id_map`: a `Map` object, mapping the original blank node ids (as used in the input) to their canonical equivalents
+  - `canonicalized_dataset`: a Set or Array of Quad instances, using the canonical blank node ids
+  - `canonical_form`: an N-Quads document containing the (sorted) quads of the dataset, using the canonical blank node ids
+  - `issued_identifier_map`: a `Map` object, mapping the original blank node ids (as used in the input) to their canonical equivalents
+  - `bnode_identifier_map`: `Map` object, mapping a blank node to its (canonical) blank node id
 
 - A Set or an Array of Quad instances, if the input was a Set or an Array, respectively;
 - A Set of Quad instances if the input was an N-Quads document.
@@ -61,10 +62,10 @@ main() {
 
     // "normalized" is a dataset of quads with "canonical" blank node labels
     // per the specification. 
-    const normalized: Quads = rdfc10.canonicalizeDetailed(input).dataset;
+    const normalized: Quads = rdfc10.canonicalizeDetailed(input).canonicalized_dataset;
 
     // If you care only of the N-Quads results only, you can make it simpler
-    const normalized_N_Quads: string = rdfc10.canonicalizeDetailed(input).dataset_nquad;
+    const normalized_N_Quads: string = rdfc10.canonicalizeDetailed(input).canonical_form;
 
     // Or even simpler, using a shortcut:
     const normalized_N_Quads_bis: string = rdfc10.canonicalize(input);

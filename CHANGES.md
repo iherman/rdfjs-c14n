@@ -1,3 +1,7 @@
+# Version 2.0.1
+
+- the variable names used in the return structure of the core algorithm have been aligned with the latest version of the spec text
+
 # Version 2.0.0
 
 - Minor editorial changes to be in line with the newest version of eslint

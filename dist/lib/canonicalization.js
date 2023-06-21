@@ -234,10 +234,10 @@ function computeCanonicalDataset(state, input) {
     /* @@@ */
     // Step 7
     const return_value = {
-        dataset: retval.dataset,
-        dataset_nquad: (0, common_1.concatNquads)((0, common_1.quadsToNquads)(retval.dataset)),
-        bnode_id_map: new IdMap(),
-        bnodeid_c14n_map: state.canonical_issuer,
+        canonical_form: (0, common_1.concatNquads)((0, common_1.quadsToNquads)(retval.dataset)),
+        canonicalized_dataset: retval.dataset,
+        bnode_identifier_map: new IdMap(),
+        issued_identifier_map: state.canonical_issuer,
     };
     return return_value;
 }

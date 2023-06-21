@@ -5,16 +5,23 @@ export type InputDataset = Quads | string;
 export type BNodeId      = string;
 export type Hash         = string;
 
-declare interface IdentifierMap<Tin,Tout> {
-    map : (t: Tin) => Tout|undefined; 
+declare interface IdentifierMap<Tin> {
+    map : (t: Tin) => BNodeId|undefined; 
 }
 
 declare interface C14nResult {
-    dataset          : Quads;
-    dataset_nquad    : string;
-    bnode_id_map     : IdentifierMap<rdf.BlankNode,BNodeId>;
-    bnodeid_c14n_map : IdentifierMap<BNodeId,BNodeId>;
-}
+    /** N-Quads serialization of the dataset */
+    canonical_form        : string;
+
+    /** Dataset as Set or Array of rdf Quads */
+    canonicalized_dataset : Quads;
+
+    /** Mapping of a blank node to its identifier */
+    bnode_identifier_map  : IdentifierMap<rdf.BlankNode>;
+
+    /** Mapping of an (original) blank node id to its canonical equivalent */
+    issued_identifier_map : IdentifierMap<BNodeId>;
+} 
 
 declare enum LogLevels {
     error,

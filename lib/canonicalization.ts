@@ -21,7 +21,7 @@ import { bntqToLogItem, ndhrToLogItem, htbnToLogItem, LogItem } from './logging'
  * A trivial mapping from a blank node to its ID; an instance of this class
  * is necessary as part of the canonicalization return structure
  */
-class IdMap implements IdentifierMap<rdf.BlankNode,BNodeId> {
+class IdMap implements IdentifierMap<rdf.BlankNode> {
     map(t: rdf.BlankNode): BNodeId {
         return t.value;
     }
@@ -249,10 +249,10 @@ export function computeCanonicalDataset(state: GlobalState, input: InputDataset)
          
         // Step 7
         const return_value: C14nResult = {
-            dataset          : retval.dataset,
-            dataset_nquad    : concatNquads(quadsToNquads(retval.dataset)),
-            bnode_id_map     : new IdMap(),
-            bnodeid_c14n_map : state.canonical_issuer,   
+            canonical_form        : concatNquads(quadsToNquads(retval.dataset)),
+            canonicalized_dataset : retval.dataset,
+            bnode_identifier_map  : new IdMap(),
+            issued_identifier_map : state.canonical_issuer,   
         }
         return return_value;
     }
