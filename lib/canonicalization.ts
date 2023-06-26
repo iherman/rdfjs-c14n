@@ -9,7 +9,7 @@
 import * as rdf from 'rdf-js';
 import { 
     GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, concatNquads, quadsToNquads,
-    DatasetShell, parseNquads, InputDataset, IdentifierMap, C14nResult 
+    DatasetShell, parseNquads, InputDataset, C14nResult 
 } from './common';
 
 import { computeFirstDegreeHash }                               from './hash1DegreeQuads';
@@ -18,13 +18,32 @@ import { IDIssuer }                                             from './issueIde
 import { bntqToLogItem, ndhrToLogItem, htbnToLogItem, LogItem } from './logging';
 
 /**
- * A trivial mapping from a blank node to its ID; an instance of this class
- * is necessary as part of the canonicalization return structure
+ * A trivial mapping from blank nodes to their IDs; the return value is used
+ * as part of the canonicalization return structure
  */
-class IdMap implements IdentifierMap<rdf.BlankNode> {
-    map(t: rdf.BlankNode): BNodeId {
-        return t.value;
+const createBidMap = (graph: Quads): Map<rdf.BlankNode,BNodeId> => {
+    const retval: Map<rdf.BlankNode,BNodeId> = new Map();
+
+    // We collect the bnodes from the graph in one place,
+    // using a Set will automatically remove duplicates
+    const bnodes: Set<rdf.BlankNode> = new Set();
+    const addBnode = (term: rdf.Term): void => {
+        if (term.termType === "BlankNode") {
+            bnodes.add(term);
+        }
     }
+
+    for (const quad of graph) {
+        addBnode(quad.subject);
+        addBnode(quad.object);
+        addBnode(quad.graph)
+    }
+
+    for (const bnode of bnodes) {
+        retval.set(bnode, bnode.value)
+    }
+
+    return retval;
 }
 
 /**
@@ -251,8 +270,8 @@ export function computeCanonicalDataset(state: GlobalState, input: InputDataset)
         const return_value: C14nResult = {
             canonical_form        : concatNquads(quadsToNquads(retval.dataset)),
             canonicalized_dataset : retval.dataset,
-            bnode_identifier_map  : new IdMap(),
-            issued_identifier_map : state.canonical_issuer,   
+            bnode_identifier_map  : createBidMap(retval.dataset),
+            issued_identifier_map : state.canonical_issuer.issued_identifier_map,   
         }
         return return_value;
     }
