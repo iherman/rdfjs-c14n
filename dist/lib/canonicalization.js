@@ -18,7 +18,6 @@ const logging_1 = require("./logging");
  * as part of the canonicalization return structure
  */
 const createBidMap = (graph) => {
-    const retval = new Map();
     // We collect the bnodes from the graph in one place,
     // using a Set will automatically remove duplicates
     const bnodes = new Set();
@@ -27,15 +26,12 @@ const createBidMap = (graph) => {
             bnodes.add(term);
         }
     };
-    for (const quad of graph) {
+    graph.forEach((quad) => {
         addBnode(quad.subject);
         addBnode(quad.object);
         addBnode(quad.graph);
-    }
-    for (const bnode of bnodes) {
-        retval.set(bnode, bnode.value);
-    }
-    return retval;
+    });
+    return new Map(Array.from(bnodes).map((node) => [node, node.value]));
 };
 /**
  * Implementation of the main [steps on the top level](https://www.w3.org/TR/rdf-canon/#canon-algo-algo) of the algorithm specification.

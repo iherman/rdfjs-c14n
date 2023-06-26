@@ -13,10 +13,10 @@ declare interface C14nResult {
     canonicalized_dataset : Quads;
 
     /** Mapping of a blank node to its identifier */
-    bnode_identifier_map  : Map<rdf.BlankNode,BNodeId>;
+    bnode_identifier_map  : ReadonlyMap<rdf.BlankNode,BNodeId>;
 
     /** Mapping of an (original) blank node id to its canonical equivalent */
-    issued_identifier_map : Map<BNodeId,BNodeId>;
+    issued_identifier_map : ReadonlyMap<BNodeId,BNodeId>;
 } 
 
 declare enum LogLevels {

@@ -21,9 +21,7 @@ import { bntqToLogItem, ndhrToLogItem, htbnToLogItem, LogItem } from './logging'
  * A trivial mapping from blank nodes to their IDs; the return value is used
  * as part of the canonicalization return structure
  */
-const createBidMap = (graph: Quads): Map<rdf.BlankNode,BNodeId> => {
-    const retval: Map<rdf.BlankNode,BNodeId> = new Map();
-
+const createBidMap = (graph: Quads): ReadonlyMap<rdf.BlankNode,BNodeId> => {
     // We collect the bnodes from the graph in one place,
     // using a Set will automatically remove duplicates
     const bnodes: Set<rdf.BlankNode> = new Set();
@@ -32,18 +30,13 @@ const createBidMap = (graph: Quads): Map<rdf.BlankNode,BNodeId> => {
             bnodes.add(term);
         }
     }
-
-    for (const quad of graph) {
+    graph.forEach((quad: rdf.Quad): void => {
         addBnode(quad.subject);
         addBnode(quad.object);
         addBnode(quad.graph)
-    }
+    });
 
-    for (const bnode of bnodes) {
-        retval.set(bnode, bnode.value)
-    }
-
-    return retval;
+    return new Map(Array.from(bnodes).map((node: rdf.BlankNode): [rdf.BlankNode, BNodeId] => [node, node.value]));
 }
 
 /**
@@ -271,7 +264,7 @@ export function computeCanonicalDataset(state: GlobalState, input: InputDataset)
             canonical_form        : concatNquads(quadsToNquads(retval.dataset)),
             canonicalized_dataset : retval.dataset,
             bnode_identifier_map  : createBidMap(retval.dataset),
-            issued_identifier_map : state.canonical_issuer.issued_identifier_map,   
+            issued_identifier_map : state.canonical_issuer.issued_identifier_map as ReadonlyMap<BNodeId,BNodeId>,   
         }
         return return_value;
     }
