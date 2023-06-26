@@ -14,14 +14,29 @@ const hashNDegreeQuads_1 = require("./hashNDegreeQuads");
 const issueIdentifier_1 = require("./issueIdentifier");
 const logging_1 = require("./logging");
 /**
- * A trivial mapping from a blank node to its ID; an instance of this class
- * is necessary as part of the canonicalization return structure
+ * A trivial mapping from blank nodes to their IDs; the return value is used
+ * as part of the canonicalization return structure
  */
-class IdMap {
-    map(t) {
-        return t.value;
+const createBidMap = (graph) => {
+    const retval = new Map();
+    // We collect the bnodes from the graph in one place,
+    // using a Set will automatically remove duplicates
+    const bnodes = new Set();
+    const addBnode = (term) => {
+        if (term.termType === "BlankNode") {
+            bnodes.add(term);
+        }
+    };
+    for (const quad of graph) {
+        addBnode(quad.subject);
+        addBnode(quad.object);
+        addBnode(quad.graph);
     }
-}
+    for (const bnode of bnodes) {
+        retval.set(bnode, bnode.value);
+    }
+    return retval;
+};
 /**
  * Implementation of the main [steps on the top level](https://www.w3.org/TR/rdf-canon/#canon-algo-algo) of the algorithm specification.
  *
@@ -236,8 +251,8 @@ function computeCanonicalDataset(state, input) {
     const return_value = {
         canonical_form: (0, common_1.concatNquads)((0, common_1.quadsToNquads)(retval.dataset)),
         canonicalized_dataset: retval.dataset,
-        bnode_identifier_map: new IdMap(),
-        issued_identifier_map: state.canonical_issuer,
+        bnode_identifier_map: createBidMap(retval.dataset),
+        issued_identifier_map: state.canonical_issuer.issued_identifier_map,
     };
     return return_value;
 }

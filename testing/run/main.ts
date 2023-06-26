@@ -57,10 +57,10 @@ async function singleTest(canonicalizer: RDFC10, num: string, dump: boolean = tr
     const c14n_result    = canonicalizer.canonicalizeDetailed(input);
     
     // console.log('>>>>')
-    // console.log(c14n_result.dataset_nquad);
-    // console.log(c14n_result.bnode_id_map);
-    // console.log(`Hash on nquad: ${canonicalizer.hash(c14n_result.dataset_nquad)}`);
-    // console.log(`Hash on dataset: ${canonicalizer.hash(c14n_result.dataset)}`);
+    // console.log(c14n_result.canonical_form);
+    // console.log(c14n_result.bnode_identifier_map);
+    // console.log(`Hash on nquad: ${canonicalizer.hash(c14n_result.canonical_form)}`);
+    // console.log(`Hash on dataset: ${canonicalizer.hash(c14n_result.canonicalized_dataset)}`);
     // console.log('>>>>');
 
     const c14n_input     = c14n_result.canonicalized_dataset;

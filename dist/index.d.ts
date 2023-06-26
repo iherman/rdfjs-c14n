@@ -5,10 +5,6 @@ export type InputDataset = Quads | string;
 export type BNodeId      = string;
 export type Hash         = string;
 
-declare interface IdentifierMap<Tin> {
-    map : (t: Tin) => BNodeId|undefined; 
-}
-
 declare interface C14nResult {
     /** N-Quads serialization of the dataset */
     canonical_form        : string;
@@ -17,10 +13,10 @@ declare interface C14nResult {
     canonicalized_dataset : Quads;
 
     /** Mapping of a blank node to its identifier */
-    bnode_identifier_map  : IdentifierMap<rdf.BlankNode>;
+    bnode_identifier_map  : Map<rdf.BlankNode,BNodeId>;
 
     /** Mapping of an (original) blank node id to its canonical equivalent */
-    issued_identifier_map : IdentifierMap<BNodeId>;
+    issued_identifier_map : Map<BNodeId,BNodeId>;
 } 
 
 declare enum LogLevels {
@@ -132,7 +128,7 @@ declare class RDFC10 {
     hash(input_dataset: InputDataset): Hash;
 }
 
-declare class RDFCanon extends RDFC10 {};
+declare class RDFCanon extends RDFC10 {}
 
 /*****************************************************************************
 Type and class declarations for logging; can be ignored if no logging is used

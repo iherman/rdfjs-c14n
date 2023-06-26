@@ -38,7 +38,8 @@ export class IDIssuer {
     }
 
     /**
-     * Accessor to the issued identifier map, to be returned at the end of the main algorithm
+     * Accessor to the issued identifier map, to be returned as part of the return
+     * structure for the main algorithm
      */
     get issued_identifier_map(): Map<BNodeId,BNodeId> {
         return this._issued_identifiers_map;
