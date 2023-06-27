@@ -1,6 +1,7 @@
 # Version 2.0.2
 
 - The return structure uses bona fide Map-s for the additional mapping information, instead of a bespoke structure. This makes the usage more natural to end-users.
+- Handling of poison graphs has changed: instead of looking at the recursion level, it looks at the number of "hash n degree quads".
 
 # Version 2.0.1
 
