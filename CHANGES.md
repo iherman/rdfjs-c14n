@@ -1,6 +1,10 @@
+# Version 2.0.2
+
+- The return structure uses bona fide Map-s for the additional mapping information, instead of a bespoke structure. This makes the usage more natural to end-users.
+
 # Version 2.0.1
 
-- the variable names used in the return structure of the core algorithm have been aligned with the latest version of the spec text
+- The variable names used in the return structure of the core algorithm have been aligned with the latest version of the spec text
 
 # Version 2.0.0
 

@@ -82,13 +82,6 @@ export interface HashToBNodes {
 }
 
 /**
- * Mapping from some value to a Blank node identifier.
- */
-export interface IdentifierMap<Tin> {
-    map : (t: Tin) => BNodeId|undefined; 
-}
-
-/**
  * Canonicalization result; ie, the result structure of the algorithm. 
  */
 export interface C14nResult {
@@ -99,10 +92,10 @@ export interface C14nResult {
     canonicalized_dataset : Quads;
 
     /** Mapping of a blank node to its identifier */
-    bnode_identifier_map  : IdentifierMap<rdf.BlankNode>;
+    bnode_identifier_map  : ReadonlyMap<rdf.BlankNode,BNodeId>;
 
     /** Mapping of an (original) blank node id to its canonical equivalent */
-    issued_identifier_map : IdentifierMap<BNodeId>;
+    issued_identifier_map : ReadonlyMap<BNodeId,BNodeId>;
 } 
 
 /**
