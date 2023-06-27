@@ -33,7 +33,7 @@ var Constants;
      * @readonly
      *
      */
-    Constants.DEFAULT_MAXIMUM_RECURSION = 50;
+    Constants.DEFAULT_MAXIMUM_COMPLEXITY = 50;
     /**
      * List of available OpenSSL hash algorithms, as of June 2023 (`node.js` version 18.16.0).
      *

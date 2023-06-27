@@ -39,15 +39,16 @@ export class RDFC10 {
      */
     constructor(data_factory?: rdf.DataFactory) {
         this.state = {
-            bnode_to_quads    : {},
-            hash_to_bnodes    : {},
-            canonical_issuer  : new IDIssuer(),
-            hash_algorithm    : Constants.HASH_ALGORITHM,
-            dataFactory       : data_factory ? data_factory : n3.DataFactory,
-            logger            : LoggerFactory.createLogger(LoggerFactory.DEFAULT_LOGGER),
-            logger_id         : LoggerFactory.DEFAULT_LOGGER,
-            maximum_recursion : Constants.DEFAULT_MAXIMUM_RECURSION,
-            current_recursion : 0
+            bnode_to_quads        : {},
+            hash_to_bnodes        : {},
+            canonical_issuer      : new IDIssuer(),
+            hash_algorithm        : Constants.HASH_ALGORITHM,
+            dataFactory           : data_factory ? data_factory : n3.DataFactory,
+            logger                : LoggerFactory.createLogger(LoggerFactory.DEFAULT_LOGGER),
+            logger_id             : LoggerFactory.DEFAULT_LOGGER,
+            complexity_number     : Constants.DEFAULT_MAXIMUM_COMPLEXITY,
+            maximum_n_degree_call : 0,
+            current_n_degree_call : 0
         }
     }
 
@@ -105,29 +106,31 @@ export class RDFC10 {
     }
 
     /**
-     * Set the maximal level of recursion this canonicalization should use. Setting this number to a reasonably low number (say, 3),
+     * Set the maximal complexity number. This number, multiplied with the number of blank nodes in the dataset,
+     * sets a maximum level of calls the algorithm can do for the so called "hash n degree quads" function.
+     * Setting this number to a reasonably low number (say, 30),
      * ensures that some "poison graphs" would not result in an unreasonably long canonicalization process.
      * See the [security consideration section](https://www.w3.org/TR/rdf-canon/#security-considerations) in the specification.
      * 
      * The default value set by this implementation is 50; any number _greater_ then this number is ignored (and an exception is thrown).
      */
-    set maximum_recursion_level(level: number) {
-        if (!Number.isNaN(level) && Number.isInteger(level) && level > 0 && level < Constants.DEFAULT_MAXIMUM_RECURSION) {
-            this.state.maximum_recursion = level;
+    set maximum_complexity_number(level: number) {
+        if (!Number.isNaN(level) && Number.isInteger(level) && level > 0 && level < Constants.DEFAULT_MAXIMUM_COMPLEXITY) {
+            this.state.complexity_number = level;
         } else {
-            const error_message = `Required recursion level is not an integer between 0 and ${Constants.DEFAULT_MAXIMUM_RECURSION}`;
+            const error_message = `Required complexity must be between 0 and ${Constants.DEFAULT_MAXIMUM_COMPLEXITY}`;
             throw RangeError(error_message);
         }
     }
-    get maximum_recursion_level(): number {
-        return this.state.maximum_recursion
+    get maximum_complexity_number(): number {
+        return this.state.complexity_number
     }
 
     /**
      * The system-wide maximum value for the recursion level. The current maximum recursion level cannot exceed this value.
      */
-    get maximum_allowed_recursion_level(): number {
-        return Constants.DEFAULT_MAXIMUM_RECURSION;
+    get maximum_allowed_complexity_number(): number {
+        return Constants.DEFAULT_MAXIMUM_COMPLEXITY;
     }
 
     /**

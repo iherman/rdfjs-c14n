@@ -36,7 +36,7 @@ export namespace Constants {
      * @readonly
      * 
      */
-    export const DEFAULT_MAXIMUM_RECURSION = 50;
+    export const DEFAULT_MAXIMUM_COMPLEXITY = 50;
 
     /**
      * List of available OpenSSL hash algorithms, as of June 2023 (`node.js` version 18.16.0).
@@ -132,16 +132,23 @@ export interface GlobalState extends C14nState {
     /** Logger instance's identifier name */
     logger_id       : string;
 
+    /**
+     * Complexity number: the multiplicative factor that
+     * sets the value of {@link maximum_n_degree_call} by
+     * multiplying it with the number of blank nodes
+     */
+    complexity_number : number;
+
     /** 
-     * Maximal number of recursions allowed. Initialized to the maximum integer value in Javascript.
+     * Maximal number of recursions allowed. 
      * This value may be modified by the caller
      */
-    maximum_recursion : number;
+    maximum_n_degree_call : number;
     
     /**
      * Current recursion level. Initialized to zero, increased every time a recursion occurs
      */
-    current_recursion : number;
+    current_n_degree_call : number;
 }
 
 /**

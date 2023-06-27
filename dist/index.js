@@ -38,8 +38,9 @@ class RDFC10 {
             dataFactory: data_factory ? data_factory : n3.DataFactory,
             logger: logging_1.LoggerFactory.createLogger(logging_1.LoggerFactory.DEFAULT_LOGGER),
             logger_id: logging_1.LoggerFactory.DEFAULT_LOGGER,
-            maximum_recursion: common_1.Constants.DEFAULT_MAXIMUM_RECURSION,
-            current_recursion: 0
+            complexity_number: common_1.Constants.DEFAULT_MAXIMUM_COMPLEXITY,
+            maximum_n_degree_call: 0,
+            current_n_degree_call: 0
         };
     }
     /**
@@ -93,29 +94,31 @@ class RDFC10 {
         return common_1.Constants.HASH_ALGORITHMS;
     }
     /**
-     * Set the maximal level of recursion this canonicalization should use. Setting this number to a reasonably low number (say, 3),
+     * Set the maximal complexity number. This number, multiplied with the number of blank nodes in the dataset,
+     * sets a maximum level of calls the algorithm can do for the so called "hash n degree quads" function.
+     * Setting this number to a reasonably low number (say, 30),
      * ensures that some "poison graphs" would not result in an unreasonably long canonicalization process.
      * See the [security consideration section](https://www.w3.org/TR/rdf-canon/#security-considerations) in the specification.
      *
      * The default value set by this implementation is 50; any number _greater_ then this number is ignored (and an exception is thrown).
      */
-    set maximum_recursion_level(level) {
-        if (!Number.isNaN(level) && Number.isInteger(level) && level > 0 && level < common_1.Constants.DEFAULT_MAXIMUM_RECURSION) {
-            this.state.maximum_recursion = level;
+    set maximum_complexity_number(level) {
+        if (!Number.isNaN(level) && Number.isInteger(level) && level > 0 && level < common_1.Constants.DEFAULT_MAXIMUM_COMPLEXITY) {
+            this.state.complexity_number = level;
         }
         else {
-            const error_message = `Required recursion level is not an integer between 0 and ${common_1.Constants.DEFAULT_MAXIMUM_RECURSION}`;
+            const error_message = `Required complexity must be between 0 and ${common_1.Constants.DEFAULT_MAXIMUM_COMPLEXITY}`;
             throw RangeError(error_message);
         }
     }
-    get maximum_recursion_level() {
-        return this.state.maximum_recursion;
+    get maximum_complexity_number() {
+        return this.state.complexity_number;
     }
     /**
      * The system-wide maximum value for the recursion level. The current maximum recursion level cannot exceed this value.
      */
-    get maximum_allowed_recursion_level() {
-        return common_1.Constants.DEFAULT_MAXIMUM_RECURSION;
+    get maximum_allowed_complexity_number() {
+        return common_1.Constants.DEFAULT_MAXIMUM_COMPLEXITY;
     }
     /**
      * Canonicalize a Dataset into an N-Quads document.

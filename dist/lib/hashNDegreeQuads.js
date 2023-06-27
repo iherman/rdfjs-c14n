@@ -71,15 +71,22 @@ function computeHashRelatedBlankNode(state, related, quad, issuer, position) {
 /**
  * Compute the n-degree hash. See the [specification](https://www.w3.org/TR/rdf-canon/#hash-nd-quads-algorithm) for the details.
  *
+ * @throws RangeError, if the maximum number of calls have been reached
+ *
  * @param state
  * @param identifier
  * @param issuer
  * @returns
  */
 function computeNDegreeHash(state, identifier, issuer) {
+    state.current_n_degree_call += 1;
+    if (state.current_n_degree_call > state.maximum_n_degree_call) {
+        const error_message = `Maximum number of to "computeNDegreeHash" has been reached. It must stay below ${state.maximum_n_degree_call}.`;
+        throw new RangeError(error_message);
+    }
     /* @@@ */
     state.logger.push("hndq");
-    state.logger.info("hndq.1", `Entering Hash N-Degree Quads function (4.8.3), with a recursion level of ${state.current_recursion}.`, {
+    state.logger.info("hndq.1", `Entering Hash N-Degree Quads function (4.8.3), with a recursion level of ${state.current_n_degree_call}.`, {
         identifier,
         "issuer": state.canonical_issuer.toLogItem()
     });
@@ -196,13 +203,7 @@ function computeNDegreeHash(state, identifier, issuer) {
                     state.logger.push("hndq.5.4.5.");
                 for (const related of recursion_list) {
                     // Step 5.4.5.1
-                    state.current_recursion += 1;
-                    if (state.current_recursion > state.maximum_recursion) {
-                        const error_message = `Maximum allowed recursion level reached. It must be below ${state.maximum_recursion}.`;
-                        throw new RangeError(error_message);
-                    }
                     const result = computeNDegreeHash(state, related, issuer_copy);
-                    state.current_recursion -= 1;
                     // Step 5.4.5.2
                     path = `${path}_:${issuer_copy.issueID(related)}`;
                     // Step 5.4.5.3

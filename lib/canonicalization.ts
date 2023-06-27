@@ -48,10 +48,10 @@ const createBidMap = (graph: Quads): ReadonlyMap<rdf.BlankNode,BNodeId> => {
  */
 export function computeCanonicalDataset(state: GlobalState, input: InputDataset): C14nResult {
         // Re-initialize the state information: canonicalization should always start with a clean state
-        state.bnode_to_quads    = {};
-        state.hash_to_bnodes    = {};
-        state.canonical_issuer  = new IDIssuer();
-        state.current_recursion = 0;
+        state.bnode_to_quads        = {};
+        state.hash_to_bnodes        = {};
+        state.canonical_issuer      = new IDIssuer();
+        state.current_n_degree_call = 0;
 
         // The input to the algorithm can be either an nQuads document, or a dataset
         // representation with Quads. This function makes the nQuad document "disappear" from
@@ -92,9 +92,13 @@ export function computeCanonicalDataset(state: GlobalState, input: InputDataset)
             }
         }
 
+        // "Side step" (not directly in the specification): the number of bnodes is used to set the maximum number of hash-n-degree-quads call
+        // This is the mechanism used to avoid poison graphs.
+        state.maximum_n_degree_call = state.complexity_number *  Object.keys(state.bnode_to_quads).length;
+
         /* @@@ */ 
         state.logger.info("ca.2", "Entering the canonicalization function (4.4.3 (2)).", { 
-            "Bnode to quads" : bntqToLogItem(state.bnode_to_quads)
+            "Bnode to quads" : bntqToLogItem(state.bnode_to_quads) 
         });
         /* @@@ */ 
 
