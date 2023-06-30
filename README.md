@@ -162,6 +162,13 @@ Implementers may add their own loggers to the system by implementing a new Logge
     rdfc10.available_logger_types;
 ```
 
+#### Configurations
+
+The default complexity value and the hash algorithm are both set in the code, but can be configured when starting
+an application using configuration files and environment variables. See 
+the [configuration module](https://iherman.github.io/rdfjs-c14n/modules/lib_config.html) for the details.
+
+
 
 ---
 

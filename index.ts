@@ -10,19 +10,17 @@
 import * as rdf from 'rdf-js';
 import * as n3  from 'n3';
 
-import { 
-    GlobalState, Quads, hashDataset, Hash, Constants, quadsToNquads, 
-    InputDataset, computeHash 
-} from './lib/common';
+import { GlobalState, Quads, hashDataset, Hash, quadsToNquads, InputDataset, computeHash, configData } from './lib/common';
 
+import * as config                          from './lib/config';
 import { C14nResult }                       from './lib/common';
 import { IDIssuer }                         from './lib/issueIdentifier';
 import { computeCanonicalDataset }          from './lib/canonicalization';
 import { Logger, LoggerFactory, LogLevels } from './lib/logging';
 
-export { Quads, InputDataset, C14nResult } from './lib/common';
-export { Hash, BNodeId }                   from './lib/common';
-export { LogLevels, Logger }               from './lib/logging';
+export { Quads, InputDataset, C14nResult }  from './lib/common';
+export { Hash, BNodeId }                    from './lib/common';
+export { LogLevels, Logger }                from './lib/logging';
 
 /**
  * Just a shell around the algorithm, consisting of a state, and the call for the real implementation.
@@ -38,18 +36,22 @@ export class RDFC10 {
      * @param data_factory  An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface). If undefined, the DataFactory of the [n3 package](https://www.npmjs.com/package/n3) is used.
      */
     constructor(data_factory?: rdf.DataFactory) {
+        const { c14n_complexity, c14n_hash } = configData();
+
         this.state = {
             bnode_to_quads        : {},
             hash_to_bnodes        : {},
             canonical_issuer      : new IDIssuer(),
-            hash_algorithm        : Constants.HASH_ALGORITHM,
+            hash_algorithm        : c14n_hash,
             dataFactory           : data_factory ? data_factory : n3.DataFactory,
             logger                : LoggerFactory.createLogger(LoggerFactory.DEFAULT_LOGGER),
             logger_id             : LoggerFactory.DEFAULT_LOGGER,
-            complexity_number     : Constants.DEFAULT_MAXIMUM_COMPLEXITY,
+            complexity_number     : c14n_complexity,
             maximum_n_degree_call : 0,
             current_n_degree_call : 0
         }
+
+        console.log(this.state);
     }
 
     /**
@@ -87,7 +89,7 @@ export class RDFC10 {
      * If the algorithm is not listed as existing for openssl, the value is ignored (and an exception is thrown).
      */
     set hash_algorithm(algorithm: string) {
-        if (Constants.HASH_ALGORITHMS.includes(algorithm)) {
+        if (config.HASH_ALGORITHMS.includes(algorithm)) {
             this.state.hash_algorithm = algorithm;
         } else {
             const error_message = `"${algorithm}" is not a valid Hash Algorithm name`;
@@ -102,7 +104,7 @@ export class RDFC10 {
      * List of available hash algorithm names.
      */
     get available_hash_algorithms(): string[] {
-        return Constants.HASH_ALGORITHMS;
+        return config.HASH_ALGORITHMS;
     }
 
     /**
@@ -115,10 +117,10 @@ export class RDFC10 {
      * The default value set by this implementation is 50; any number _greater_ then this number is ignored (and an exception is thrown).
      */
     set maximum_complexity_number(level: number) {
-        if (!Number.isNaN(level) && Number.isInteger(level) && level > 0 && level < Constants.DEFAULT_MAXIMUM_COMPLEXITY) {
+        if (!Number.isNaN(level) && Number.isInteger(level) && level > 0 && level < config.DEFAULT_MAXIMUM_COMPLEXITY) {
             this.state.complexity_number = level;
         } else {
-            const error_message = `Required complexity must be between 0 and ${Constants.DEFAULT_MAXIMUM_COMPLEXITY}`;
+            const error_message = `Required complexity must be between 0 and ${config.DEFAULT_MAXIMUM_COMPLEXITY}`;
             throw RangeError(error_message);
         }
     }
@@ -130,7 +132,7 @@ export class RDFC10 {
      * The system-wide maximum value for the recursion level. The current maximum recursion level cannot exceed this value.
      */
     get maximum_allowed_complexity_number(): number {
-        return Constants.DEFAULT_MAXIMUM_COMPLEXITY;
+        return config.DEFAULT_MAXIMUM_COMPLEXITY;
     }
 
     /**
