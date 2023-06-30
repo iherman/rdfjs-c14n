@@ -305,11 +305,9 @@ export function configData(): config.ConfigData {
     const get_config = (env_name: string): config.ConfigData => {
         if (env_name in env) {
             const fname = path.join(`${env[env_name]}`,".rdfjs_c14n.json");
-            console.log(fname);
             try {
                 return JSON.parse(fs.readFileSync(fname,'utf-8')) as config.ConfigData;
             } catch(e) {
-                console.error(e.message)
                 return {};
             }
         } else {

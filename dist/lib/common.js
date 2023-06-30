@@ -172,8 +172,8 @@ exports.DatasetShell = DatasetShell;
 /**
  * Handling the configuration data that the user can use, namely:
  *
- * - `$HOME/.rdfjs_c14n.json` following {@link ConfigData}
- * - `$PWD/.rdfjs_c14n.json` following {@link ConfigData}
+ * - `$HOME/.rdfjs_c14n.json` following {@link config.ConfigData}
+ * - `$PWD/.rdfjs_c14n.json` following {@link config.ConfigData}
  * - Environment variables `c14_complexity` and/or `c14n_hash`
  *
  * (in increasing priority order).
@@ -188,12 +188,10 @@ function configData() {
     const get_config = (env_name) => {
         if (env_name in node_process_1.env) {
             const fname = path.join(`${node_process_1.env[env_name]}`, ".rdfjs_c14n.json");
-            console.log(fname);
             try {
                 return JSON.parse(fs.readFileSync(fname, 'utf-8'));
             }
             catch (e) {
-                console.error(e.message);
                 return {};
             }
         }
