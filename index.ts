@@ -50,8 +50,6 @@ export class RDFC10 {
             maximum_n_degree_call : 0,
             current_n_degree_call : 0
         }
-
-        console.log(this.state);
     }
 
     /**
