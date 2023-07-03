@@ -137,26 +137,30 @@ export class RDFC10 {
      * Canonicalize a Dataset into an N-Quads document.
      * 
      * Implementation of the main algorithmic steps, see
-     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
-     * real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html).
+     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). 
+     * 
+     * (The real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html)).
      * 
      * @remarks
      * Note that the N-Quads parser throws an exception in case of syntax error.
+     * 
+     * @throws - RangeError, if the complexity of the graph goes beyond the set complexity number. See {@link maximum_complexity_number}
      * 
      * @param input_dataset 
      * @returns - N-Quads document using the canonical ID-s.
      * 
      */
     canonicalize(input_dataset: InputDataset): string {
-        return this.canonicalizeDetailed(input_dataset).canonical_form;
+        return this.c14n(input_dataset).canonical_form;
     }
 
     /**
-     * Canonicalize a Dataset into a full set of information.
+     * Canonicalize a Dataset producing the full set of information.
      * 
      * Implementation of the main algorithmic steps, see
-     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
-     * real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html).
+     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). 
+     * 
+     * (The real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html)).
      * 
      * The result is an Object containing the serialized version and the Quads version of the canonicalization result, 
      * as well as a bnode mapping from the original to the canonical equivalents
@@ -164,15 +168,17 @@ export class RDFC10 {
      * @remarks
      * Note that the N-Quads parser throws an exception in case of syntax error.
      * 
+     * @throws - RangeError, if the complexity of the graph goes beyond the set complexity number. See {@link maximum_complexity_number}
+     *
      * @param input_dataset 
      * @returns - Detailed results of the canonicalization
      */
-    canonicalizeDetailed(input_dataset: InputDataset): C14nResult {
+    c14n(input_dataset: InputDataset): C14nResult {
         return computeCanonicalDataset(this.state, input_dataset);
     } 
 
     /**
-     * Serialize the dataset into a (possibly sorted) Array of nquads.
+     * Serialize a dataset into a (possibly sorted) Array of nquads.
      * 
      * @param input_dataset 
      * @param sort If `true` (the default) the array is lexicographically sorted

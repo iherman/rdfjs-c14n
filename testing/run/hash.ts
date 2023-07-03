@@ -4,10 +4,11 @@
  */
 import { Hash }                              from '../../index';
 import { IDIssuer }                          from '../../lib/issueIdentifier';
-import { C14nState, Constants, computeHash } from '../../lib/common';
+import { C14nState, computeHash }            from '../../lib/common';
+import * as config                           from '../../lib/config';
 
 
-function main(alg: string, data: string) {
+function main(alg: string, _data: string) {
     const fake_state: C14nState = {
         bnode_to_quads   : {},
         hash_to_bnodes   : {},
@@ -19,11 +20,9 @@ function main(alg: string, data: string) {
 }
 
 
-
-
 if (process.argv[2]) {
     const not_supported: string[] = [];
-    for (const alg of Constants.HASH_ALGORITHMS) {
+    for (const alg of config.HASH_ALGORITHMS) {
         try {
             main(alg, process.argv[2]);
         } catch(e) {

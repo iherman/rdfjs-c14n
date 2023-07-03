@@ -103,7 +103,7 @@ declare class RDFC10 {
      * @param input_dataset 
      * @returns - Detailed results of the canonicalization
      */
-    canonicalizeDetailed(input_dataset: InputDataset): C14nResult ; 
+    c14n(input_dataset: InputDataset): C14nResult ; 
 
     /**
      * Serialize the dataset into a (possibly sorted) Array of nquads.

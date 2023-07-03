@@ -3,6 +3,7 @@
 - The return structure uses bona fide Map-s for the additional mapping information, instead of a bespoke structure. This makes the usage more natural to end-users.
 - Handling of poison graphs has changed: instead of looking at the recursion level, it looks at the number of calls to "hash n degree quads".
 - The default hash function and complexity levels can also be set via environment variables, and the system also looks for a `.rdfjs_c14n.json` configuration file in the local directory as well as the user's home directory for further values. These are merged using the usual priority (HOME < Local Dir < environment variables).
+- The `canonicalizeDetailed` entry point has been renamed `c14n`...
 
 # Version 2.0.1
 
