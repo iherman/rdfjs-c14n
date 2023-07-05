@@ -45,7 +45,7 @@ function computeCanonicalDataset(state, input) {
     state.bnode_to_quads = {};
     state.hash_to_bnodes = {};
     state.canonical_issuer = new issueIdentifier_1.IDIssuer();
-    state.current_recursion = 0;
+    state.current_n_degree_call = 0;
     // The input to the algorithm can be either an nQuads document, or a dataset
     // representation with Quads. This function makes the nQuad document "disappear" from
     // the rest of the processing.
@@ -84,6 +84,9 @@ function computeCanonicalDataset(state, input) {
             bnode_map(quad.graph);
         }
     }
+    // "Side step" (not directly in the specification): the number of bnodes is used to set the maximum number of hash-n-degree-quads call
+    // This is the mechanism used to avoid poison graphs.
+    state.maximum_n_degree_call = state.complexity_number * Object.keys(state.bnode_to_quads).length;
     /* @@@ */
     state.logger.info("ca.2", "Entering the canonicalization function (4.4.3 (2)).", {
         "Bnode to quads": (0, logging_1.bntqToLogItem)(state.bnode_to_quads)

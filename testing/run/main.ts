@@ -54,7 +54,7 @@ async function singleTest(canonicalizer: RDFC10, num: string, dump: boolean = tr
 
     // Just for testing the direct nquad input...
     // const trig: string = await fs.readFile(input_fname, 'utf-8');
-    const c14n_result    = canonicalizer.canonicalizeDetailed(input);
+    const c14n_result    = canonicalizer.c14n(input);
     
     // console.log('>>>>')
     // console.log(c14n_result.canonical_form);
@@ -133,45 +133,48 @@ async function main(): Promise<void> {
     const debug = options.debug ? true : false;
     const trace = options.trace ? true : false;
 
-    if (options.full) {
-        const base_tests = [...Array(number_of_tests).keys()].map((index: number): string => testNumber(`${index}`));
-        const tests = [...base_tests, ...extra_tests];
-        tests.shift(); // There is no '000' test!
+    try {
+        if (options.full) {
+            const base_tests = [...Array(number_of_tests).keys()].map((index: number): string => testNumber(`${index}`));
+            const tests = [...base_tests, ...extra_tests];
+            tests.shift(); // There is no '000' test!
 
-        // Run all the tests...
-        const proms: boolean[] = await Promise.all(tests.map((num) => singleTest(canonicalizer, num, false)));
-        const failed_tests = tests
-            // pair the test name and whether the tests passed:
-            .map((value: string, index:number): [string, boolean] => [value, proms[index]])
-            // filter the successful tests:
-            .filter( (value: [string,boolean]): boolean => !value[1])
-            // Keep the names only
-            .map( ([test,_result]: [string,boolean]): string => test);
-        
-        if (failed_tests.length === 0) {
-            console.log('All tests passed')
-        } else {
-            console.log(`Failed tests: ${failed_tests}`)
-        }
-    } else {
-        let logger : Logger|undefined = undefined; // = new SimpleYamlLogger(logLevel);
-        const logLevel = (debug) ? LogLevels.debug : ((trace) ? LogLevels.info : undefined);
-
-        console.log(`Available logger types: ${canonicalizer.available_logger_types}`);
-        if (logLevel) {
-            logger = canonicalizer.setLogger("YamlLogger", logLevel)
-        }
-    
-        const num = (program.args.length === 0) ? testNumber(options.number) : testNumber(program.args[0]);
-        if (test_number_format.test(num)) {
-            await singleTest(canonicalizer, num, true);
-            if (logger) {
-                console.log("\n>> Log <<")
-                console.log(logger.log);
+            // Run all the tests...
+            const proms: boolean[] = await Promise.all(tests.map((num) => singleTest(canonicalizer, num, false)));
+            const failed_tests = tests
+                // pair the test name and whether the tests passed:
+                .map((value: string, index:number): [string, boolean] => [value, proms[index]])
+                // filter the successful tests:
+                .filter( (value: [string,boolean]): boolean => !value[1])
+                // Keep the names only
+                .map( ([test,_result]: [string,boolean]): string => test);
+            
+            if (failed_tests.length === 0) {
+                console.log('All tests passed')
+            } else {
+                console.log(`Failed tests: ${failed_tests}`)
             }
         } else {
-            console.error('Invalid test number');
-        }    
+            let logger : Logger|undefined = undefined; // = new SimpleYamlLogger(logLevel);
+            const logLevel = (debug) ? LogLevels.debug : ((trace) ? LogLevels.info : undefined);
+
+            if (logLevel) {
+                logger = canonicalizer.setLogger("YamlLogger", logLevel)
+            }
+        
+            const num = (program.args.length === 0) ? testNumber(options.number) : testNumber(program.args[0]);
+            if (test_number_format.test(num)) {
+                await singleTest(canonicalizer, num, true);
+                if (logger) {
+                    console.log("\n>> Log <<")
+                    console.log(logger.log);
+                }
+            } else {
+                console.error('Invalid test number');
+            }    
+        }
+    } catch(e) {
+        console.error(`Canonicalization algorithm aborted: "${e.name}: ${e.message}"`);
     }
 }
 

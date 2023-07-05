@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RDFCanon = exports.RDFC10 = exports.LogLevels = void 0;
 const n3 = require("n3");
 const common_1 = require("./lib/common");
+const config = require("./lib/config");
 const issueIdentifier_1 = require("./lib/issueIdentifier");
 const canonicalization_1 = require("./lib/canonicalization");
 const logging_1 = require("./lib/logging");
@@ -30,16 +31,18 @@ class RDFC10 {
      * @param data_factory  An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface). If undefined, the DataFactory of the [n3 package](https://www.npmjs.com/package/n3) is used.
      */
     constructor(data_factory) {
+        const { c14n_complexity, c14n_hash } = (0, common_1.configData)();
         this.state = {
             bnode_to_quads: {},
             hash_to_bnodes: {},
             canonical_issuer: new issueIdentifier_1.IDIssuer(),
-            hash_algorithm: common_1.Constants.HASH_ALGORITHM,
+            hash_algorithm: c14n_hash,
             dataFactory: data_factory ? data_factory : n3.DataFactory,
             logger: logging_1.LoggerFactory.createLogger(logging_1.LoggerFactory.DEFAULT_LOGGER),
             logger_id: logging_1.LoggerFactory.DEFAULT_LOGGER,
-            maximum_recursion: common_1.Constants.DEFAULT_MAXIMUM_RECURSION,
-            current_recursion: 0
+            complexity_number: c14n_complexity,
+            maximum_n_degree_call: 0,
+            current_n_degree_call: 0
         };
     }
     /**
@@ -75,7 +78,7 @@ class RDFC10 {
      * If the algorithm is not listed as existing for openssl, the value is ignored (and an exception is thrown).
      */
     set hash_algorithm(algorithm) {
-        if (common_1.Constants.HASH_ALGORITHMS.includes(algorithm)) {
+        if (config.HASH_ALGORITHMS.includes(algorithm)) {
             this.state.hash_algorithm = algorithm;
         }
         else {
@@ -90,56 +93,62 @@ class RDFC10 {
      * List of available hash algorithm names.
      */
     get available_hash_algorithms() {
-        return common_1.Constants.HASH_ALGORITHMS;
+        return config.HASH_ALGORITHMS;
     }
     /**
-     * Set the maximal level of recursion this canonicalization should use. Setting this number to a reasonably low number (say, 3),
+     * Set the maximal complexity number. This number, multiplied with the number of blank nodes in the dataset,
+     * sets a maximum level of calls the algorithm can do for the so called "hash n degree quads" function.
+     * Setting this number to a reasonably low number (say, 30),
      * ensures that some "poison graphs" would not result in an unreasonably long canonicalization process.
      * See the [security consideration section](https://www.w3.org/TR/rdf-canon/#security-considerations) in the specification.
      *
      * The default value set by this implementation is 50; any number _greater_ then this number is ignored (and an exception is thrown).
      */
-    set maximum_recursion_level(level) {
-        if (!Number.isNaN(level) && Number.isInteger(level) && level > 0 && level < common_1.Constants.DEFAULT_MAXIMUM_RECURSION) {
-            this.state.maximum_recursion = level;
+    set maximum_complexity_number(level) {
+        if (!Number.isNaN(level) && Number.isInteger(level) && level > 0 && level < config.DEFAULT_MAXIMUM_COMPLEXITY) {
+            this.state.complexity_number = level;
         }
         else {
-            const error_message = `Required recursion level is not an integer between 0 and ${common_1.Constants.DEFAULT_MAXIMUM_RECURSION}`;
+            const error_message = `Required complexity must be between 0 and ${config.DEFAULT_MAXIMUM_COMPLEXITY}`;
             throw RangeError(error_message);
         }
     }
-    get maximum_recursion_level() {
-        return this.state.maximum_recursion;
+    get maximum_complexity_number() {
+        return this.state.complexity_number;
     }
     /**
      * The system-wide maximum value for the recursion level. The current maximum recursion level cannot exceed this value.
      */
-    get maximum_allowed_recursion_level() {
-        return common_1.Constants.DEFAULT_MAXIMUM_RECURSION;
+    get maximum_allowed_complexity_number() {
+        return config.DEFAULT_MAXIMUM_COMPLEXITY;
     }
     /**
      * Canonicalize a Dataset into an N-Quads document.
      *
      * Implementation of the main algorithmic steps, see
-     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
-     * real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html).
+     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview).
+     *
+     * (The real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html)).
      *
      * @remarks
      * Note that the N-Quads parser throws an exception in case of syntax error.
+     *
+     * @throws - RangeError, if the complexity of the graph goes beyond the set complexity number. See {@link maximum_complexity_number}
      *
      * @param input_dataset
      * @returns - N-Quads document using the canonical ID-s.
      *
      */
     canonicalize(input_dataset) {
-        return this.canonicalizeDetailed(input_dataset).canonical_form;
+        return this.c14n(input_dataset).canonical_form;
     }
     /**
-     * Canonicalize a Dataset into a full set of information.
+     * Canonicalize a Dataset producing the full set of information.
      *
      * Implementation of the main algorithmic steps, see
-     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
-     * real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html).
+     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview).
+     *
+     * (The real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html)).
      *
      * The result is an Object containing the serialized version and the Quads version of the canonicalization result,
      * as well as a bnode mapping from the original to the canonical equivalents
@@ -147,14 +156,16 @@ class RDFC10 {
      * @remarks
      * Note that the N-Quads parser throws an exception in case of syntax error.
      *
+     * @throws - RangeError, if the complexity of the graph goes beyond the set complexity number. See {@link maximum_complexity_number}
+     *
      * @param input_dataset
      * @returns - Detailed results of the canonicalization
      */
-    canonicalizeDetailed(input_dataset) {
+    c14n(input_dataset) {
         return (0, canonicalization_1.computeCanonicalDataset)(this.state, input_dataset);
     }
     /**
-     * Serialize the dataset into a (possibly sorted) Array of nquads.
+     * Serialize a dataset into a (possibly sorted) Array of nquads.
      *
      * @param input_dataset
      * @param sort If `true` (the default) the array is lexicographically sorted

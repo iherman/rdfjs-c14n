@@ -62,10 +62,10 @@ main() {
 
     // "normalized" is a dataset of quads with "canonical" blank node labels
     // per the specification. 
-    const normalized: Quads = rdfc10.canonicalizeDetailed(input).canonicalized_dataset;
+    const normalized: Quads = rdfc10.c14n(input).canonicalized_dataset;
 
     // If you care only of the N-Quads results only, you can make it simpler
-    const normalized_N_Quads: string = rdfc10.canonicalizeDetailed(input).canonical_form;
+    const normalized_N_Quads: string = rdfc10.c14n(input).canonical_form;
 
     // Or even simpler, using a shortcut:
     const normalized_N_Quads_bis: string = rdfc10.canonicalize(input);
@@ -117,23 +117,24 @@ attribute, where `algorithm` can be any hash function identification. Examples a
 
 which corresponds to what the underlying OpenSSL library of `node.js` implements (as of June 2023, i.e., version 18.16.0).
 
-#### Controlling the recursion level
+#### Controlling the complexity level
 
-On rare occasion, the [RDFC 1.0](https://www.w3.org/TR/rdf-canon/) algorithm has to go through some recursive steps. On even more extreme situations, the running of the algorithm could result in an unreasonably long canonicalization process. Although this practically never occurs in practice, attackers may use some "poison graphs" to create such a situation (see the [security consideration section](https://www.w3.org/TR/rdf-canon/#security-considerations) in the specification).
+On rare occasion, the [RDFC 1.0](https://www.w3.org/TR/rdf-canon/) algorithm has to go through complex
+cycles that may also involve a recursive steps. On even more extreme situations, the running of the algorithm could result in an unreasonably long canonicalization process. Although this practically never occurs in practice, attackers may use some "poison graphs" to create such situations (see the [security consideration section](https://www.w3.org/TR/rdf-canon/#security-considerations) in the specification).
 
 This implementation sets a maximum level; this level can be accessed by the
 
 ```js
-    rdfc10.maximum_allowed_recursion_level;
+    rdfc10.maximum_allowed_complexity_number;
 ```
 
 (read-only) attribute. This number can be lowered by setting the 
 
 ```js
-    rdfc10.maximum_recursion_level
+    rdfc10.maximum_complexity_number
 ```
 
-attribute. The value of this attribute cannot exceed the system wide maximum allowed level.
+attribute. The value of this attribute cannot exceed the system wide maximum level.
 
 #### Logging
 
@@ -160,6 +161,13 @@ Implementers may add their own loggers to the system by implementing a new Logge
 ```js
     rdfc10.available_logger_types;
 ```
+
+#### Configurations
+
+The default complexity value and the hash algorithm are both set in the code, but can be configured when starting
+an application using configuration files and environment variables. See 
+the [configuration module](https://iherman.github.io/rdfjs-c14n/modules/lib_config.html) for the details.
+
 
 
 ---

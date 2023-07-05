@@ -8,7 +8,13 @@
 
 import * as rdf       from 'rdf-js';
 import * as n3        from 'n3';
-import { createHash } from 'crypto';
+import { createHash } from 'node:crypto';
+import { env }        from 'node:process';
+import * as fs        from 'node:fs';
+import * as path      from 'node:path';
+
+import * as config    from './config';
+
 import { IDIssuer }   from './issueIdentifier';
 import { nquads }     from '@tpluscode/rdf-string';
 import { Logger }     from './logging';
@@ -21,34 +27,6 @@ export namespace Constants {
      * 
      */
     export const BNODE_PREFIX = "c14n";
-
-    /** 
-     * The default hash algorithm's name
-     * 
-     * @readonly
-     * 
-     */
-    export const HASH_ALGORITHM = "sha256";
-
-    /**
-     * Default maximal value for recursion
-     *
-     * @readonly
-     * 
-     */
-    export const DEFAULT_MAXIMUM_RECURSION = 50;
-
-    /**
-     * List of available OpenSSL hash algorithms, as of June 2023 (`node.js` version 18.16.0).
-     * 
-     */
-    export const HASH_ALGORITHMS = [
-        "blake2b512", "blake2s256", "md5",        "rmd160",  
-        "sha1",       "sha224",     "sha256",     "sha3-224", 
-        "sha3-256",   "sha3-384",   "sha3-512",   "sha384",   
-        "sha512",     "sha512-224", "sha512-256", "shake128", 
-        "shake256",   "sm3",
-    ];
 }
 
 /** 
@@ -132,16 +110,23 @@ export interface GlobalState extends C14nState {
     /** Logger instance's identifier name */
     logger_id       : string;
 
+    /**
+     * Complexity number: the multiplicative factor that
+     * sets the value of {@link maximum_n_degree_call} by
+     * multiplying it with the number of blank nodes
+     */
+    complexity_number : number;
+
     /** 
-     * Maximal number of recursions allowed. Initialized to the maximum integer value in Javascript.
+     * Maximal number of recursions allowed. 
      * This value may be modified by the caller
      */
-    maximum_recursion : number;
+    maximum_n_degree_call : number;
     
     /**
      * Current recursion level. Initialized to zero, increased every time a recursion occurs
      */
-    current_recursion : number;
+    current_n_degree_call : number;
 }
 
 /**
@@ -254,8 +239,8 @@ export function parseNquads(nquads: string): Quads {
  * 
  * @remarks
  * The reason this class is necessary is (1) the Array object in JS does not have a `add` 
- * property and (2) care should be taken about creating new RDF Datasets to reproduce the same "choice" for Quads  
- * (see the {@link new} method).
+ * property and (2) care should be taken about creating new RDF Datasets to reproduce the same 
+ * "option" for Quads (see the {@link new} method).
  */
 export class DatasetShell {
     private the_dataset: Quads ;
@@ -298,4 +283,64 @@ export class DatasetShell {
             yield quad;
         }
     }
+}
+
+
+/**
+ * Handling the configuration data that the user can use, namely:
+ * 
+ * - `$HOME/.rdfjs_c14n.json` following {@link config.ConfigData}
+ * - `$PWD/.rdfjs_c14n.json` following {@link config.ConfigData}
+ * - Environment variables `c14_complexity` and/or `c14n_hash`
+ * 
+ * (in increasing priority order).
+ * 
+ * If no configuration is set, and/or the values are invalid, the default values are used.
+ * 
+ * @returns 
+ */
+export function configData(): config.ConfigData {
+    // Read the configuration file; the env_name gives the base for the file name
+    // It is a very small file, sync file read is used to make it simple...
+    const get_config = (env_name: string): config.ConfigData => {
+        if (env_name in env) {
+            const fname = path.join(`${env[env_name]}`,".rdfjs_c14n.json");
+            try {
+                return JSON.parse(fs.readFileSync(fname,'utf-8')) as config.ConfigData;
+            } catch(e) {
+                return {};
+            }
+        } else {
+            return {};
+        }
+    };
+    // Create a configuration data for the environment variables (if any)
+    const get_env_data = () : config.ConfigData => {
+        const retval: config.ConfigData = {};
+        if (config.ENV_COMPLEXITY in env) retval.c14n_complexity = Number(env[config.ENV_COMPLEXITY]);
+        if (config.ENV_HASH_ALGORITHM in env) retval.c14n_hash = env[config.ENV_HASH_ALGORITHM];
+        return retval;
+    };
+
+    const home_data: config.ConfigData  = get_config("HOME");
+    const local_data: config.ConfigData = get_config("PWD");
+    const env_data: config.ConfigData   = get_env_data();
+    const sys_data: config.ConfigData   = {
+        c14n_complexity : config.DEFAULT_MAXIMUM_COMPLEXITY,
+        c14n_hash       : config.HASH_ALGORITHM,
+    }
+    let retval: config.ConfigData = {};
+
+    // "Merge" all the configuration data in the right priority order
+    Object.assign(retval, sys_data, home_data, local_data, env_data)
+
+    // Sanity check of the data:
+    if (Number.isNaN(retval.c14n_complexity) || retval.c14n_complexity <= 0) {
+        retval.c14n_complexity = config.DEFAULT_MAXIMUM_COMPLEXITY;
+    }
+    if (!config.HASH_ALGORITHMS.includes(retval.c14n_hash)) {
+        retval.c14n_hash = config.HASH_ALGORITHM;
+    }
+
+    return retval;
 }
