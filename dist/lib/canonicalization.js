@@ -51,14 +51,17 @@ function computeCanonicalDataset(state, input) {
     // the rest of the processing.
     const convertToQuads = (inp) => {
         if (typeof inp === 'string') {
-            return new common_1.DatasetShell((0, common_1.parseNquads)(inp));
+            return (0, common_1.parseNquads)(inp);
+        }
+        else if (Array.isArray(inp)) {
+            return new Set(inp);
         }
         else {
-            return new common_1.DatasetShell(inp);
+            return inp;
         }
     };
     const input_dataset = convertToQuads(input);
-    const retval = input_dataset.new();
+    const retval = new Set();
     // Step 2
     // All quads are 'classified' depending on what bnodes they contain
     // Results in a mapping from bnodes to all quads that they are part of.
@@ -80,6 +83,7 @@ function computeCanonicalDataset(state, input) {
                 }
             };
             bnode_map(quad.subject);
+            // The algorithm is not prepared for generalized graphs, ie, predicates cannot be bnodes
             bnode_map(quad.object);
             bnode_map(quad.graph);
         }
@@ -248,9 +252,9 @@ function computeCanonicalDataset(state, input) {
     /* @@@ */
     // Step 7
     const return_value = {
-        canonical_form: (0, common_1.concatNquads)((0, common_1.quadsToNquads)(retval.dataset)),
-        canonicalized_dataset: retval.dataset,
-        bnode_identifier_map: createBidMap(retval.dataset),
+        canonical_form: (0, common_1.concatNquads)((0, common_1.quadsToNquads)(retval)),
+        canonicalized_dataset: Array.isArray(input) ? [...retval] : retval,
+        bnode_identifier_map: createBidMap(retval),
         issued_identifier_map: state.canonical_issuer.issued_identifier_map,
     };
     return return_value;

@@ -4,6 +4,7 @@
 - Handling of poison graphs has changed: instead of looking at the recursion level, it looks at the number of calls to "hash n degree quads".
 - The default hash function and complexity levels can also be set via environment variables, and the system also looks for a `.rdfjs_c14n.json` configuration file in the local directory as well as the user's home directory for further values. These are merged using the usual priority (HOME < Local Dir < environment variables).
 - The `canonicalizeDetailed` entry point has been renamed `c14n`...
+- Code improvement: it is simpler to use `Set<rdf.Quad>` everywhere rather than using a 'Shell' to cover for a Set or an Array. (It may be a bit slower that way, but the complication may not be worth it.)
 
 # Version 2.0.1
 

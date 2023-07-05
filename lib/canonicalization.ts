@@ -8,8 +8,8 @@
 
 import * as rdf from 'rdf-js';
 import { 
-    GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, concatNquads, quadsToNquads,
-    DatasetShell, parseNquads, InputDataset, C14nResult 
+    GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, concatNquads, 
+    quadsToNquads, parseNquads, InputDataset, C14nResult 
 } from './common';
 
 import { computeFirstDegreeHash }                               from './hash1DegreeQuads';
@@ -56,16 +56,18 @@ export function computeCanonicalDataset(state: GlobalState, input: InputDataset)
         // The input to the algorithm can be either an nQuads document, or a dataset
         // representation with Quads. This function makes the nQuad document "disappear" from
         // the rest of the processing.
-        const convertToQuads = (inp: InputDataset): DatasetShell => {
+        const convertToQuads = (inp: InputDataset): Quads => {
             if (typeof inp === 'string') {
-                return new DatasetShell(parseNquads(inp as string));
+                return parseNquads(inp as string);
+            } else if (Array.isArray(inp)) {
+                return new Set<rdf.Quad>(inp as rdf.Quad[])
             } else {
-                return new DatasetShell(inp as Quads);
+                return inp;
             }
         }
 
-        const input_dataset: DatasetShell = convertToQuads(input);
-        const retval: DatasetShell        = input_dataset.new();
+        const input_dataset: Quads = convertToQuads(input);
+        const retval: Quads        = new Set();
 
         // Step 2
         // All quads are 'classified' depending on what bnodes they contain
@@ -87,6 +89,7 @@ export function computeCanonicalDataset(state: GlobalState, input: InputDataset)
                     }
                 }
                 bnode_map(quad.subject);
+                // The algorithm is not prepared for generalized graphs, ie, predicates cannot be bnodes
                 bnode_map(quad.object);
                 bnode_map(quad.graph);
             }
@@ -265,9 +268,9 @@ export function computeCanonicalDataset(state: GlobalState, input: InputDataset)
          
         // Step 7
         const return_value: C14nResult = {
-            canonical_form        : concatNquads(quadsToNquads(retval.dataset)),
-            canonicalized_dataset : retval.dataset,
-            bnode_identifier_map  : createBidMap(retval.dataset),
+            canonical_form        : concatNquads(quadsToNquads(retval)),
+            canonicalized_dataset : Array.isArray(input) ? [...retval] : retval,
+            bnode_identifier_map  : createBidMap(retval),
             issued_identifier_map : state.canonical_issuer.issued_identifier_map as ReadonlyMap<BNodeId,BNodeId>,   
         }
         return return_value;

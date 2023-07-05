@@ -7,7 +7,7 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.configData = exports.DatasetShell = exports.parseNquads = exports.hashDataset = exports.quadsToNquads = exports.quadToNquad = exports.hashNquads = exports.concatNquads = exports.computeHash = exports.Constants = void 0;
+exports.configData = exports.parseNquads = exports.hashDataset = exports.quadsToNquads = exports.quadToNquad = exports.hashNquads = exports.concatNquads = exports.computeHash = exports.Constants = void 0;
 const n3 = require("n3");
 const node_crypto_1 = require("node:crypto");
 const node_process_1 = require("node:process");
@@ -120,55 +120,6 @@ function parseNquads(nquads) {
     return new Set(quads);
 }
 exports.parseNquads = parseNquads;
-/**
- * A shell to provide a unified way of handling the various ways a graph can be represented: a full blown
- * [RDF Dataset core instance](https://rdf.js.org/dataset-spec/#datasetcore-interface), an Array of Quads, or a Set of Quads.
- *
- * @remarks
- * The reason this class is necessary is (1) the Array object in JS does not have a `add`
- * property and (2) care should be taken about creating new RDF Datasets to reproduce the same
- * "option" for Quads (see the {@link new} method).
- */
-class DatasetShell {
-    the_dataset;
-    constructor(dataset) {
-        this.the_dataset = dataset;
-    }
-    add(quad) {
-        if (Array.isArray(this.the_dataset)) {
-            this.the_dataset.push(quad);
-        }
-        else {
-            this.the_dataset.add(quad);
-        }
-    }
-    /**
-     * Create a new instance whose exact type reflects the current type.
-     *
-     * @param state
-     * @returns - a new (empty) dataset
-     */
-    new() {
-        if (Array.isArray(this.the_dataset)) {
-            return new DatasetShell([]);
-        }
-        else {
-            return new DatasetShell(new Set());
-        }
-    }
-    get dataset() {
-        return this.the_dataset;
-    }
-    /**
-     * Iterate over the quads
-     */
-    *[Symbol.iterator]() {
-        for (const quad of this.the_dataset) {
-            yield quad;
-        }
-    }
-}
-exports.DatasetShell = DatasetShell;
 /**
  * Handling the configuration data that the user can use, namely:
  *

@@ -30,15 +30,14 @@ export namespace Constants {
 }
 
 /** 
- * According to the RDF semantics, the correct representation of a dataset is a Set
- * but, for convenience, many applications use arrays. Hence this type.
+ * According to the RDF semantics, the correct representation of a dataset is a Set of Quads.
  */
-export type Quads = rdf.Quad[] | Set<rdf.Quad>;
+export type Quads = Set<rdf.Quad>;
 
 /*
- * Per spec, the input can be an abstract dataset (ie, Quads) or an N-Quads document (ie, a string)
+ * Per spec, the input can be an abstract dataset (ie, Quads, either as a set or an array) or an N-Quads document (ie, a string)
  */
-export type InputDataset = Quads | string;
+export type InputDataset = Quads | rdf.Quad[] | string;
 export type BNodeId      = string;
 export type Hash         = string;
 export type QuadToNquad  = (quad: rdf.Quad) => string;
@@ -67,7 +66,7 @@ export interface C14nResult {
     canonical_form        : string;
 
     /** Dataset as Set or Array of rdf Quads */
-    canonicalized_dataset : Quads;
+    canonicalized_dataset : Quads | rdf.Quad[];
 
     /** Mapping of a blank node to its identifier */
     bnode_identifier_map  : ReadonlyMap<rdf.BlankNode,BNodeId>;
@@ -231,58 +230,6 @@ export function parseNquads(nquads: string): Quads {
     const parser = new n3.Parser({blankNodePrefix: ''});
     const quads: rdf.Quad[] = parser.parse(nquads);
     return new Set<rdf.Quad>(quads);
-}
-
-/**
- * A shell to provide a unified way of handling the various ways a graph can be represented: a full blown
- * [RDF Dataset core instance](https://rdf.js.org/dataset-spec/#datasetcore-interface), an Array of Quads, or a Set of Quads.
- * 
- * @remarks
- * The reason this class is necessary is (1) the Array object in JS does not have a `add` 
- * property and (2) care should be taken about creating new RDF Datasets to reproduce the same 
- * "option" for Quads (see the {@link new} method).
- */
-export class DatasetShell {
-    private the_dataset: Quads ;
-
-    constructor(dataset: Quads) {
-        this.the_dataset = dataset;
-    }
-
-    add(quad: rdf.Quad) {
-        if (Array.isArray(this.the_dataset)) {
-            this.the_dataset.push(quad)
-        } else {
-            this.the_dataset.add(quad);
-        }
-    }
-
-    /**
-     * Create a new instance whose exact type reflects the current type. 
-     * 
-     * @param state 
-     * @returns - a new (empty) dataset
-     */
-    new(): DatasetShell {
-        if (Array.isArray(this.the_dataset)) {
-            return new DatasetShell([]);
-        } else {
-            return new DatasetShell(new Set<rdf.Quad>());
-        }
-    }
-
-    get dataset(): Quads {
-        return this.the_dataset;
-    }
-
-    /**
-     * Iterate over the quads 
-     */
-     *[Symbol.iterator](): IterableIterator<rdf.Quad> {
-        for (const quad of this.the_dataset) {
-            yield quad;
-        }
-    }
 }
 
 
