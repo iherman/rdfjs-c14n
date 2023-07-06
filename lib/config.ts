@@ -17,10 +17,6 @@
  * @packageDocumentation
  */
 
-import { env }   from 'node:process';
-import * as fs   from 'node:fs';
-import * as path from 'node:path';
-
 /**
  * Default maximal complexity value. Algorithmically, this number is multiplied
  * with the number of bnodes in a given dataset, thereby yielding the maximum times
@@ -61,22 +57,22 @@ export const HASH_ALGORITHM = "sha256";
  * 
  */
 export const HASH_ALGORITHMS = [
-    "blake2b512", "blake2s256", "md5",        "rmd160",  
-    "sha1",       "sha224",     "sha256",     "sha3-224", 
-    "sha3-256",   "sha3-384",   "sha3-512",   "sha384",   
-    "sha512",     "sha512-224", "sha512-256", "shake128", 
-    "shake256",   "sm3",
+    "blake2b512", "blake2s256", "md5", "rmd160",
+    "sha1", "sha224", "sha256", "sha3-224",
+    "sha3-256", "sha3-384", "sha3-512", "sha384",
+    "sha512", "sha512-224", "sha512-256", "shake128",
+    "shake256", "sm3",
 ];
 
 /**
  * Environment variable to set/change the maximum complexity
  */
-export const ENV_COMPLEXITY   = "c14n_complexity"
+export const ENV_COMPLEXITY = "c14n_complexity";
 
 /**
  * Environment variable to set/change the maximum complexity
  */
-export const ENV_HASH_ALGORITHM = "c14n_hash"
+export const ENV_HASH_ALGORITHM = "c14n_hash";
 
 
 /**
@@ -84,10 +80,10 @@ export const ENV_HASH_ALGORITHM = "c14n_hash"
  */
 export interface ConfigData {
     /** Number must be positive */
-    c14n_complexity ?: number,
+    c14n_complexity?: number,
 
     /** The value must be one of the algorithms listed in {@link HASH_ALGORITHMS} */
-    c14n_hash       ?: string,
+    c14n_hash?: string,
 }
 
 // /**

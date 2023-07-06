@@ -20,11 +20,11 @@ import { BNodeId, Hash, GlobalState, quadToNquad, hashNquads } from './common';
  * @param identifier 
  * @returns - hash value
  */
- export function computeFirstDegreeHash(state: GlobalState, identifier: BNodeId): Hash {
+export function computeFirstDegreeHash(state: GlobalState, identifier: BNodeId): Hash {
     /* @@@ */
     state.logger.push("h1dg");
     state.logger.info("h1dg.1", "Entering Hash First Degree Quads function (4.6.3)", { identifier });
-    /* @@@ */ 
+    /* @@@ */
 
     // Step 1
     const nquads: string[] = [];
@@ -39,17 +39,17 @@ import { BNodeId, Hash, GlobalState, quadToNquad, hashNquads } from './common';
             if (term.termType === "BlankNode") {
                 return (term.value === identifier) ? state.dataFactory.blankNode('a') : state.dataFactory.blankNode('z');
             } else {
-                return term
+                return term;
             }
-        }
+        };
         const new_term = state.dataFactory.quad(
-            mapTerm(quad.subject) as rdf.Quad_Subject, 
-            quad.predicate, 
+            mapTerm(quad.subject) as rdf.Quad_Subject,
+            quad.predicate,
             mapTerm(quad.object) as rdf.Quad_Object,
             mapTerm(quad.graph) as rdf.Quad_Graph
         );
-        nquads.push(quadToNquad(new_term))
-    })
+        nquads.push(quadToNquad(new_term));
+    });
 
     // Step 4 (hopefully javascript does the right thing in terms of unicode)
     nquads.sort();
@@ -58,13 +58,13 @@ import { BNodeId, Hash, GlobalState, quadToNquad, hashNquads } from './common';
     const the_hash: Hash = hashNquads(state, nquads);
 
     /* @@@ */
-    state.logger.info("h1dg.5", "Leaving Hash First Degree Quads function (4.6.3).", { 
+    state.logger.info("h1dg.5", "Leaving Hash First Degree Quads function (4.6.3).", {
         identifier,
-        "quads" : nquads,
-        "hash" : the_hash
+        "quads": nquads,
+        "hash": the_hash
     });
     state.logger.pop();
-    /* @@@ */ 
+    /* @@@ */
 
     return the_hash;
 }

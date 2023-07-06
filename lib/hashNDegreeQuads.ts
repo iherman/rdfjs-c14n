@@ -6,10 +6,10 @@
  * @packageDocumentation
  */
 
-import * as rdf                                                                                  from 'rdf-js';
+import * as rdf from 'rdf-js';
 import { BNodeId, Hash, NDegreeHashResult, HashToBNodes, GlobalState, computeHash, quadToNquad } from './common';
-import { computeFirstDegreeHash }                                                                from './hash1DegreeQuads';
-import { IDIssuer }                                                                              from './issueIdentifier';
+import { computeFirstDegreeHash } from './hash1DegreeQuads';
+import { IDIssuer } from './issueIdentifier';
 const permutation = require('array-permutation');
 
 /**
@@ -28,14 +28,14 @@ const permutation = require('array-permutation');
  * @param position 
  * @returns 
  */
- function computeHashRelatedBlankNode(state: GlobalState, related: BNodeId, quad: rdf.Quad, issuer: IDIssuer, position: string): Hash {
-    /* @@@ */ 
+function computeHashRelatedBlankNode(state: GlobalState, related: BNodeId, quad: rdf.Quad, issuer: IDIssuer, position: string): Hash {
+    /* @@@ */
     state.logger.push("hrbn");
     state.logger.info("hrbn.1", "Entering Hash Related Blank Node function (4.7.3)", {
         "related": related,
         "quad": quadToNquad(quad),
     });
-    /* @@@ */ 
+    /* @@@ */
 
     const getIdentifier = (): BNodeId => {
         if (state.canonical_issuer.isSet(related)) {
@@ -43,8 +43,8 @@ const permutation = require('array-permutation');
         } else if (issuer.isSet(related)) {
             return `_:${issuer.issueID(related)}`;
         } else {
-            return computeFirstDegreeHash(state, related)
-        }    
+            return computeFirstDegreeHash(state, related);
+        }
     };
 
     // Step 1
@@ -55,22 +55,22 @@ const permutation = require('array-permutation');
 
     // Step 3
     if (position !== 'g') {
-        input = `${input}<${quad.predicate.value}>`
+        input = `${input}<${quad.predicate.value}>`;
     }
 
     // Step 4
     input = `${input}${identifier}`;
 
     // Step 5
-    const hash: Hash = computeHash(state,input);
+    const hash: Hash = computeHash(state, input);
 
-    /* @@@ */ 
+    /* @@@ */
     state.logger.debug("hrbn.5", "Leaving Hash Related Blank Node function (4.7.3 (4))", {
         "input to hash": input,
         hash
     });
     state.logger.pop();
-    /* @@@ */ 
+    /* @@@ */
 
     // Step 5
     return hash;
@@ -103,7 +103,7 @@ export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issu
 
     // console.log(`>>>>>++ ${state.current_recursion}`)
     /* @@@ */
- 
+
     // Step 1
     const Hn: HashToBNodes = {};
 
@@ -111,33 +111,33 @@ export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issu
     // Calculate a unique hash for all other bnodes that are immediately connected to 'identifier'
     // Note that this step will, in possible recursive calls, create additional steps for the "gossips"
     {
-        /* @@@ */ state.logger.push("hndq.3")
+        /* @@@ */ state.logger.push("hndq.3");
         for (const quad of state.bnode_to_quads[identifier]) {
-            /* @@@ */ state.logger.push("hndq.3.1","", {quad: quadToNquad(quad)});
+            /* @@@ */ state.logger.push("hndq.3.1", "", { quad: quadToNquad(quad) });
             // Step 3.1
             const processTerm = (term: rdf.Term, position: string): void => {
-                /* @@@ */ state.logger.push("hndq.3.1.1","", {term: term.value});
-                if (term.termType === "BlankNode" &&  term.value !== identifier) {
+                /* @@@ */ state.logger.push("hndq.3.1.1", "", { term: term.value });
+                if (term.termType === "BlankNode" && term.value !== identifier) {
                     // Step 3.1.1
-                    const hash = computeHashRelatedBlankNode(state, term.value, quad,  issuer, position);
+                    const hash = computeHashRelatedBlankNode(state, term.value, quad, issuer, position);
                     // Step 3.1.2
                     if (Hn[hash] === undefined) {
                         Hn[hash] = [term.value];
                     } else {
-                        Hn[hash].push(term.value)
+                        Hn[hash].push(term.value);
                     }
                 }
                 state.logger.pop();
-            }
-            processTerm(quad.subject,'s');
+            };
+            processTerm(quad.subject, 's');
             processTerm(quad.object, 'o');
-            processTerm(quad.graph,  'g');
+            processTerm(quad.graph, 'g');
             /* @@@ */ state.logger.pop();
         }
 
-        /* @@@ */ 
-        state.logger.debug("hndq.3.extra", "Hash N-Degree Quads function (4.8.3 (3))", { 
-            "Hash to bnodes" : Hn
+        /* @@@ */
+        state.logger.debug("hndq.3.extra", "Hash N-Degree Quads function (4.8.3 (3))", {
+            "Hash to bnodes": Hn
         });
         state.logger.pop();
         /* @@@ */
@@ -152,7 +152,7 @@ export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issu
 
         const hashes: Hash[] = Object.keys(Hn).sort();
         for (const hash of hashes) {
-            /* @@@ */ 
+            /* @@@ */
             state.logger.info("hndq.5.1", "Hash N-Degree Quads function (4.8.3 (5)), entering loop", {
                 hash,
                 "data to hash": data_to_hash
@@ -173,10 +173,10 @@ export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issu
             // 'permutation' package has a strange bug: if the array to be handled
             // has, in fact, one element, then the result of permutations is empty...
             //
-            state.logger.push("hndq.5.4")
+            state.logger.push("hndq.5.4");
             const perms: BNodeId[][] = Hn[hash].length === 1 ? [Hn[hash]] : Array.from(permutation(Hn[hash]));
             perms: for (const p of perms) {
-                /* @@@ */ 
+                /* @@@ */
                 state.logger.info("hndq.5.4.1", "Hash N-Degree Quads function (4.8.3 (5.4)), entering loop", {
                     p,
                     "chosen path": chosen_path
@@ -193,11 +193,11 @@ export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issu
                 const recursion_list: BNodeId[] = [];
 
                 // Step 5.4.4
-                state.logger.push("hndq.5.4.4")
+                state.logger.push("hndq.5.4.4");
                 for (const related of p) {
-                    /* @@@ */ 
+                    /* @@@ */
                     state.logger.info("hndq.5.4.4.1", "Hash N-Degree Quads function (4.8.3 (5.4.4)), entering loop", { related, path });
-                    /* @@@ */ 
+                    /* @@@ */
 
                     if (state.canonical_issuer.isSet(related)) {
                         // Step 5.4.4.1
@@ -210,14 +210,14 @@ export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issu
                         path = `${path}_:${issuer_copy.issueID(related)}`;
                     }
                     // Step 5.4.4.3
-                    if (chosen_path.length > 0 && path.length >= chosen_path.length &&  path > chosen_path) {
+                    if (chosen_path.length > 0 && path.length >= chosen_path.length && path > chosen_path) {
                         state.logger.pop();
                         continue perms;
                     }
                 }
                 state.logger.pop();
 
-                /* @@@ */ 
+                /* @@@ */
                 state.logger.debug("hndq.5.4.5.extra", "Hash N-Degree Quads function (4.8.3 (5.4.5)), before possible recursion.", {
                     "recursion list": recursion_list,
                     path
@@ -239,7 +239,7 @@ export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issu
                     // Step 5.4.5.4
                     issuer_copy = result.issuer;
 
-                    /* @@@ */ 
+                    /* @@@ */
                     state.logger.info("hndq.5.4.5.4", "Hash N-Degree Quads function (4.8.3 (5.4.5.4)), combine result of recursion.", {
                         path,
                         "issuer copy": issuer_copy.toLogItem(),
@@ -255,7 +255,7 @@ export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issu
 
                 // Step 5.4.6
                 if (chosen_path.length === 0 || path < chosen_path) {
-                    chosen_path   = path;
+                    chosen_path = path;
                     chosen_issuer = issuer_copy;
                 }
             }
@@ -263,13 +263,13 @@ export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issu
 
             // Step 5.5.
             data_to_hash = `${data_to_hash}${chosen_path}`;
-            
-            /* @@@ */ 
+
+            /* @@@ */
             state.logger.info("hndq.5.5", "Hash N-Degree Quads function (4.8.3 (5.5). End of current loop with Hn hashes", {
                 "chosen path": chosen_path,
                 "data to hash": data_to_hash
             });
-            /* @@@ */ 
+            /* @@@ */
 
             // Step 5.6
             issuer = chosen_issuer;
@@ -281,15 +281,15 @@ export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issu
     const retval: NDegreeHashResult = {
         hash: computeHash(state, data_to_hash),
         issuer: issuer
-    }
+    };
 
-    /* @@@ */ 
+    /* @@@ */
     state.logger.info("hndq.6", "Leaving Hash N-Degree Quads function (4.8.3).", {
         "hash": retval.hash,
         "issuer": retval.issuer.toLogItem()
     });
     state.logger.pop();
-    /* @@@ */ 
-    
+    /* @@@ */
+
     return retval;
 }

@@ -6,10 +6,10 @@
  * @packageDocumentation
  */
 
-import * as n3          from 'n3';
-import * as rdf         from 'rdf-js';
-import {promises as fs} from 'fs';
-import { nquads }       from '@tpluscode/rdf-string';
+import * as n3 from 'n3';
+import * as rdf from 'rdf-js';
+import { promises as fs } from 'fs';
+import { nquads } from '@tpluscode/rdf-string';
 
 /**
  * Convert the graph into NQuads, more exactly into an array of individual NQuad statement
@@ -19,12 +19,12 @@ import { nquads }       from '@tpluscode/rdf-string';
 export function dataset_to_nquads(quads: Iterable<rdf.Quad>): string[] {
     const quad_to_nquad = (quad: rdf.Quad): string => {
         const retval = nquads`${quad}`.toString();
-        return retval.endsWith('  .') ? retval.replace(/  .$/, ' .') : retval;    
-    }
+        return retval.endsWith('  .') ? retval.replace(/  .$/, ' .') : retval;
+    };
 
     let retval: string[] = [];
     for (const quad of quads) {
-        retval.push(quad_to_nquad(quad))
+        retval.push(quad_to_nquad(quad));
     }
     return retval;
 }
@@ -38,9 +38,9 @@ export function dataset_to_nquads(quads: Iterable<rdf.Quad>): string[] {
  * @param fname - file name
  * @returns 
  */
-export async function get_quads(fname: string): Promise<Set<rdf.Quad>> {    
+export async function get_quads(fname: string): Promise<Set<rdf.Quad>> {
     const trig: string = await fs.readFile(fname, 'utf-8');
-    const parser = new n3.Parser({blankNodePrefix: ''});
+    const parser = new n3.Parser({ blankNodePrefix: '' });
     const quads: rdf.Quad[] = parser.parse(trig);
     return new Set<rdf.Quad>(quads);
 }
