@@ -8,19 +8,19 @@
  */
 
 import * as rdf from 'rdf-js';
-import * as n3  from 'n3';
+import * as n3 from 'n3';
 
 import { GlobalState, Quads, hashDataset, Hash, quadsToNquads, InputDataset, computeHash, configData } from './lib/common';
 
-import * as config                          from './lib/config';
-import { C14nResult }                       from './lib/common';
-import { IDIssuer }                         from './lib/issueIdentifier';
-import { computeCanonicalDataset }          from './lib/canonicalization';
+import * as config from './lib/config';
+import { C14nResult } from './lib/common';
+import { IDIssuer } from './lib/issueIdentifier';
+import { computeCanonicalDataset } from './lib/canonicalization';
 import { Logger, LoggerFactory, LogLevels } from './lib/logging';
 
-export { Quads, InputDataset, C14nResult }  from './lib/common';
-export { Hash, BNodeId }                    from './lib/common';
-export { LogLevels, Logger }                from './lib/logging';
+export { Quads, InputDataset, C14nResult } from './lib/common';
+export { Hash, BNodeId } from './lib/common';
+export { LogLevels, Logger } from './lib/logging';
 
 /**
  * Just a shell around the algorithm, consisting of a state, and the call for the real implementation.
@@ -39,17 +39,17 @@ export class RDFC10 {
         const { c14n_complexity, c14n_hash } = configData();
 
         this.state = {
-            bnode_to_quads        : {},
-            hash_to_bnodes        : {},
-            canonical_issuer      : new IDIssuer(),
-            hash_algorithm        : c14n_hash,
-            dataFactory           : data_factory ? data_factory : n3.DataFactory,
-            logger                : LoggerFactory.createLogger(LoggerFactory.DEFAULT_LOGGER),
-            logger_id             : LoggerFactory.DEFAULT_LOGGER,
-            complexity_number     : c14n_complexity,
-            maximum_n_degree_call : 0,
-            current_n_degree_call : 0
-        }
+            bnode_to_quads: {},
+            hash_to_bnodes: {},
+            canonical_issuer: new IDIssuer(),
+            hash_algorithm: c14n_hash,
+            dataFactory: data_factory ? data_factory : n3.DataFactory,
+            logger: LoggerFactory.createLogger(LoggerFactory.DEFAULT_LOGGER),
+            logger_id: LoggerFactory.DEFAULT_LOGGER,
+            complexity_number: c14n_complexity,
+            maximum_n_degree_call: 0,
+            current_n_degree_call: 0
+        };
     }
 
     /**
@@ -61,10 +61,10 @@ export class RDFC10 {
         const new_logger = LoggerFactory.createLogger(id, level);
         if (new_logger !== undefined) {
             this.state.logger_id = id;
-            this.state.logger    = new_logger;
+            this.state.logger = new_logger;
             return new_logger;
         } else {
-            return undefined
+            return undefined;
         }
     }
 
@@ -123,7 +123,7 @@ export class RDFC10 {
         }
     }
     get maximum_complexity_number(): number {
-        return this.state.complexity_number
+        return this.state.complexity_number;
     }
 
     /**
@@ -175,7 +175,7 @@ export class RDFC10 {
      */
     c14n(input_dataset: InputDataset): C14nResult {
         return computeCanonicalDataset(this.state, input_dataset);
-    } 
+    }
 
     /**
      * Serialize a dataset into a (possibly sorted) Array of nquads.
@@ -216,4 +216,4 @@ export class RDFC10 {
  * The WG has decided what the final name of the algorithm is (RDFC 1.0), hence the renaming of the core
  * class.
  */
-export class RDFCanon extends RDFC10 {};
+export class RDFCanon extends RDFC10 { };

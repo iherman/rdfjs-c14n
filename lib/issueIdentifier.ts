@@ -7,7 +7,7 @@
  */
 
 import { Constants, BNodeId } from './common';
-import { LogItem }            from './logging';
+import { LogItem } from './logging';
 
 /**
  * Issue Identifier.
@@ -17,23 +17,23 @@ import { LogItem }            from './logging';
  */
 export class IDIssuer {
     // This is used to provide a readable ID at debug/logging time...
-    private static _IDIssuerID : number = 1234;
+    private static _IDIssuerID: number = 1234;
     // ... for each instance; it is only used for debugging purposes.
-    private _id                : number;
+    private _id: number;
 
     // See [the specification](https://www.w3.org/TR/rdf-canon/#issue-identifier-algorithm)
-    private _identifier_prefix      : string;
-    private _identifier_counter     : number;
-    private _issued_identifiers_map : Map<BNodeId,BNodeId>;
+    private _identifier_prefix: string;
+    private _identifier_counter: number;
+    private _issued_identifiers_map: Map<BNodeId, BNodeId>;
 
     /**
      * 
      * @param prefix - the prefix used for the generated IDs
      */
     constructor(prefix: string = Constants.BNODE_PREFIX) {
-        this._id                     = IDIssuer._IDIssuerID++;
-        this._identifier_prefix      = prefix;
-        this._identifier_counter     = 0;
+        this._id = IDIssuer._IDIssuerID++;
+        this._identifier_prefix = prefix;
+        this._identifier_counter = 0;
         this._issued_identifiers_map = new Map();
     }
 
@@ -41,7 +41,7 @@ export class IDIssuer {
      * Accessor to the issued identifier map, to be returned as part of the return
      * structure for the main algorithm
      */
-    get issued_identifier_map(): Map<BNodeId,BNodeId> {
+    get issued_identifier_map(): Map<BNodeId, BNodeId> {
         return this._issued_identifiers_map;
     }
 
@@ -56,10 +56,10 @@ export class IDIssuer {
     issueID(existing: BNodeId): BNodeId {
         const issued = this._issued_identifiers_map.get(existing);
         if (issued !== undefined) {
-            return issued
+            return issued;
         } else {
             const newly_issued: BNodeId = `${this._identifier_prefix}${this._identifier_counter}`;
-            this._issued_identifiers_map.set(existing,newly_issued)
+            this._issued_identifiers_map.set(existing, newly_issued);
             this._identifier_counter++;
             return newly_issued;
         }
@@ -92,7 +92,7 @@ export class IDIssuer {
      */
     copy(): IDIssuer {
         const retval = new IDIssuer(this._identifier_prefix);
-        retval._identifier_counter     = this._identifier_counter;
+        retval._identifier_counter = this._identifier_counter;
         retval._issued_identifiers_map = new Map(this._issued_identifiers_map);
         return retval;
     }
@@ -100,22 +100,22 @@ export class IDIssuer {
     /**
      * Iterate over the values in issuance order.
      */
-     *[Symbol.iterator](): IterableIterator<[BNodeId,BNodeId]> {
-        for (const [key,value] of this._issued_identifiers_map) {
-            yield [key,value]
+    *[Symbol.iterator](): IterableIterator<[BNodeId, BNodeId]> {
+        for (const [key, value] of this._issued_identifiers_map) {
+            yield [key, value];
         }
     }
 
     /**
      * Presentation for logging.
      */
-    toLogItem() : LogItem {
+    toLogItem(): LogItem {
         const retval: LogItem = {
-            "issuer ID" : `${this._id}`,
-            "prefix"    : this._identifier_prefix,
-            "counter"   : `${this._identifier_counter}`,
-            "mappings"  : this._issued_identifiers_map
-        }
+            "issuer ID": `${this._id}`,
+            "prefix": this._identifier_prefix,
+            "counter": `${this._identifier_counter}`,
+            "mappings": this._issued_identifiers_map
+        };
         return retval;
     }
 }

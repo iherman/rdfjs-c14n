@@ -13,37 +13,26 @@
         "noUnusedLocals": false,
         "outDir": "dist",
         "paths": {
-            "*": [
-                "node_modules/*"
-            ]
+            "*": ["node_modules/*"]
         },
         "resolveJsonModule": true,
         "sourceMap": false,
         "target": "esnext"
     },
-    "typesRoots": [
-        "node_modules/@types"
-    ],
-    "include": [
-        "lib/**/*",
-        "index.ts"
-    ],
-    "exclude": [
-        "example/**/*",
-        "tester/**/*",
-        "Attic/**/*"
-    ],
-    "typedocOptions" : {
+    "typesRoots": ["node_modules/@types"],
+    "include": ["lib/**/*", "index.ts"],
+    "exclude": ["example/**/*", "tester/**/*", "Attic/**/*"],
+    "typedocOptions": {
         "excludeExternals": true,
-        "excludePrivate" : true,
-        "excludeProtected" : false,
-        "out" : "docs",
+        "excludePrivate": true,
+        "excludeProtected": false,
+        "out": "docs",
         "theme": "default",
         "includeVersion": true,
         "categorizeByGroup": true,
         "gitRemote": "origin",
         "hideGenerator": true,
-        "sort" : ["static-first","visibility"],
-        "name" : "Implementation of the RDF Canonicalization algorithm RDFC-1.0"
+        "sort": ["static-first", "visibility"],
+        "name": "Implementation of the RDF Canonicalization algorithm RDFC-1.0"
     }
 }

@@ -6,18 +6,18 @@
  * @packageDocumentation
  */
 
-import * as rdf       from 'rdf-js';
-import * as n3        from 'n3';
+import * as rdf from 'rdf-js';
+import * as n3 from 'n3';
 import { createHash } from 'node:crypto';
-import { env }        from 'node:process';
-import * as fs        from 'node:fs';
-import * as path      from 'node:path';
+import { env } from 'node:process';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 
-import * as config    from './config';
+import * as config from './config';
 
-import { IDIssuer }   from './issueIdentifier';
-import { nquads }     from '@tpluscode/rdf-string';
-import { Logger }     from './logging';
+import { IDIssuer } from './issueIdentifier';
+import { nquads } from '@tpluscode/rdf-string';
+import { Logger } from './logging';
 
 export namespace Constants {
     /** 
@@ -38,16 +38,16 @@ export type Quads = Set<rdf.Quad>;
  * Per spec, the input can be an abstract dataset (ie, Quads, either as a set or an array) or an N-Quads document (ie, a string)
  */
 export type InputDataset = Quads | rdf.Quad[] | string;
-export type BNodeId      = string;
-export type Hash         = string;
-export type QuadToNquad  = (quad: rdf.Quad) => string;
+export type BNodeId = string;
+export type Hash = string;
+export type QuadToNquad = (quad: rdf.Quad) => string;
 
 /**
  * BNode labels to Quads mapping. Used in the canonicalization state as the blank node to quad map. See
  * the [specification](https://www.w3.org/TR/rdf-canon/#canon-state).
  */
 export interface BNodeToQuads {
-    [index: BNodeId] : rdf.Quad[];
+    [index: BNodeId]: rdf.Quad[];
 }
 
 /**
@@ -55,7 +55,7 @@ export interface BNodeToQuads {
  * the [specification](https://www.w3.org/TR/rdf-canon/#canon-state).
  */
 export interface HashToBNodes {
-    [index: Hash] : BNodeId[];
+    [index: Hash]: BNodeId[];
 }
 
 /**
@@ -63,17 +63,17 @@ export interface HashToBNodes {
  */
 export interface C14nResult {
     /** N-Quads serialization of the dataset */
-    canonical_form        : string;
+    canonical_form: string;
 
     /** Dataset as Set or Array of rdf Quads */
-    canonicalized_dataset : Quads | rdf.Quad[];
+    canonicalized_dataset: Quads | rdf.Quad[];
 
     /** Mapping of a blank node to its identifier */
-    bnode_identifier_map  : ReadonlyMap<rdf.BlankNode,BNodeId>;
+    bnode_identifier_map: ReadonlyMap<rdf.BlankNode, BNodeId>;
 
     /** Mapping of an (original) blank node id to its canonical equivalent */
-    issued_identifier_map : ReadonlyMap<BNodeId,BNodeId>;
-} 
+    issued_identifier_map: ReadonlyMap<BNodeId, BNodeId>;
+}
 
 /**
  * Canonicalization state. See
@@ -83,10 +83,10 @@ export interface C14nResult {
  * that may make this parametrized.
  */
 export interface C14nState {
-    bnode_to_quads   : BNodeToQuads;
-    hash_to_bnodes   : HashToBNodes;
-    canonical_issuer : IDIssuer;
-    hash_algorithm   : string;
+    bnode_to_quads: BNodeToQuads;
+    hash_to_bnodes: HashToBNodes;
+    canonical_issuer: IDIssuer;
+    hash_algorithm: string;
 }
 
 /**
@@ -101,39 +101,39 @@ export interface GlobalState extends C14nState {
     /** 
      * [RDF data factory instance](http://rdf.js.org/data-model-spec/#datafactory-interface), to be used to create new terms and quads 
      */
-    dataFactory     : rdf.DataFactory;
+    dataFactory: rdf.DataFactory;
 
     /** A logger instance */
-    logger          : Logger;
+    logger: Logger;
 
     /** Logger instance's identifier name */
-    logger_id       : string;
+    logger_id: string;
 
     /**
      * Complexity number: the multiplicative factor that
      * sets the value of {@link maximum_n_degree_call} by
      * multiplying it with the number of blank nodes
      */
-    complexity_number : number;
+    complexity_number: number;
 
     /** 
      * Maximal number of recursions allowed. 
      * This value may be modified by the caller
      */
-    maximum_n_degree_call : number;
-    
+    maximum_n_degree_call: number;
+
     /**
      * Current recursion level. Initialized to zero, increased every time a recursion occurs
      */
-    current_n_degree_call : number;
+    current_n_degree_call: number;
 }
 
 /**
  * Return structure from a N-degree quad's hash computation, see [the specification](https://www.w3.org/TR/rdf-canon/#hash-nd-quads-algorithm).
  */
 export interface NDegreeHashResult {
-    hash   : Hash;
-    issuer : IDIssuer
+    hash: Hash;
+    issuer: IDIssuer;
 }
 
 
@@ -147,7 +147,7 @@ Various utility functions used by the rest of the code.
  * @param data 
  * @returns - hash value
  */
- export function computeHash(state: C14nState, data: string): Hash {
+export function computeHash(state: C14nState, data: string): Hash {
     return createHash(state.hash_algorithm).update(data).digest('hex');
 }
 
@@ -161,7 +161,7 @@ Various utility functions used by the rest of the code.
  * 
  */
 export function concatNquads(nquads: string[]): string {
-    return nquads.map((q:string): string => q.endsWith('\n') ? q : `${q}\n`).join('');
+    return nquads.map((q: string): string => q.endsWith('\n') ? q : `${q}\n`).join('');
 }
 
 /**
@@ -198,10 +198,10 @@ export function quadToNquad(quad: rdf.Quad): string {
  * @param sort - whether the quads must be sorted before hash. Defaults to `true`.
  * @returns - array of nquads
  */
-export function quadsToNquads(quads: Iterable<rdf.Quad>, sort:boolean = true): string[] {
+export function quadsToNquads(quads: Iterable<rdf.Quad>, sort: boolean = true): string[] {
     const retval: string[] = [];
-    for(const quad of quads) {
-        retval.push(quadToNquad(quad))
+    for (const quad of quads) {
+        retval.push(quadToNquad(quad));
     }
     if (sort) retval.sort();
     return retval;
@@ -216,8 +216,8 @@ export function quadsToNquads(quads: Iterable<rdf.Quad>, sort:boolean = true): s
  * @returns - hash value
  */
 export function hashDataset(state: C14nState, quads: Iterable<rdf.Quad>, sort: boolean = true): Hash {
-    const nquads: string[] = quadsToNquads(quads, sort)
-    return hashNquads(state, nquads)
+    const nquads: string[] = quadsToNquads(quads, sort);
+    return hashNquads(state, nquads);
 }
 
 /**
@@ -227,7 +227,7 @@ export function hashDataset(state: C14nState, quads: Iterable<rdf.Quad>, sort: b
  * @returns parsed dataset
  */
 export function parseNquads(nquads: string): Quads {
-    const parser = new n3.Parser({blankNodePrefix: ''});
+    const parser = new n3.Parser({ blankNodePrefix: '' });
     const quads: rdf.Quad[] = parser.parse(nquads);
     return new Set<rdf.Quad>(quads);
 }
@@ -251,10 +251,10 @@ export function configData(): config.ConfigData {
     // It is a very small file, sync file read is used to make it simple...
     const get_config = (env_name: string): config.ConfigData => {
         if (env_name in env) {
-            const fname = path.join(`${env[env_name]}`,".rdfjs_c14n.json");
+            const fname = path.join(`${env[env_name]}`, ".rdfjs_c14n.json");
             try {
-                return JSON.parse(fs.readFileSync(fname,'utf-8')) as config.ConfigData;
-            } catch(e) {
+                return JSON.parse(fs.readFileSync(fname, 'utf-8')) as config.ConfigData;
+            } catch (e) {
                 return {};
             }
         } else {
@@ -262,24 +262,24 @@ export function configData(): config.ConfigData {
         }
     };
     // Create a configuration data for the environment variables (if any)
-    const get_env_data = () : config.ConfigData => {
+    const get_env_data = (): config.ConfigData => {
         const retval: config.ConfigData = {};
         if (config.ENV_COMPLEXITY in env) retval.c14n_complexity = Number(env[config.ENV_COMPLEXITY]);
         if (config.ENV_HASH_ALGORITHM in env) retval.c14n_hash = env[config.ENV_HASH_ALGORITHM];
         return retval;
     };
 
-    const home_data: config.ConfigData  = get_config("HOME");
+    const home_data: config.ConfigData = get_config("HOME");
     const local_data: config.ConfigData = get_config("PWD");
-    const env_data: config.ConfigData   = get_env_data();
-    const sys_data: config.ConfigData   = {
-        c14n_complexity : config.DEFAULT_MAXIMUM_COMPLEXITY,
-        c14n_hash       : config.HASH_ALGORITHM,
-    }
+    const env_data: config.ConfigData = get_env_data();
+    const sys_data: config.ConfigData = {
+        c14n_complexity: config.DEFAULT_MAXIMUM_COMPLEXITY,
+        c14n_hash: config.HASH_ALGORITHM,
+    };
     let retval: config.ConfigData = {};
 
     // "Merge" all the configuration data in the right priority order
-    Object.assign(retval, sys_data, home_data, local_data, env_data)
+    Object.assign(retval, sys_data, home_data, local_data, env_data);
 
     // Sanity check of the data:
     if (Number.isNaN(retval.c14n_complexity) || retval.c14n_complexity <= 0) {

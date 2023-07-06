@@ -1,9 +1,9 @@
-import { Command }                   from 'commander';
+import { Command } from 'commander';
 import { RDFC10, LogLevels, Logger } from '../../index';
-import * as rdfn3                    from './rdfn3';
+import * as rdfn3 from './rdfn3';
 
 const number_of_tests: number = 63;
-const extra_tests: string[] = ['900', '901']
+const extra_tests: string[] = ['900', '901'];
 
 // The format of all test numbers
 const test_number_format = RegExp('^[0-9][0-9][0-9]$');
@@ -37,8 +37,8 @@ function printQuads(nquads: string[], label: string): void {
  * @param dump - whether the results should be printed on the screen
  */
 async function singleTest(canonicalizer: RDFC10, num: string, dump: boolean = true): Promise<boolean> {
-    const input_fname    = `testing/tests/test${num}-in.nq`;
-    const expected_fname = `testing/tests/test${num}-rdfc10.nq`
+    const input_fname = `testing/tests/test${num}-in.nq`;
+    const expected_fname = `testing/tests/test${num}-rdfc10.nq`;
     const [input, expected] = await Promise.all([
         rdfn3.get_quads(input_fname),
         rdfn3.get_quads(expected_fname),
@@ -54,8 +54,8 @@ async function singleTest(canonicalizer: RDFC10, num: string, dump: boolean = tr
 
     // Just for testing the direct nquad input...
     // const trig: string = await fs.readFile(input_fname, 'utf-8');
-    const c14n_result    = canonicalizer.c14n(input);
-    
+    const c14n_result = canonicalizer.c14n(input);
+
     // console.log('>>>>')
     // console.log(c14n_result.canonical_form);
     // console.log(c14n_result.bnode_identifier_map);
@@ -63,18 +63,18 @@ async function singleTest(canonicalizer: RDFC10, num: string, dump: boolean = tr
     // console.log(`Hash on dataset: ${canonicalizer.hash(c14n_result.canonicalized_dataset)}`);
     // console.log('>>>>');
 
-    const c14n_input     = c14n_result.canonicalized_dataset;
-    const input_quads    = rdfn3.dataset_to_nquads(input).sort();
-    const c14_quads      = rdfn3.dataset_to_nquads(c14n_input).sort();
+    const c14n_input = c14n_result.canonicalized_dataset;
+    const input_quads = rdfn3.dataset_to_nquads(input).sort();
+    const c14_quads = rdfn3.dataset_to_nquads(c14n_input).sort();
     const expected_quads = rdfn3.dataset_to_nquads(expected).sort();
-    const result         = compareNquads(c14_quads,expected_quads);
+    const result = compareNquads(c14_quads, expected_quads);
 
     if (dump) {
         console.log(`*************** Test number ${num} *****************`);
         printQuads(input_quads, 'Input quads');
-        printQuads(c14_quads,'Canonicalized quads');
-        printQuads(expected_quads,'Expected quads');    
-        const test_passes    = result ? 'passes' : 'fails';
+        printQuads(c14_quads, 'Canonicalized quads');
+        printQuads(expected_quads, 'Expected quads');
+        const test_passes = result ? 'passes' : 'fails';
         console.log(`===> Test ${test_passes} <===`);
     }
     return result;
@@ -100,7 +100,7 @@ async function singleTest(canonicalizer: RDFC10, num: string, dump: boolean = tr
  * @async
  */
 async function main(): Promise<void> {
-    const testNumber = (num ?: string): string => {
+    const testNumber = (num?: string): string => {
         if (num) {
             switch (num.length) {
                 case 1:
@@ -112,15 +112,15 @@ async function main(): Promise<void> {
                     return num;
             }
         } else {
-            return "002"
+            return "002";
         }
     };
 
-    const canonicalizer = new RDFC10();  
+    const canonicalizer = new RDFC10();
 
     const program = new Command();
     program
-        .name ('rdf_c14n [number]')
+        .name('rdf_c14n [number]')
         .description('Run a specific test from the test suite')
         .usage('[options]')
         .option('-f --full', 'Run the full tests suite, just return the list of fails')
@@ -143,37 +143,37 @@ async function main(): Promise<void> {
             const proms: boolean[] = await Promise.all(tests.map((num) => singleTest(canonicalizer, num, false)));
             const failed_tests = tests
                 // pair the test name and whether the tests passed:
-                .map((value: string, index:number): [string, boolean] => [value, proms[index]])
+                .map((value: string, index: number): [string, boolean] => [value, proms[index]])
                 // filter the successful tests:
-                .filter( (value: [string,boolean]): boolean => !value[1])
+                .filter((value: [string, boolean]): boolean => !value[1])
                 // Keep the names only
-                .map( ([test,_result]: [string,boolean]): string => test);
-            
+                .map(([test, _result]: [string, boolean]): string => test);
+
             if (failed_tests.length === 0) {
-                console.log('All tests passed')
+                console.log('All tests passed');
             } else {
-                console.log(`Failed tests: ${failed_tests}`)
+                console.log(`Failed tests: ${failed_tests}`);
             }
         } else {
-            let logger : Logger|undefined = undefined; // = new SimpleYamlLogger(logLevel);
+            let logger: Logger | undefined = undefined; // = new SimpleYamlLogger(logLevel);
             const logLevel = (debug) ? LogLevels.debug : ((trace) ? LogLevels.info : undefined);
 
             if (logLevel) {
-                logger = canonicalizer.setLogger("YamlLogger", logLevel)
+                logger = canonicalizer.setLogger("YamlLogger", logLevel);
             }
-        
+
             const num = (program.args.length === 0) ? testNumber(options.number) : testNumber(program.args[0]);
             if (test_number_format.test(num)) {
                 await singleTest(canonicalizer, num, true);
                 if (logger) {
-                    console.log("\n>> Log <<")
+                    console.log("\n>> Log <<");
                     console.log(logger.log);
                 }
             } else {
                 console.error('Invalid test number');
-            }    
+            }
         }
-    } catch(e) {
+    } catch (e) {
         console.error(`Canonicalization algorithm aborted: "${e.name}: ${e.message}"`);
     }
 }

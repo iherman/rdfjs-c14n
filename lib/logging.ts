@@ -24,10 +24,10 @@ export enum LogLevels {
  * And individual log item.
  */
 export interface LogItem {
-    [index: string]: string|string[]|Map<string,string>|boolean|LogItem|LogItem[];
+    [index: string]: string | string[] | Map<string, string> | boolean | LogItem | LogItem[];
 }
 
-export type Log = Map<string,LogItem>;
+export type Log = Map<string, LogItem>;
 
 /**
  * Very simple Logger interface, to be used in the code. 
@@ -89,7 +89,7 @@ export interface Logger {
      * @param extra_info - possible extra information on the level increase 
      * @param 
      */
-    push(label: string, extra_info ?: string, ...otherData: LogItem[]): void;
+    push(label: string, extra_info?: string, ...otherData: LogItem[]): void;
 
     /**
      * Counterpart of the {@link push} method.
@@ -109,13 +109,13 @@ export interface Logger {
 class DefaultLogger implements Logger {
     protected _level: LogLevels;
 
-    constructor() {};
-    debug(_log_point: string, _position: string, ..._otherData: LogItem[]): void {};
-    warn(_log_point: string, _position: string, ..._otherData: LogItem[]): void {};
-    error(_log_point: string, _position: string, ..._otherData: LogItem[]): void {};
-    info(_log_point: string, _position: string, ..._otherData: LogItem[]): void {};
-    push(_label: string, _extra_info ?: string, ..._otherData: LogItem[]): void {};
-    pop(): void {};
+    constructor() { };
+    debug(_log_point: string, _position: string, ..._otherData: LogItem[]): void { };
+    warn(_log_point: string, _position: string, ..._otherData: LogItem[]): void { };
+    error(_log_point: string, _position: string, ..._otherData: LogItem[]): void { };
+    info(_log_point: string, _position: string, ..._otherData: LogItem[]): void { };
+    push(_label: string, _extra_info?: string, ..._otherData: LogItem[]): void { };
+    pop(): void { };
 
     get log(): string {
         return '';
@@ -138,9 +138,9 @@ class DefaultLogger implements Logger {
  * By default, the logger level is set to `LogLevels.info`.
  */
 class YamlLogger extends DefaultLogger {
-    private top_log:     LogItem = {};
+    private top_log: LogItem = {};
     private current_log: LogItem[];
-    private log_stack:   LogItem[][] = [];
+    private log_stack: LogItem[][] = [];
 
     constructor() {
         super();
@@ -149,7 +149,7 @@ class YamlLogger extends DefaultLogger {
         this.current_log = ca_level;
     }
 
-    private emitMessage(mtype: "debug"|"info"|"warn"|"error", log_id: string, position: string, extras: LogItem[]): void {
+    private emitMessage(mtype: "debug" | "info" | "warn" | "error", log_id: string, position: string, extras: LogItem[]): void {
         const item: LogItem = {};
         if (position !== '') {
             item["log point"] = mtype === "info" ? `${position}` : `[${mtype}] ${position}`;
@@ -164,28 +164,28 @@ class YamlLogger extends DefaultLogger {
     }
 
     debug(log_id: string, position: string, ...extras: LogItem[]): void {
-        if (this._level >= LogLevels.debug) this.emitMessage("debug", log_id, position, extras)
+        if (this._level >= LogLevels.debug) this.emitMessage("debug", log_id, position, extras);
     }
     info(log_id: string, position: string, ...extras: LogItem[]): void {
-        if (this._level >= LogLevels.info) this.emitMessage("info", log_id, position, extras)
+        if (this._level >= LogLevels.info) this.emitMessage("info", log_id, position, extras);
     }
     warn(log_id: string, position: string, ...extras: LogItem[]): void {
-        if (this._level >= LogLevels.warn) this.emitMessage("warn", log_id, position, extras)
+        if (this._level >= LogLevels.warn) this.emitMessage("warn", log_id, position, extras);
     }
     error(log_id: string, position: string, ...extras: LogItem[]): void {
-        if (this._level >= LogLevels.error) this.emitMessage("error", log_id, position, extras)
+        if (this._level >= LogLevels.error) this.emitMessage("error", log_id, position, extras);
     }
 
-    push(label: string, extra_info ?: string, ...extras: LogItem[]): void {
+    push(label: string, extra_info?: string, ...extras: LogItem[]): void {
         const new_level: LogItem[] = [];
         const new_level_ref: LogItem = {};
 
         new_level_ref[label] = new_level;
-        
+
         if (extra_info && extra_info !== "") {
             new_level.push({
                 "push info": extra_info
-            })
+            });
         }
         if (extras.length !== 0) {
             new_level.push({
@@ -213,10 +213,10 @@ class YamlLogger extends DefaultLogger {
 export class LoggerFactory {
     static DEFAULT_LOGGER = "DefaultLogger";
 
-    static #logger_protos: { [key:string]: Logger } = { 
-        "YamlLogger"    : new YamlLogger(), 
-        "DefaultLogger" : new DefaultLogger(),
-    }
+    static #logger_protos: { [key: string]: Logger; } = {
+        "YamlLogger": new YamlLogger(),
+        "DefaultLogger": new DefaultLogger(),
+    };
 
     /**
      * 
@@ -247,7 +247,7 @@ export class LoggerFactory {
     }
 }
 
- 
+
 /**
  * Return a log item version of a `BNodeToQuads` instance, used to build up a full log message.
  * 
@@ -271,9 +271,9 @@ export function bntqToLogItem(bntq: BNodeToQuads): LogItem {
 export function ndhrToLogItem(ndhrs: NDegreeHashResult[]): LogItem[] {
     return ndhrs.map((ndhr: NDegreeHashResult): LogItem => {
         return {
-            "hash" : ndhr.hash,
+            "hash": ndhr.hash,
             "issuer": ndhr.issuer.toLogItem()
-        }
+        };
     });
 }
 
@@ -288,7 +288,7 @@ export function htbnToLogItem(htbn: HashToBNodes): LogItem[] {
         return {
             "hash": index,
             "bnodes": htbn[index]
-        }
+        };
     });
 }
 
