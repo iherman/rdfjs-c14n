@@ -8,7 +8,7 @@
 
 import * as rdf from 'rdf-js';
 import * as n3 from 'n3';
-import { createHash } from 'node:crypto';
+import * as CryptoJS from 'crypto-js';
 import { env } from 'node:process';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -148,8 +148,25 @@ Various utility functions used by the rest of the code.
  * @returns - hash value
  */
 export function computeHash(state: C14nState, data: string): Hash {
-    return createHash(state.hash_algorithm).update(data).digest('hex');
+    // Unfortunately, the mapping from a string to the function is not
+    // clear. Doing this manually for now...
+    const hash = (name: string, data: string): CryptoJS.lib.WordArray => {
+        switch (name) {
+            case "SHA1": return CryptoJS.SHA1(data);
+            case "SHA224": return CryptoJS.SHA224(data);
+            case "SHA512": return CryptoJS.SHA512(data);
+            case "SHA3": return CryptoJS.SHA3(data);
+            case "MD5": return CryptoJS.MD5(data);
+            case "RIPEMD160": return CryptoJS.RIPEMD160(data);
+            case "SHA256":
+            default:
+                return CryptoJS.SHA256(data);
+        }
+    };
+    const hash_value = hash(state.hash_algorithm, data);
+    return hash_value.toString();
 }
+
 
 /**
  * Return a single N-Quads document out of an array of nquad statements. Per specification, 

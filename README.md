@@ -115,7 +115,7 @@ attribute, where `algorithm` can be any hash function identification. Examples a
     rdfc10.available_hash_algorithms;
 ```
 
-which corresponds to what the underlying OpenSSL library of `node.js` implements (as of June 2023, i.e., version 18.16.0).
+which corresponds to any value that the underlying `npm/crypto-js` package (version 4.1.1., as of July 2023) accepts. 
 
 #### Controlling the complexity level
 

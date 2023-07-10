@@ -40,13 +40,13 @@ export const DEFAULT_MAXIMUM_COMPLEXITY = 50;
  * separate {@link HASH_ALGORITHMS} list.
  * 
  * Care should be taken if changing this constant. The formal specification of RDFC-1.0
- * _requires_ the value of "sha256". If a different hash function is used, the 
+ * _requires_ the value of "SHA256". If a different hash function is used, the 
  * canonicalization results will not be interoperable with other implementations/installations. 
  * 
  * @readonly
  * 
  */
-export const HASH_ALGORITHM = "sha256";
+export const HASH_ALGORITHM = "SHA256";
 
 /**
  * List of available OpenSSL hash algorithms, as of June 2023 (`node.js` version 18.16.0).
@@ -57,11 +57,7 @@ export const HASH_ALGORITHM = "sha256";
  * 
  */
 export const HASH_ALGORITHMS = [
-    "blake2b512", "blake2s256", "md5", "rmd160",
-    "sha1", "sha224", "sha256", "sha3-224",
-    "sha3-256", "sha3-384", "sha3-512", "sha384",
-    "sha512", "sha512-224", "sha512-256", "shake128",
-    "shake256", "sm3",
+    "SHA1", "SHA256", "SHA224", "SHA512", "SHA3", "RIPEMD160", "MD5"
 ];
 
 /**
@@ -86,66 +82,3 @@ export interface ConfigData {
     c14n_hash?: string,
 }
 
-// /**
-//  * Handling the configuration data that the user can use, namely:
-//  * 
-//  * - `$HOME/.rdfjs_c14n.json` following {@link ConfigData}
-//  * - `$PWD/.rdfjs_c14n.json` following {@link ConfigData}
-//  * - Environment variables `c14_complexity` and/or `c14n_hash`
-//  * 
-//  * (in increasing priority order).
-//  * 
-//  * If no configuration is set, and/or the values are invalid, the default values are used.
-//  * 
-//  * @returns 
-//  */
-// export function configData(): ConfigData {
-//     const get_config = (env_name: string): ConfigData => {
-//         if (env_name in env) {
-//             const fname = path.join(`${env[env_name]}`,".rdfjs_c14n.json");
-//             console.log(fname);
-//             try {
-//                 return JSON.parse(fs.readFileSync(fname,'utf-8')) as ConfigData;
-//             } catch(e) {
-//                 console.error(e.message)
-//                 return {};
-//             }
-//         } else {
-//             return {};
-//         }
-//     };
-//     const get_env_data = () : ConfigData => {
-//         const retval: ConfigData = {};
-//         if (ENV_COMPLEXITY in env) retval.c14n_complexity = Number(env[ENV_COMPLEXITY]);
-//         if (ENV_HASH_ALGORITHM in env) retval.c14n_hash = env[ENV_HASH_ALGORITHM];
-//         return retval;
-//     };
-
-//     const home_data: ConfigData  = get_config("HOME");
-//     const local_data: ConfigData = get_config("PWD");
-//     const env_data: ConfigData   = get_env_data();
-//     const sys_data: ConfigData   = {
-//         c14n_complexity : DEFAULT_MAXIMUM_COMPLEXITY,
-//         c14n_hash       : HASH_ALGORITHM,
-//     }
-//     let retval: ConfigData = {};
-//     console.log(`home:     ${JSON.stringify(home_data)}`);
-//     console.log(`local:    ${JSON.stringify(local_data)}`);
-//     console.log(`env:      ${JSON.stringify(env_data)}`);
-//     console.log(`sys data: ${JSON.stringify(sys_data)}`)
-//     console.log('');
-
-//     Object.assign(retval, sys_data, home_data, local_data, env_data)
-
-//     // Sanity check of the data:
-//     if (Number.isNaN(retval.c14n_complexity) || retval.c14n_complexity <= 0) {
-//         retval.c14n_complexity = DEFAULT_MAXIMUM_COMPLEXITY;
-//     }
-//     if (!HASH_ALGORITHMS.includes(retval.c14n_hash)) {
-//         retval.c14n_hash = HASH_ALGORITHM;
-//     }
-
-//     console.log(`return:   ${JSON.stringify(retval)}`);
-
-//     return retval;
-// }
