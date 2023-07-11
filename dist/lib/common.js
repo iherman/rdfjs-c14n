@@ -9,7 +9,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.configData = exports.parseNquads = exports.hashDataset = exports.quadsToNquads = exports.quadToNquad = exports.hashNquads = exports.concatNquads = exports.computeHash = exports.Constants = void 0;
 const n3 = require("n3");
-const node_crypto_1 = require("node:crypto");
+const CryptoJS = require("crypto-js");
 const node_process_1 = require("node:process");
 const fs = require("node:fs");
 const path = require("node:path");
@@ -35,7 +35,23 @@ Various utility functions used by the rest of the code.
  * @returns - hash value
  */
 function computeHash(state, data) {
-    return (0, node_crypto_1.createHash)(state.hash_algorithm).update(data).digest('hex');
+    // Unfortunately, the mapping from a string to the function is not
+    // clear. Doing this manually for now...
+    const hash = (name, data) => {
+        switch (name) {
+            case "SHA1": return CryptoJS.SHA1(data);
+            case "SHA224": return CryptoJS.SHA224(data);
+            case "SHA512": return CryptoJS.SHA512(data);
+            case "SHA3": return CryptoJS.SHA3(data);
+            case "MD5": return CryptoJS.MD5(data);
+            case "RIPEMD160": return CryptoJS.RIPEMD160(data);
+            case "SHA256":
+            default:
+                return CryptoJS.SHA256(data);
+        }
+    };
+    const hash_value = hash(state.hash_algorithm, data);
+    return hash_value.toString();
 }
 exports.computeHash = computeHash;
 /**

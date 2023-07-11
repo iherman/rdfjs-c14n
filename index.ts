@@ -83,14 +83,18 @@ export class RDFC10 {
     }
 
     /**
-     * Set Hash algorithm. The value can be anything that the underlying openssl, as used by node.js, accepts. The default is "sha256".
-     * If the algorithm is not listed as existing for openssl, the value is ignored (and an exception is thrown).
+     * Set the Hash algorithm. The value can be anything that the underlying `npm/crypto-js` package accepts. The default is "sha256".
+     * If the algorithm is not listed as existing for `crypto-js`, the value is ignored (and an exception is thrown).
+     * 
+     * @param algorithm_in: the (case insensitive) name of the algorithm, 
      */
-    set hash_algorithm(algorithm: string) {
+    set hash_algorithm(algorithm_in: string) {
+        const algorithm = algorithm_in.toUpperCase();
+
         if (config.HASH_ALGORITHMS.includes(algorithm)) {
             this.state.hash_algorithm = algorithm;
         } else {
-            const error_message = `"${algorithm}" is not a valid Hash Algorithm name`;
+            const error_message = `"${algorithm_in}" is not a valid Hash Algorithm name`;
             throw TypeError(error_message);
         }
     }

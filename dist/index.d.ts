@@ -55,7 +55,7 @@ declare class RDFC10 {
 
 
     /**
-     * Set the hash algorithm. The value can be anything that the underlying openssl, as used by node.js, accepts. The default is "sha256".
+     * The Hash algorithm. The value can be anything that the underlying `npm/crypto-js` package accepts. The default is "sha256".
      */
     set hash_algorithm(algorithm: string);
     get hash_algorithm(): string;
