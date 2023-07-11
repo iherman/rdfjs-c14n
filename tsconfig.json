@@ -21,7 +21,7 @@
     },
     "typesRoots": ["node_modules/@types"],
     "include": ["lib/**/*", "index.ts"],
-    "exclude": ["example/**/*", "tester/**/*", "Attic/**/*"],
+    "exclude": ["extras/**/*", "example/**/*", "tester/**/*", "Attic/**/*"],
     "typedocOptions": {
         "excludeExternals": true,
         "excludePrivate": true,

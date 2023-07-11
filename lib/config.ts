@@ -2,16 +2,9 @@
  * Configuration constants. System administrators may want to modify these parameters, 
  * although they should do it with care.
  * 
- * To handle the configuration data that the user can use, namely:
+ * Applications relying on the library may provide a callback to modify the configuration data. The `extras` directory
+ * on the [github repository](https://github.com/iherman/rdfjs-c14n) includes such a callback for the `node.js` platform.
  * 
- * - `$HOME/.rdfjs_c14n.json` following {@link ConfigData}
- * - `$PWD/.rdfjs_c14n.json` following {@link ConfigData}
- * - Environment variables `c14_complexity` and/or `c14n_hash` (see {@link ENV_COMPLEXITY} and {@link ENV_HASH_ALGORITHM})
- * 
- * (in increasing priority order).
- * 
- * If no configuration is set, and/or the values are invalid, the default values are used.
-* 
  * @copyright Ivan Herman 2023
  * 
  * @packageDocumentation
@@ -80,5 +73,23 @@ export interface ConfigData {
 
     /** The value must be one of the algorithms listed in {@link HASH_ALGORITHMS} */
     c14n_hash?: string,
+}
+
+/**
+ * Function type to return config data
+ */
+export type GetConfigData = () => ConfigData;
+
+/**
+ * A default callback, returning the built-in configuration data. Application developers may 
+ * create an alternative callback with a more user-friendly way to set the configuration values.
+ * 
+ * @returns 
+ */
+export function defaultConfigData(): ConfigData {
+    return {
+        c14n_complexity: DEFAULT_MAXIMUM_COMPLEXITY,
+        c14n_hash: HASH_ALGORITHM,
+    };
 }
 

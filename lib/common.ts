@@ -9,11 +9,6 @@
 import * as rdf from 'rdf-js';
 import * as n3 from 'n3';
 import * as CryptoJS from 'crypto-js';
-import { env } from 'node:process';
-import * as fs from 'node:fs';
-import * as path from 'node:path';
-
-import * as config from './config';
 
 import { IDIssuer } from './issueIdentifier';
 import { nquads } from '@tpluscode/rdf-string';
@@ -247,64 +242,4 @@ export function parseNquads(nquads: string): Quads {
     const parser = new n3.Parser({ blankNodePrefix: '' });
     const quads: rdf.Quad[] = parser.parse(nquads);
     return new Set<rdf.Quad>(quads);
-}
-
-
-/**
- * Handling the configuration data that the user can use, namely:
- * 
- * - `$HOME/.rdfjs_c14n.json` following {@link config.ConfigData}
- * - `$PWD/.rdfjs_c14n.json` following {@link config.ConfigData}
- * - Environment variables `c14_complexity` and/or `c14n_hash`
- * 
- * (in increasing priority order).
- * 
- * If no configuration is set, and/or the values are invalid, the default values are used.
- * 
- * @returns 
- */
-export function configData(): config.ConfigData {
-    // Read the configuration file; the env_name gives the base for the file name
-    // It is a very small file, sync file read is used to make it simple...
-    const get_config = (env_name: string): config.ConfigData => {
-        if (env_name in env) {
-            const fname = path.join(`${env[env_name]}`, ".rdfjs_c14n.json");
-            try {
-                return JSON.parse(fs.readFileSync(fname, 'utf-8')) as config.ConfigData;
-            } catch (e) {
-                return {};
-            }
-        } else {
-            return {};
-        }
-    };
-    // Create a configuration data for the environment variables (if any)
-    const get_env_data = (): config.ConfigData => {
-        const retval: config.ConfigData = {};
-        if (config.ENV_COMPLEXITY in env) retval.c14n_complexity = Number(env[config.ENV_COMPLEXITY]);
-        if (config.ENV_HASH_ALGORITHM in env) retval.c14n_hash = env[config.ENV_HASH_ALGORITHM];
-        return retval;
-    };
-
-    const home_data: config.ConfigData = get_config("HOME");
-    const local_data: config.ConfigData = get_config("PWD");
-    const env_data: config.ConfigData = get_env_data();
-    const sys_data: config.ConfigData = {
-        c14n_complexity: config.DEFAULT_MAXIMUM_COMPLEXITY,
-        c14n_hash: config.HASH_ALGORITHM,
-    };
-    let retval: config.ConfigData = {};
-
-    // "Merge" all the configuration data in the right priority order
-    Object.assign(retval, sys_data, home_data, local_data, env_data);
-
-    // Sanity check of the data:
-    if (Number.isNaN(retval.c14n_complexity) || retval.c14n_complexity <= 0) {
-        retval.c14n_complexity = config.DEFAULT_MAXIMUM_COMPLEXITY;
-    }
-    if (!config.HASH_ALGORITHMS.includes(retval.c14n_hash)) {
-        retval.c14n_hash = config.HASH_ALGORITHM;
-    }
-
-    return retval;
 }
