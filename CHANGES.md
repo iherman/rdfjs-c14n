@@ -1,3 +1,10 @@
+# Version 2.0.3
+
+- The library has been made "node-independent", ie, removed all dependencies that meant that library can only use on a `node.js` platform (as opposed to, say, a browser). This means:
+  - Instead of using the build-in crypto module for hashing, the `crypto-js` library is used. Although it has a slightly smaller set of available hashing functions, that is not really important for RDFC10 (which, formally, is based on sha256, and everything else is just a cherry on the cake)
+  - The function that allows the user to set some configuration data via environment variables and/or configuration files has been removed from the core. There is now a separate 'extras' directory on the repository which has this function as a callback example that the application developer can use, and the general structure only relies on callback. The callback itself is `node.js` based, others may want to come up with alternatives for, e.g., `deno` or a browser.
+
+
 # Version 2.0.2
 
 - The return structure uses bona fide Map-s for the additional mapping information, instead of a bespoke structure. This makes the usage more natural to end-users.

@@ -5,6 +5,16 @@ export type InputDataset = Quads | string;
 export type BNodeId      = string;
 export type Hash         = string;
 
+declare interface ConfigData {
+    /** Number must be positive */
+    c14n_complexity?: number,
+
+    /** The value must be one of the algorithms listed in the built-in list of available hash functions */
+    c14n_hash?: string,
+}
+
+export type GetConfigData = () => ConfigData;
+
 declare interface C14nResult {
     /** N-Quads serialization of the dataset */
     canonical_form        : string;
@@ -34,8 +44,9 @@ declare class RDFC10 {
     /**
      * @constructor
      * @param data_factory  An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface). If undefined, the DataFactory of the [`n3` package](https://www.npmjs.com/package/n3) is used.
+     * @param getConfigData A function returning the configuration data, see {@link ConfigData}. By default, this return the constant values set in the code; the caller may provide a more complex function to handle environment variables and/or configuration files
      */
-    constructor(data_factory?: rdf.DataFactory);
+    constructor(data_factory?: rdf.DataFactory, getConfigData?: GetConfigData);
 
     /**
      * Set a logger instance. By default it is an "empty" logger, ie, no logging happens
