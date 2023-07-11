@@ -10,17 +10,17 @@
 import * as rdf from 'rdf-js';
 import * as n3 from 'n3';
 
-import { GlobalState, Quads, hashDataset, Hash, quadsToNquads, InputDataset, computeHash, configData } from './lib/common';
-
-import * as config from './lib/config';
+import { GlobalState, Quads, hashDataset, Hash, quadsToNquads, InputDataset, computeHash } from './lib/common';
+import { HASH_ALGORITHMS, DEFAULT_MAXIMUM_COMPLEXITY, ConfigData, GetConfigData, defaultConfigData } from './lib/config';
 import { C14nResult } from './lib/common';
 import { IDIssuer } from './lib/issueIdentifier';
 import { computeCanonicalDataset } from './lib/canonicalization';
-import { Logger, LoggerFactory, LogLevels } from './lib/logging';
+import { LoggerFactory, LogLevels, Logger } from './lib/logging';
 
 export { Quads, InputDataset, C14nResult } from './lib/common';
 export { Hash, BNodeId } from './lib/common';
 export { LogLevels, Logger } from './lib/logging';
+export { ConfigData, GetConfigData } from './lib/config';
 
 /**
  * Just a shell around the algorithm, consisting of a state, and the call for the real implementation.
@@ -34,16 +34,20 @@ export class RDFC10 {
     /**
      * @constructor
      * @param data_factory  An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface). If undefined, the DataFactory of the [n3 package](https://www.npmjs.com/package/n3) is used.
+     * @param getConfigData A function returning the configuration data, see {@link ConfigData}. By default, this return the constant values set in the code; the caller may provide a more complex function to handle environment variables and/or configuration files
      */
-    constructor(data_factory?: rdf.DataFactory) {
-        const { c14n_complexity, c14n_hash } = configData();
+    constructor(data_factory?: rdf.DataFactory, getConfigData?: GetConfigData) {
+        const localGetConfigData: GetConfigData =
+            (getConfigData !== undefined && getConfigData !== null) ? getConfigData : defaultConfigData;
+
+        const { c14n_complexity, c14n_hash } = localGetConfigData();
 
         this.state = {
             bnode_to_quads: {},
             hash_to_bnodes: {},
             canonical_issuer: new IDIssuer(),
             hash_algorithm: c14n_hash,
-            dataFactory: data_factory ? data_factory : n3.DataFactory,
+            dataFactory: (data_factory !== null && data_factory !== undefined) ? data_factory : n3.DataFactory,
             logger: LoggerFactory.createLogger(LoggerFactory.DEFAULT_LOGGER),
             logger_id: LoggerFactory.DEFAULT_LOGGER,
             complexity_number: c14n_complexity,
@@ -83,14 +87,18 @@ export class RDFC10 {
     }
 
     /**
-     * Set Hash algorithm. The value can be anything that the underlying openssl, as used by node.js, accepts. The default is "sha256".
-     * If the algorithm is not listed as existing for openssl, the value is ignored (and an exception is thrown).
+     * Set the Hash algorithm. The value can be anything that the underlying `npm/crypto-js` package accepts. The default is "sha256".
+     * If the algorithm is not listed as existing for `crypto-js`, the value is ignored (and an exception is thrown).
+     * 
+     * @param algorithm_in: the (case insensitive) name of the algorithm, 
      */
-    set hash_algorithm(algorithm: string) {
-        if (config.HASH_ALGORITHMS.includes(algorithm)) {
+    set hash_algorithm(algorithm_in: string) {
+        const algorithm = algorithm_in.toUpperCase();
+
+        if (HASH_ALGORITHMS.includes(algorithm)) {
             this.state.hash_algorithm = algorithm;
         } else {
-            const error_message = `"${algorithm}" is not a valid Hash Algorithm name`;
+            const error_message = `"${algorithm_in}" is not a valid Hash Algorithm name`;
             throw TypeError(error_message);
         }
     }
@@ -102,7 +110,7 @@ export class RDFC10 {
      * List of available hash algorithm names.
      */
     get available_hash_algorithms(): string[] {
-        return config.HASH_ALGORITHMS;
+        return HASH_ALGORITHMS;
     }
 
     /**
@@ -115,10 +123,10 @@ export class RDFC10 {
      * The default value set by this implementation is 50; any number _greater_ then this number is ignored (and an exception is thrown).
      */
     set maximum_complexity_number(level: number) {
-        if (!Number.isNaN(level) && Number.isInteger(level) && level > 0 && level < config.DEFAULT_MAXIMUM_COMPLEXITY) {
+        if (!Number.isNaN(level) && Number.isInteger(level) && level > 0 && level < DEFAULT_MAXIMUM_COMPLEXITY) {
             this.state.complexity_number = level;
         } else {
-            const error_message = `Required complexity must be between 0 and ${config.DEFAULT_MAXIMUM_COMPLEXITY}`;
+            const error_message = `Required complexity must be between 0 and ${DEFAULT_MAXIMUM_COMPLEXITY}`;
             throw RangeError(error_message);
         }
     }
@@ -130,7 +138,7 @@ export class RDFC10 {
      * The system-wide maximum value for the recursion level. The current maximum recursion level cannot exceed this value.
      */
     get maximum_allowed_complexity_number(): number {
-        return config.DEFAULT_MAXIMUM_COMPLEXITY;
+        return DEFAULT_MAXIMUM_COMPLEXITY;
     }
 
     /**

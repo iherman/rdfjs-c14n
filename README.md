@@ -115,7 +115,7 @@ attribute, where `algorithm` can be any hash function identification. Examples a
     rdfc10.available_hash_algorithms;
 ```
 
-which corresponds to what the underlying OpenSSL library of `node.js` implements (as of June 2023, i.e., version 18.16.0).
+which corresponds to any value that the underlying `npm/crypto-js` package (version 4.1.1., as of July 2023) accepts. 
 
 #### Controlling the complexity level
 
@@ -162,13 +162,21 @@ Implementers may add their own loggers to the system by implementing a new Logge
     rdfc10.available_logger_types;
 ```
 
+that returns the loggers that are included in the distribution.
+
 #### Configurations
 
-The default complexity value and the hash algorithm are both set in the code, but can be configured when starting
-an application using configuration files and environment variables. See 
-the [configuration module](https://iherman.github.io/rdfjs-c14n/modules/lib_config.html) for the details.
+The default complexity value and the hash algorithm are both set in the code, see the [configuration module](https://iherman.github.io/rdfjs-c14n/modules/lib_config.html).
 
+Specific applications may want to add the possibility to let the user configure these values, e.g., via environment variables or configuration files. This requires specific features (e.g., file access) depending on the platform used to run the algorithm (e.g., node.js, deno, or a browser platform), i.e., this requires some extra code that should not be included in the library. However, the library _is_ prepared to run such an external configuration setting via a callback when constructing the RDFC10 instance, as follows:
 
+```js
+    …
+    const rdfc10 = new RDFC10(null, getConfigData);
+    …
+```
+
+where `null` stands for a possible `DataFactory` instance (or `null` if the default is used) and `getConfigData` stands for a callback returning the configuration data. An example [callback](https://github.com/iherman/rdfjs-c14n/blob/main/extras/nodeConfiguration.ts) (using a combination of environment variables and configuration files and relying on the node.js platform) is available, and can be easily adapted to other platforms (e.g., deno). (A [javascript version](https://github.com/iherman/rdfjs-c14n/blob/main/extras/nodeConfiguration.js) of the callback is also available.)
 
 ---
 

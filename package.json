@@ -1,7 +1,7 @@
 {
   "name": "rdfjs-c14n",
-  "version": "2.0.2",
-  "date": "2013-07-05",
+  "version": "2.0.3",
+  "date": "2013-07-11",
   "description": "Implementation in Typescript of the RDF Canonicalization Algorithm RDFC-1.0, on top of the RDF/JS interfaces",
   "homepage": "https://github.com/iherman/rdfjs-c14n",
   "repository": {
@@ -15,7 +15,7 @@
     "test": "./node_modules/.bin/ts-node testing/run/main.ts",
     "hash": "./node_modules/.bin/ts-node testing/run/hash.ts",
     "docs": "./node_modules/.bin/typedoc index.ts lib/*",
-    "dist": "tsc"
+    "dist": "tsc; (cd extras; tsc nodeConfiguration.ts)"
   },
   "keywords": [
     "RDF",
@@ -38,12 +38,14 @@
     "@tpluscode/rdf-string": "^0.2.27",
     "@types/rdf-js": "^4.0.2",
     "array-permutation": "^0.2.0",
+    "crypto-js": "^4.1.1",
     "n3": "^1.16.3",
     "rdf-js": "^4.0.2",
     "yaml": "^2.2.1"
   },
   "devDependencies": {
     "@types/commander": "^2.12.2",
+    "@types/crypto-js": "^4.1.1",
     "@types/n3": "^1.10.4",
     "@types/node": "^20.2.5",
     "@typescript-eslint/eslint-plugin": "^5.59.9",
