@@ -40,6 +40,8 @@ npm rdfjs-c14n
 
 The package has been written in TypeScript but is distributed in JavaScript; the type definition (i.e., `index.d.ts`) is included in the distribution.
 
+Also, using appropriate tools (e.g., [esbuild](https://esbuild.github.io/)) the package can be included into a module that can be loaded into a browser.
+
 ## Usage
 
 There is a more detailed documentation of the classes and types [on github](https://iherman.github.io/rdfjs-c14n/). The basic usage may be as follows:
