@@ -27,7 +27,6 @@
  */
 export const DEFAULT_MAXIMUM_COMPLEXITY = 50;
 
-
 /** 
  * The default hash algorithm's name. If changed, it should be one of the names in the 
  * separate {@link HASH_ALGORITHMS} list.
@@ -50,7 +49,7 @@ export const HASH_ALGORITHM = "SHA256";
  * 
  */
 export const HASH_ALGORITHMS = [
-    "SHA1", "SHA256", "SHA224", "SHA512", "SHA3", "RIPEMD160", "MD5"
+    "SHA1", "SHA256", "SHA224", "SHA384", "SHA512", "SHA3", "RIPEMD160", "MD5"
 ];
 
 /**

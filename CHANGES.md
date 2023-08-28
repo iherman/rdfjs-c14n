@@ -1,3 +1,8 @@
+# Version 2.0.4
+
+- Added SHA-384 to the list of available hash functions (missed it the last time)
+
+
 # Version 2.0.3
 
 - The library has been made "node-independent", ie, removed all dependencies that meant that library can only use on a `node.js` platform (as opposed to, say, a browser). This means:

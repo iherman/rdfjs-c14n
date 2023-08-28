@@ -150,6 +150,7 @@ export function computeHash(state: C14nState, data: string): Hash {
             case "SHA1": return CryptoJS.SHA1(data);
             case "SHA224": return CryptoJS.SHA224(data);
             case "SHA512": return CryptoJS.SHA512(data);
+            case "SHA384": return CryptoJS.SHA384(data);
             case "SHA3": return CryptoJS.SHA3(data);
             case "MD5": return CryptoJS.MD5(data);
             case "RIPEMD160": return CryptoJS.RIPEMD160(data);
