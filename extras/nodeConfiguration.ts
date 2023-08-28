@@ -71,7 +71,7 @@ export function nodeConfigData(): config.ConfigData {
     if ( !(retval.c14n_complexity !== undefined && Number.isNaN(retval.c14n_complexity) && retval.c14n_complexity > 0) ) {
         retval.c14n_complexity = config.DEFAULT_MAXIMUM_COMPLEXITY;
     }
-    if ( !(retval.c14n_hash !== undefined && config.HASH_ALGORITHMS.includes(retval.c14n_hash)) ) {
+    if ( !(retval.c14n_hash !== undefined && config.AVAILABLE_HASH_ALGORITHMS.includes(retval.c14n_hash)) ) {
         retval.c14n_hash = config.HASH_ALGORITHM;
     }
 

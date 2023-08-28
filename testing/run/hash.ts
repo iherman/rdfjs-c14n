@@ -22,14 +22,14 @@ function main(alg: string, _data: string) {
 
 if (process.argv[2]) {
     const not_supported: string[] = [];
-    for (const alg of config.HASH_ALGORITHMS) {
+    for (const alg of Object.keys(config.AVAILABLE_HASH_ALGORITHMS)) {
         try {
             main(alg, process.argv[2]);
         } catch (e) {
             not_supported.push(alg);
         }
     }
-    console.log(`\nNot supported: ${not_supported}`);
+    if (not_supported.length > 0) console.log(`\nNot supported: ${not_supported}`);
 } else {
     console.log("Usage: hash input");
 }
