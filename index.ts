@@ -11,7 +11,7 @@ import * as rdf from 'rdf-js';
 import * as n3 from 'n3';
 
 import { GlobalState, Quads, hashDataset, Hash, quadsToNquads, InputDataset, computeHash } from './lib/common';
-import { HASH_ALGORITHMS, DEFAULT_MAXIMUM_COMPLEXITY, ConfigData, GetConfigData, defaultConfigData } from './lib/config';
+import { AVAILABLE_HASH_ALGORITHMS, DEFAULT_MAXIMUM_COMPLEXITY, ConfigData, GetConfigData, defaultConfigData } from './lib/config';
 import { C14nResult } from './lib/common';
 import { IDIssuer } from './lib/issueIdentifier';
 import { computeCanonicalDataset } from './lib/canonicalization';
@@ -93,9 +93,10 @@ export class RDFC10 {
      * @param algorithm_in: the (case insensitive) name of the algorithm, 
      */
     set hash_algorithm(algorithm_in: string) {
-        const algorithm = algorithm_in.toUpperCase();
+        // To avoid stupid case dependent misspellings...
+        const algorithm = algorithm_in.toLowerCase();
 
-        if (HASH_ALGORITHMS.includes(algorithm)) {
+        if (Object.keys(AVAILABLE_HASH_ALGORITHMS).includes(algorithm)) {
             this.state.hash_algorithm = algorithm;
         } else {
             const error_message = `"${algorithm_in}" is not a valid Hash Algorithm name`;
@@ -110,7 +111,7 @@ export class RDFC10 {
      * List of available hash algorithm names.
      */
     get available_hash_algorithms(): string[] {
-        return HASH_ALGORITHMS;
+        return Object.keys(AVAILABLE_HASH_ALGORITHMS);
     }
 
     /**

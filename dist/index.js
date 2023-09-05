@@ -82,8 +82,9 @@ class RDFC10 {
      * @param algorithm_in: the (case insensitive) name of the algorithm,
      */
     set hash_algorithm(algorithm_in) {
-        const algorithm = algorithm_in.toUpperCase();
-        if (config_1.HASH_ALGORITHMS.includes(algorithm)) {
+        // To avoid stupid case dependent misspellings...
+        const algorithm = algorithm_in.toLowerCase();
+        if (Object.keys(config_1.AVAILABLE_HASH_ALGORITHMS).includes(algorithm)) {
             this.state.hash_algorithm = algorithm;
         }
         else {
@@ -98,7 +99,7 @@ class RDFC10 {
      * List of available hash algorithm names.
      */
     get available_hash_algorithms() {
-        return config_1.HASH_ALGORITHMS;
+        return Object.keys(config_1.AVAILABLE_HASH_ALGORITHMS);
     }
     /**
      * Set the maximal complexity number. This number, multiplied with the number of blank nodes in the dataset,

@@ -10,12 +10,14 @@
  * @packageDocumentation
  */
 
+import * as CryptoJS from 'crypto-js';
+
 /**
  * Default maximal complexity value. Algorithmically, this number is multiplied
  * with the number of bnodes in a given dataset, thereby yielding the maximum times
- * the `computeNDegreeHash` function can be called (this function is invoked)
+ * the `computeNDegreeHash` function can be called (this function is invoked
  * in only a few cases when there two blank nodes get the same hash value in the
- * first pass of the algorithm. 
+ * first pass of the algorithm). 
  * 
  * Setting this number to a reasonably low number (say, 30),
  * ensures that some "poison graphs" would not result in an unreasonably long canonicalization process.
@@ -27,10 +29,9 @@
  */
 export const DEFAULT_MAXIMUM_COMPLEXITY = 50;
 
-
 /** 
- * The default hash algorithm's name. If changed, it should be one of the names in the 
- * separate {@link HASH_ALGORITHMS} list.
+ * The default hash algorithm's name. If changed, it should be one of the keys in the 
+ * separate {@link AVAILABLE_HASH_ALGORITHMS} object.
  * 
  * Care should be taken if changing this constant. The formal specification of RDFC-1.0
  * _requires_ the value of "SHA256". If a different hash function is used, the 
@@ -39,22 +40,41 @@ export const DEFAULT_MAXIMUM_COMPLEXITY = 50;
  * @readonly
  * 
  */
-export const HASH_ALGORITHM = "SHA256";
+export const HASH_ALGORITHM = "sha256";
 
 /**
- * List of available OpenSSL hash algorithms, as of June 2023 (`node.js` version 18.16.0).
- * The user has the possibility to change the hash algorithm, to be used without the
+ * List of available hash algorithms, as of August 2023 in the crypto-js library.
+ * The user has the possibility to change the hash algorithm to be used instead of the
  * default one.
+ * 
+ * At installation the available choices can be reduced to, e.g., sha256 and sha384. Also,
+ * if crypto-js evolves and new functions are be added, this can be added to the structure
+ * below if needed.
+ * 
+ * @readonly
  * 
  * This list has been checked to work with the algorithm.
  * 
  */
-export const HASH_ALGORITHMS = [
-    "SHA1", "SHA256", "SHA224", "SHA512", "SHA3", "RIPEMD160", "MD5"
-];
+export const AVAILABLE_HASH_ALGORITHMS: Record<string, (n: string) => CryptoJS.lib.WordArray> = {
+    "md5"       : CryptoJS.MD5,
+    "sha1"      : CryptoJS.SHA1,
+    "sha256"    : CryptoJS.SHA256,
+    "sha224"    : CryptoJS.SHA224,
+    "sha384"    : CryptoJS.SHA384,
+    "sha512"    : CryptoJS.SHA512,
+    "ripemd160" : CryptoJS.RIPEMD160,
+    "sha3"      : CryptoJS.SHA3,
+};
 
 /**
  * Environment variable to set/change the maximum complexity
+* 
+ * @readonly
+ * 
+* 
+ * @readonly
+ * 
  */
 export const ENV_COMPLEXITY = "c14n_complexity";
 
@@ -63,7 +83,6 @@ export const ENV_COMPLEXITY = "c14n_complexity";
  */
 export const ENV_HASH_ALGORITHM = "c14n_hash";
 
-
 /**
  * Interface for the configuration data format
  */
@@ -71,7 +90,7 @@ export interface ConfigData {
     /** Number must be positive */
     c14n_complexity?: number,
 
-    /** The value must be one of the algorithms listed in {@link HASH_ALGORITHMS} */
+    /** The value must be one of the algorithms listed in {@link AVAILABLE_HASH_ALGORITHMS} */
     c14n_hash?: string,
 }
 

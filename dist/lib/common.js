@@ -9,8 +9,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.parseNquads = exports.hashDataset = exports.quadsToNquads = exports.quadToNquad = exports.hashNquads = exports.concatNquads = exports.computeHash = exports.Constants = void 0;
 const n3 = require("n3");
-const CryptoJS = require("crypto-js");
 const rdf_string_1 = require("@tpluscode/rdf-string");
+const config_1 = require("./config");
 var Constants;
 (function (Constants) {
     /**
@@ -31,22 +31,9 @@ Various utility functions used by the rest of the code.
  * @returns - hash value
  */
 function computeHash(state, data) {
-    // Unfortunately, the mapping from a string to the function is not
-    // clear. Doing this manually for now...
-    const hash = (name, data) => {
-        switch (name) {
-            case "SHA1": return CryptoJS.SHA1(data);
-            case "SHA224": return CryptoJS.SHA224(data);
-            case "SHA512": return CryptoJS.SHA512(data);
-            case "SHA3": return CryptoJS.SHA3(data);
-            case "MD5": return CryptoJS.MD5(data);
-            case "RIPEMD160": return CryptoJS.RIPEMD160(data);
-            case "SHA256":
-            default:
-                return CryptoJS.SHA256(data);
-        }
-    };
-    const hash_value = hash(state.hash_algorithm, data);
+    // The value of the state.hash_algorithm is checked at setting, so there
+    // no reason to check it here.
+    const hash_value = config_1.AVAILABLE_HASH_ALGORITHMS[state.hash_algorithm](data);
     return hash_value.toString();
 }
 exports.computeHash = computeHash;
