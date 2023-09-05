@@ -230,7 +230,7 @@ export class LoggerFactory {
             new_logger.level = level;
             return new_logger;
         } else {
-            console.log(`>>> Not found logger ${id}`);
+            console.error(`>>> Not found logger ${id}`);
             return undefined;
         }
     }

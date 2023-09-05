@@ -100,8 +100,6 @@ export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issu
         identifier,
         "issuer": state.canonical_issuer.toLogItem()
     });
-
-    // console.log(`>>>>>++ ${state.current_recursion}`)
     /* @@@ */
 
     // Step 1

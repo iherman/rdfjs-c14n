@@ -90,7 +90,6 @@ function computeNDegreeHash(state, identifier, issuer) {
         identifier,
         "issuer": state.canonical_issuer.toLogItem()
     });
-    // console.log(`>>>>>++ ${state.current_recursion}`)
     /* @@@ */
     // Step 1
     const Hn = {};
