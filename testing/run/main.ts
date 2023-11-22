@@ -144,15 +144,13 @@ async function main(): Promise<void> {
             const tests = [...base_tests, ...extra_tests];
             tests.shift(); // There is no '000' test!
 
-            // Run all the tests...
-            const proms: boolean[] = await Promise.all(tests.map((num) => singleTest(canonicalizer, num, false)));
-            const failed_tests = tests
-                // pair the test name and whether the tests passed:
-                .map((value: string, index: number): [string, boolean] => [value, proms[index]])
-                // filter the successful tests:
-                .filter((value: [string, boolean]): boolean => !value[1])
-                // Keep the names only
-                .map(([test, _result]: [string, boolean]): string => test);
+            const failed_tests: string[] = [];
+            for (const test of tests) {
+                const result = await singleTest(canonicalizer, test, false);
+                if (result === false) {
+                    failed_tests.push(test);
+                }
+            }
 
             if (failed_tests.length === 0) {
                 console.log('All tests passed');
