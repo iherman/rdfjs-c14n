@@ -2,8 +2,6 @@
 
 This is an implementation of the [RDF Dataset Canonicalization](https://www.w3.org/TR/rdf-canon/) algorithm, also referred to as RDFC-1.0. (The algorithm is being specified by the W3C [RDF Dataset Canonicalization and Hash Working Group](https://www.w3.org/groups/wg/rch).)
 
-> **The [specification](https://www.w3.org/TR/rdf-canon/) is not yet final. This implementations aims at reflecting _exactly_ the specification, which means it may evolve alongside the specification even if changes are editorial only.**
-
 ## Requirements
 
 The implementation depends on the interfaces defined by the [RDF/JS Data model specification](http://rdf.js.org/data-model-spec/) for RDF terms, named and blank nodes, or quads. It also depends on an instance of an RDF Data Factory, specified by the aforementioned [specification](http://rdf.js.org/data-model-spec/#datafactory-interface). For TypeScript, the necessary type specifications are available through the [`@rdfjs/types` package](https://www.npmjs.com/package/@rdfjs/types); an implementation of the RDF Data Factory is provided by, for example, the [`n3` package](https://www.npmjs.com/package/n3) (but there are others), which also provides a Turtle/TriG parser and serializer to test the library.
@@ -64,16 +62,16 @@ main() {
 
     // "normalized" is a dataset of quads with "canonical" blank node labels
     // per the specification. 
-    const normalized: Quads = rdfc10.c14n(input).canonicalized_dataset;
+    const normalized: Quads = await rdfc10.c14n(input).canonicalized_dataset;
 
     // If you care only of the N-Quads results only, you can make it simpler
-    const normalized_N_Quads: string = rdfc10.c14n(input).canonical_form;
+    const normalized_N_Quads: string = await rdfc10.c14n(input).canonical_form;
 
     // Or even simpler, using a shortcut:
-    const normalized_N_Quads_bis: string = rdfc10.canonicalize(input);
+    const normalized_N_Quads_bis: string = await rdfc10.canonicalize(input);
 
     // "hash" is the hash value of the canonical dataset, per specification
-    const hash: string = rdfc10.hash(normalized);
+    const hash: string = await rdfc10.hash(normalized);
 }
 ```
 
@@ -93,10 +91,10 @@ main() {
     const input: string = fetchYourNQuadsDocument();
 
     // "normalized" is an N-Quads document with all blank nodes canonicalized 
-    const normalized: string = rdfc10.canonicalize(input);
+    const normalized: string = await rdfc10.canonicalize(input);
 
     // "hash" is the hash value of the canonical dataset, per specification
-    const hash = rdfc10.hash(normalized);
+    const hash = await rdfc10.hash(normalized);
 }
 ```
 
@@ -105,7 +103,8 @@ main() {
 
 #### Choice of hash
 
-The [RDFC 1.0](https://www.w3.org/TR/rdf-canon/) algorithm is based on an extensive usage of hashing. By default, as specified by the document, the hash function is 'sha256'. This default hash function can be changed via the
+The [RDFC 1.0](https://www.w3.org/TR/rdf-canon/) algorithm is based on an extensive usage of hashing. By default, as specified by the specification, the hash function is 'sha256'.
+This default hash function can be changed via the
 
 ```js
     rdfc10.hash_algorithm = algorithm;
@@ -117,7 +116,8 @@ attribute, where `algorithm` can be any hash function identification. Examples a
     rdfc10.available_hash_algorithms;
 ```
 
-which corresponds to any value that the underlying `npm/crypto-js` package (version 4.1.1., as of July 2023) accepts. 
+which corresponds to the values defined by, and also usually implemented, the [Web Cryptography API specification](https://www.w3.org/TR/WebCryptoAPI/) (as of December 2013), 
+namely 'sha1', 'sha256', 'sha384', and 'sha512'. 
 
 #### Controlling the complexity level
 
@@ -178,7 +178,7 @@ Specific applications may want to add the possibility to let the user configure 
     …
 ```
 
-where `null` stands for a possible `DataFactory` instance (or `null` if the default is used) and `getConfigData` stands for a callback returning the configuration data. An example [callback](https://github.com/iherman/rdfjs-c14n/blob/main/extras/nodeConfiguration.ts) (using a combination of environment variables and configuration files and relying on the node.js platform) is available, and can be easily adapted to other platforms (e.g., deno). (A [javascript version](https://github.com/iherman/rdfjs-c14n/blob/main/extras/nodeConfiguration.js) of the callback is also available.)
+where `null` stands for a possible `DataFactory` instance (or `null` if the default is used) and `getConfigData` stands for a callback returning the configuration data. An example [callback](https://github.com/iherman/rdfjs-c14n/blob/main/extras/nodeConfiguration.ts) (using a combination of environment variables and configuration files and relying on the `node.js`` platform) is available, and can be easily adapted to other platforms (e.g., `deno``). (A [javascript version](https://github.com/iherman/rdfjs-c14n/blob/main/extras/nodeConfiguration.js) of the callback is also available.)
 
 ---
 

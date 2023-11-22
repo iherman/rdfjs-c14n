@@ -27,14 +27,18 @@ Various utility functions used by the rest of the code.
 /**
  * Return the hash of a string.
  *
- * @param data
+ * @param input
  * @returns - hash value
+ *
+ * @async
  */
-function computeHash(state, data) {
-    // The value of the state.hash_algorithm is checked at setting, so there
-    // no reason to check it here.
-    const hash_value = config_1.AVAILABLE_HASH_ALGORITHMS[state.hash_algorithm](data);
-    return hash_value.toString();
+async function computeHash(state, input) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(input);
+    const hashBuffer = await crypto.subtle.digest(config_1.AVAILABLE_HASH_ALGORITHMS[state.hash_algorithm], data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex;
 }
 exports.computeHash = computeHash;
 /**
@@ -57,12 +61,13 @@ exports.concatNquads = concatNquads;
  *
  * @param nquads
  * @returns - hash value
+ * @async
  *
  */
-function hashNquads(state, nquads) {
+async function hashNquads(state, nquads) {
     // Care should be taken that the final data to be hashed include a single `/n`
     // for every quad, before joining the quads into a string that must be hashed
-    return computeHash(state, concatNquads(nquads));
+    return await computeHash(state, concatNquads(nquads));
 }
 exports.hashNquads = hashNquads;
 /**
@@ -101,10 +106,12 @@ exports.quadsToNquads = quadsToNquads;
  * @param quads
  * @param sort - whether the quads must be sorted before hash. Defaults to `true`.
  * @returns - hash value
+ *
+ * @async
  */
-function hashDataset(state, quads, sort = true) {
+async function hashDataset(state, quads, sort = true) {
     const nquads = quadsToNquads(quads, sort);
-    return hashNquads(state, nquads);
+    return await hashNquads(state, nquads);
 }
 exports.hashDataset = hashDataset;
 /**

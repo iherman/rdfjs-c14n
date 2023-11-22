@@ -68,10 +68,11 @@ export function nodeConfigData(): config.ConfigData {
     Object.assign(retval, sys_data, home_data, local_data, env_data);
 
     // Sanity check of the data:
-    if ( !(retval.c14n_complexity !== undefined && Number.isNaN(retval.c14n_complexity) && retval.c14n_complexity > 0) ) {
+    if (retval.c14n_complexity === undefined || Number.isNaN(retval.c14n_complexity) || retval.c14n_complexity <= 0 || retval.c14n_complexity > config.DEFAULT_MAXIMUM_COMPLEXITY) {
         retval.c14n_complexity = config.DEFAULT_MAXIMUM_COMPLEXITY;
     }
-    if ( !(retval.c14n_hash !== undefined && config.AVAILABLE_HASH_ALGORITHMS.includes(retval.c14n_hash)) ) {
+    
+    if (retval.c14n_hash === undefined || Object.keys(config.AVAILABLE_HASH_ALGORITHMS).includes(retval.c14n_hash.toLowerCase()) === false ) {
         retval.c14n_hash = config.HASH_ALGORITHM;
     }
 

@@ -12,7 +12,6 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defaultConfigData = exports.ENV_HASH_ALGORITHM = exports.ENV_COMPLEXITY = exports.AVAILABLE_HASH_ALGORITHMS = exports.HASH_ALGORITHM = exports.DEFAULT_MAXIMUM_COMPLEXITY = void 0;
-const CryptoJS = require("crypto-js");
 /**
  * Default maximal complexity value. Algorithmically, this number is multiplied
  * with the number of bnodes in a given dataset, thereby yielding the maximum times
@@ -42,41 +41,35 @@ exports.DEFAULT_MAXIMUM_COMPLEXITY = 50;
  */
 exports.HASH_ALGORITHM = "sha256";
 /**
- * List of available hash algorithms, as of August 2023 in the crypto-js library.
+ * List of available hash algorithms defined by the WebCrypto API standard as of November 2021.
  * The user has the possibility to change the hash algorithm to be used instead of the
  * default one.
  *
- * At installation the available choices can be reduced to, e.g., sha256 and sha384. Also,
- * if crypto-js evolves and new functions are be added, this can be added to the structure
- * below if needed.
+ * Note that the list includes the alternative formats with or without the '-' character,
+ * and the interface function for setting the algorithm is case insensitive.
  *
  * @readonly
- *
- * This list has been checked to work with the algorithm.
  *
  */
 exports.AVAILABLE_HASH_ALGORITHMS = {
-    "md5": CryptoJS.MD5,
-    "sha1": CryptoJS.SHA1,
-    "sha256": CryptoJS.SHA256,
-    "sha224": CryptoJS.SHA224,
-    "sha384": CryptoJS.SHA384,
-    "sha512": CryptoJS.SHA512,
-    "ripemd160": CryptoJS.RIPEMD160,
-    "sha3": CryptoJS.SHA3,
+    "sha1": "SHA-1",
+    "sha256": "SHA-256",
+    "sha384": "SHA-384",
+    "sha512": "SHA-256",
+    "sha-1": "SHA-1",
+    "sha-256": "SHA-256",
+    "sha-384": "SHA-384",
+    "sha-512": "SHA-256",
 };
 /**
  * Environment variable to set/change the maximum complexity
-*
- * @readonly
  *
-*
  * @readonly
  *
  */
 exports.ENV_COMPLEXITY = "c14n_complexity";
 /**
- * Environment variable to set/change the maximum complexity
+ * Environment variable to set/change the default hash algorithm
  */
 exports.ENV_HASH_ALGORITHM = "c14n_hash";
 /**

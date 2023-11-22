@@ -153,8 +153,6 @@ declare class RDFC10 {
     hash(input_dataset: InputDataset): Promise<Hash>;
 }
 
-declare class RDFCanon extends RDFC10 {}
-
 /*****************************************************************************
 Type and class declarations for logging; can be ignored if no logging is used
 ******************************************************************************/
