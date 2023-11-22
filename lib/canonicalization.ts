@@ -109,14 +109,18 @@ export async function computeCanonicalDataset(state: GlobalState, input: InputDa
 
     // Step 3
     {
-            /* @@@ */ state.logger.push("ca.3");
-            /* @@@ */ state.logger.push("ca.3.1");
+        /* @@@ */ state.logger.push("ca.3");
+        /* @@@ */ state.logger.push("ca.3.1");
 
         // Compute a hash value for each bnode (depending on the quads it appear in)
         // In simple cases a hash value refers to one bnode only; in unlucky cases there
         // may be more. Hence the usage of the hash_to_bnodes map.
-        Object.keys(state.bnode_to_quads).forEach(async (n: BNodeId): Promise<void> => {
-            // Step 3.1
+
+        // The code below serializes a series of Promise references which is not nice
+        // However, if I use a Promise.all, although that works, it messes up the log entries' order for some reasons
+        // Because, deep underneath all, the hash function operates on in-memory data in one block (as opposed to streaming),
+        // it probably does not really matter speed-wise...
+        for (const n of Object.keys(state.bnode_to_quads)) {
             const hfn: Hash = await computeFirstDegreeHash(state, n);
             // Step 3.2
             if (state.hash_to_bnodes[hfn] === undefined) {
@@ -124,8 +128,8 @@ export async function computeCanonicalDataset(state: GlobalState, input: InputDa
             } else {
                 state.hash_to_bnodes[hfn].push(n);
             }
-        });
-            /* @@@ */ state.logger.pop();
+        }
+        /* @@@ */ state.logger.pop();
 
         /* @@@ */
         state.logger.info("ca.3.2", "Calculated first degree hashes (4.4.3. (3))", {
@@ -187,7 +191,6 @@ export async function computeCanonicalDataset(state: GlobalState, input: InputDa
         /* @@@ */
 
         const hashes: Hash[] = Object.keys(state.hash_to_bnodes).sort();
-
 
             /* @@@ */ if (hashes.length > 0) state.logger.push("ca.5.1");
         for (const hash of hashes) {

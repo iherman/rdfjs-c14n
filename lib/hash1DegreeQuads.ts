@@ -58,7 +58,6 @@ export async function computeFirstDegreeHash(state: GlobalState, identifier: BNo
 
     // Step 5
     const the_hash: Hash = await hashNquads(state, nquads);
-
     /* @@@ */
     state.logger.info("h1dg.5", "Leaving Hash First Degree Quads function (4.6.3).", {
         identifier,
@@ -67,6 +66,15 @@ export async function computeFirstDegreeHash(state: GlobalState, identifier: BNo
     });
     state.logger.pop();
     /* @@@ */
+
+    // const dummy = {
+    //     "log point": "Leaving Hash First Degree Quads function (4.6.3).",
+    //     identifier,
+    //     "quads": nquads,
+    //     "hash": the_hash
+    // }
+    // console.log(`Fake thing ${JSON.stringify(dummy,null,4)}`)
+    // console.log(`LOG? ${state.logger.log}`)
 
     return the_hash;
 }

@@ -223,13 +223,3 @@ export class RDFC10 {
         }
     }
 }
-
-/** 
- * Alternative name for {@link RDFC10}.
- * 
- * @remark
- * This is only for possible backward compatibility's sake; this was the old name of the class
- * The WG has decided what the final name of the algorithm is (RDFC 1.0), hence the renaming of the core
- * class.
- */
-export class RDFCanon extends RDFC10 { };
