@@ -19,8 +19,10 @@ import { BNodeId, Hash, GlobalState, quadToNquad, hashNquads } from './common';
  * @param state 
  * @param identifier 
  * @returns - hash value
+ * 
+ * @async
  */
-export function computeFirstDegreeHash(state: GlobalState, identifier: BNodeId): Hash {
+export async function computeFirstDegreeHash(state: GlobalState, identifier: BNodeId): Promise<Hash> {
     /* @@@ */
     state.logger.push("h1dg");
     state.logger.info("h1dg.1", "Entering Hash First Degree Quads function (4.6.3)", { identifier });
@@ -55,7 +57,7 @@ export function computeFirstDegreeHash(state: GlobalState, identifier: BNodeId):
     nquads.sort();
 
     // Step 5
-    const the_hash: Hash = hashNquads(state, nquads);
+    const the_hash: Hash = await hashNquads(state, nquads);
 
     /* @@@ */
     state.logger.info("h1dg.5", "Leaving Hash First Degree Quads function (4.6.3).", {

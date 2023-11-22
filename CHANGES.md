@@ -1,3 +1,7 @@
+# Version 3.0.0
+
+- As `crypto-js` package has been discontinued, switching to the WebCrypto API for hashing (available in `node.js` for versions 21 and upwards). ***This is a backward incompatible change***, because hashing in WebCrypto is an asynchronous function, and this "bubbles up" to the generic interface as well. 
+
 # Version 2.0.4
 
 - Added SHA-384 to the list of available hash functions (missed it the last time)

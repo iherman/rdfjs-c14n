@@ -87,8 +87,11 @@ export class RDFC10 {
     }
 
     /**
-     * Set the Hash algorithm. The value can be anything that the underlying `npm/crypto-js` package accepts. The default is "sha256".
-     * If the algorithm is not listed as existing for `crypto-js`, the value is ignored (and an exception is thrown).
+     * Set the Hash algorithm. The default is "sha256".
+     * If the algorithm is available the value is ignored (and an exception is thrown).
+     * 
+     * The name is considered to be case insensitive. Also, both the formats including, or not, the '-' characters
+     * are accepted (i.e., "sha256" and "sha-256").
      * 
      * @param algorithm_in: the (case insensitive) name of the algorithm, 
      */
@@ -158,9 +161,11 @@ export class RDFC10 {
      * @param input_dataset 
      * @returns - N-Quads document using the canonical ID-s.
      * 
+     * @async
+     * 
      */
-    canonicalize(input_dataset: InputDataset): string {
-        return this.c14n(input_dataset).canonical_form;
+    async canonicalize(input_dataset: InputDataset): Promise<string> {
+        return (await this.c14n(input_dataset)).canonical_form;
     }
 
     /**
@@ -181,9 +186,11 @@ export class RDFC10 {
      *
      * @param input_dataset 
      * @returns - Detailed results of the canonicalization
+     * 
+     * @async
      */
-    c14n(input_dataset: InputDataset): C14nResult {
-        return computeCanonicalDataset(this.state, input_dataset);
+    async c14n(input_dataset: InputDataset): Promise<C14nResult> {
+        return await computeCanonicalDataset(this.state, input_dataset);
     }
 
     /**
@@ -208,11 +215,11 @@ export class RDFC10 {
      * @param input_dataset 
      * @returns
      */
-    hash(input_dataset: InputDataset): Hash {
+    async hash(input_dataset: InputDataset): Promise<Hash> {
         if (typeof input_dataset === 'string') {
-            return computeHash(this.state, input_dataset);
+            return await computeHash(this.state, input_dataset);
         } else {
-            return hashDataset(this.state, input_dataset, true);
+            return await hashDataset(this.state, input_dataset, true);
         }
     }
 }

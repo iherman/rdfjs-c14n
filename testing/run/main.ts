@@ -54,13 +54,13 @@ async function singleTest(canonicalizer: RDFC10, num: string, dump: boolean = tr
 
     // Just for testing the direct nquad input...
     // const trig: string = await fs.readFile(input_fname, 'utf-8');
-    const c14n_result = canonicalizer.c14n(input);
+    const c14n_result = await canonicalizer.c14n(input);
 
     // console.log('>>>>')
     // console.log(c14n_result.canonical_form);
     // console.log(c14n_result.bnode_identifier_map);
-    // console.log(`Hash on nquad: ${canonicalizer.hash(c14n_result.canonical_form)}`);
-    // console.log(`Hash on dataset: ${canonicalizer.hash(c14n_result.canonicalized_dataset)}`);
+    // console.log(`Hash on nquad: ${await canonicalizer.hash(c14n_result.canonical_form)}`);
+    // console.log(`Hash on dataset: ${await canonicalizer.hash(c14n_result.canonicalized_dataset)}`);
     // console.log('>>>>');
 
     const c14n_input = c14n_result.canonicalized_dataset;

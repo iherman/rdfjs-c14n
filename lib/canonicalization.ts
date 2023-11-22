@@ -45,8 +45,10 @@ const createBidMap = (graph: Quads): ReadonlyMap<rdf.BlankNode, BNodeId> => {
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
  * @returns - A semantically identical set of Quads, with canonical BNode labels. The exact format of the output depends on the format of the input. If the input is a Set or an Array, so will be the return. If it is an N-Quads document (string) then the return is a Set of Quads.
+ * 
+ * @async
  */
-export function computeCanonicalDataset(state: GlobalState, input: InputDataset): C14nResult {
+export async function computeCanonicalDataset(state: GlobalState, input: InputDataset): Promise<C14nResult> {
     // Re-initialize the state information: canonicalization should always start with a clean state
     state.bnode_to_quads = {};
     state.hash_to_bnodes = {};
@@ -113,9 +115,9 @@ export function computeCanonicalDataset(state: GlobalState, input: InputDataset)
         // Compute a hash value for each bnode (depending on the quads it appear in)
         // In simple cases a hash value refers to one bnode only; in unlucky cases there
         // may be more. Hence the usage of the hash_to_bnodes map.
-        Object.keys(state.bnode_to_quads).forEach((n: BNodeId): void => {
+        Object.keys(state.bnode_to_quads).forEach(async (n: BNodeId): Promise<void> => {
             // Step 3.1
-            const hfn: Hash = computeFirstDegreeHash(state, n);
+            const hfn: Hash = await computeFirstDegreeHash(state, n);
             // Step 3.2
             if (state.hash_to_bnodes[hfn] === undefined) {
                 state.hash_to_bnodes[hfn] = [n];
@@ -210,7 +212,7 @@ export function computeCanonicalDataset(state: GlobalState, input: InputDataset)
                         // to make eslint happy
                         /* const bn = */ temporary_issuer.issueID(n);
                     // Step 5.2.4
-                    const result: NDegreeHashResult = computeNDegreeHash(state, n, temporary_issuer);
+                    const result: NDegreeHashResult = await computeNDegreeHash(state, n, temporary_issuer);
                     hash_path_list.push(result);
                 }
             }
