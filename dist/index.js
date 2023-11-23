@@ -175,7 +175,7 @@ class RDFC10 {
      * @async
      */
     async c14n(input_dataset) {
-        return await (0, canonicalization_1.computeCanonicalDataset)(this.state, input_dataset);
+        return (0, canonicalization_1.computeCanonicalDataset)(this.state, input_dataset);
     }
     /**
      * Serialize a dataset into a (possibly sorted) Array of nquads.
@@ -200,10 +200,10 @@ class RDFC10 {
      */
     async hash(input_dataset) {
         if (typeof input_dataset === 'string') {
-            return await (0, common_1.computeHash)(this.state, input_dataset);
+            return (0, common_1.computeHash)(this.state, input_dataset);
         }
         else {
-            return await (0, common_1.hashDataset)(this.state, input_dataset, true);
+            return (0, common_1.hashDataset)(this.state, input_dataset, true);
         }
     }
 }

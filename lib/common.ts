@@ -34,9 +34,9 @@ export type Quads = Set<rdf.Quad>;
  * Per spec, the input can be an abstract dataset (ie, Quads, either as a set or an array) or an N-Quads document (ie, a string)
  */
 export type InputDataset = Quads | rdf.Quad[] | string;
-export type BNodeId = string;
-export type Hash = string;
-export type QuadToNquad = (quad: rdf.Quad) => string;
+export type BNodeId      = string;
+export type Hash         = string;
+export type QuadToNquad  = (quad: rdf.Quad) => string;
 
 /**
  * BNode labels to Quads mapping. Used in the canonicalization state as the blank node to quad map. See
@@ -55,7 +55,7 @@ export interface HashToBNodes {
 }
 
 /**
- * Canonicalization result; ie, the result structure of the algorithm. 
+ * Canonicalization result, ie, the result structure of the algorithm. 
  */
 export interface C14nResult {
     /** N-Quads serialization of the dataset */
@@ -75,8 +75,7 @@ export interface C14nResult {
  * Canonicalization state. See
  * the [specification](https://www.w3.org/TR/rdf-canon/#canon-state).
  * 
- * The "hash algorithm" field has been added to the state in anticipation of the evolution of the algorithm
- * that may make this parametrized.
+ * The "hash algorithm" field has been added to the state because the algorithm can be parametrized.
  */
 export interface C14nState {
     bnode_to_quads: BNodeToQuads;
@@ -138,7 +137,10 @@ Various utility functions used by the rest of the code.
 ***********************************************************/
 
 /**
- * Return the hash of a string.
+ * Return the hash of a string (encoded in UTF-8).
+ * 
+ * This is the core of the various hashing functions. It is the interface to the Web Crypto API,
+ * which does the effective calculations.
  * 
  * @param input 
  * @returns - hash value
@@ -183,7 +185,7 @@ export function concatNquads(nquads: string[]): string {
 export async function hashNquads(state: C14nState, nquads: string[]): Promise<Hash> {
     // Care should be taken that the final data to be hashed include a single `/n`
     // for every quad, before joining the quads into a string that must be hashed
-    return await computeHash(state, concatNquads(nquads));
+    return computeHash(state, concatNquads(nquads));
 }
 
 /**
@@ -226,7 +228,7 @@ export function quadsToNquads(quads: Iterable<rdf.Quad>, sort: boolean = true): 
  */
 export async function hashDataset(state: C14nState, quads: Iterable<rdf.Quad>, sort: boolean = true): Promise<Hash> {
     const nquads: string[] = quadsToNquads(quads, sort);
-    return await hashNquads(state, nquads);
+    return hashNquads(state, nquads);
 }
 
 /**

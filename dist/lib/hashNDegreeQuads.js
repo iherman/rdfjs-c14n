@@ -45,7 +45,7 @@ async function computeHashRelatedBlankNode(state, related, quad, issuer, positio
             return `_:${issuer.issueID(related)}`;
         }
         else {
-            return await (0, hash1DegreeQuads_1.computeFirstDegreeHash)(state, related);
+            return (0, hash1DegreeQuads_1.computeFirstDegreeHash)(state, related);
         }
     };
     // Step 1

@@ -25,7 +25,10 @@ var Constants;
 Various utility functions used by the rest of the code.
 ***********************************************************/
 /**
- * Return the hash of a string.
+ * Return the hash of a string (encoded in UTF-8).
+ *
+ * This is the core of the various hashing functions. It is the interface to the Web Crypto API,
+ * which does the effective calculations.
  *
  * @param input
  * @returns - hash value
@@ -67,7 +70,7 @@ exports.concatNquads = concatNquads;
 async function hashNquads(state, nquads) {
     // Care should be taken that the final data to be hashed include a single `/n`
     // for every quad, before joining the quads into a string that must be hashed
-    return await computeHash(state, concatNquads(nquads));
+    return computeHash(state, concatNquads(nquads));
 }
 exports.hashNquads = hashNquads;
 /**
@@ -111,7 +114,7 @@ exports.quadsToNquads = quadsToNquads;
  */
 async function hashDataset(state, quads, sort = true) {
     const nquads = quadsToNquads(quads, sort);
-    return await hashNquads(state, nquads);
+    return hashNquads(state, nquads);
 }
 exports.hashDataset = hashDataset;
 /**

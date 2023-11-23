@@ -190,7 +190,7 @@ export class RDFC10 {
      * @async
      */
     async c14n(input_dataset: InputDataset): Promise<C14nResult> {
-        return await computeCanonicalDataset(this.state, input_dataset);
+        return computeCanonicalDataset(this.state, input_dataset);
     }
 
     /**
@@ -217,9 +217,9 @@ export class RDFC10 {
      */
     async hash(input_dataset: InputDataset): Promise<Hash> {
         if (typeof input_dataset === 'string') {
-            return await computeHash(this.state, input_dataset);
+            return computeHash(this.state, input_dataset);
         } else {
-            return await hashDataset(this.state, input_dataset, true);
+            return hashDataset(this.state, input_dataset, true);
         }
     }
 }

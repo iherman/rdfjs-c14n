@@ -45,7 +45,7 @@ async function computeHashRelatedBlankNode(state: GlobalState, related: BNodeId,
         } else if (issuer.isSet(related)) {
             return `_:${issuer.issueID(related)}`;
         } else {
-            return await computeFirstDegreeHash(state, related);
+            return computeFirstDegreeHash(state, related);
         }
     };
 
