@@ -38,14 +38,12 @@
     "@tpluscode/rdf-string": "^0.2.27",
     "@types/rdf-js": "^4.0.2",
     "array-permutation": "^0.2.0",
-    "crypto-js": "^4.1.1",
     "n3": "^1.16.3",
     "rdf-js": "^4.0.2",
     "yaml": "^2.2.1"
   },
   "devDependencies": {
     "@types/commander": "^2.12.2",
-    "@types/crypto-js": "^4.1.1",
     "@types/n3": "^1.10.4",
     "@types/node": "^20.2.5",
     "@typescript-eslint/eslint-plugin": "^5.59.9",
