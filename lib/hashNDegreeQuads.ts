@@ -27,8 +27,10 @@ const permutation = require('array-permutation');
  * @param issuer 
  * @param position 
  * @returns 
+ * 
+ * @async
  */
-function computeHashRelatedBlankNode(state: GlobalState, related: BNodeId, quad: rdf.Quad, issuer: IDIssuer, position: string): Hash {
+async function computeHashRelatedBlankNode(state: GlobalState, related: BNodeId, quad: rdf.Quad, issuer: IDIssuer, position: string): Promise<Hash> {
     /* @@@ */
     state.logger.push("hrbn");
     state.logger.info("hrbn.1", "Entering Hash Related Blank Node function (4.7.3)", {
@@ -37,7 +39,7 @@ function computeHashRelatedBlankNode(state: GlobalState, related: BNodeId, quad:
     });
     /* @@@ */
 
-    const getIdentifier = (): BNodeId => {
+    const getIdentifier = async (): Promise<BNodeId> => {
         if (state.canonical_issuer.isSet(related)) {
             return `_:${state.canonical_issuer.issueID(related)}`;
         } else if (issuer.isSet(related)) {
@@ -48,7 +50,7 @@ function computeHashRelatedBlankNode(state: GlobalState, related: BNodeId, quad:
     };
 
     // Step 1
-    const identifier: BNodeId = getIdentifier();
+    const identifier: BNodeId = await getIdentifier();
 
     // Step 2
     let input: string = position;
@@ -62,7 +64,7 @@ function computeHashRelatedBlankNode(state: GlobalState, related: BNodeId, quad:
     input = `${input}${identifier}`;
 
     // Step 5
-    const hash: Hash = computeHash(state, input);
+    const hash: Hash = await computeHash(state, input);
 
     /* @@@ */
     state.logger.debug("hrbn.5", "Leaving Hash Related Blank Node function (4.7.3 (4))", {
@@ -86,8 +88,9 @@ function computeHashRelatedBlankNode(state: GlobalState, related: BNodeId, quad:
  * @param identifier 
  * @param issuer 
  * @returns
+ * @async
  */
-export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issuer: IDIssuer): NDegreeHashResult {
+export async function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issuer: IDIssuer): Promise<NDegreeHashResult> {
     state.current_n_degree_call += 1;
     if (state.current_n_degree_call > state.maximum_n_degree_call) {
         const error_message = `Maximum number of to "computeNDegreeHash" has been reached. It must stay below ${state.maximum_n_degree_call}.`;
@@ -113,11 +116,11 @@ export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issu
         for (const quad of state.bnode_to_quads[identifier]) {
             /* @@@ */ state.logger.push("hndq.3.1", "", { quad: quadToNquad(quad) });
             // Step 3.1
-            const processTerm = (term: rdf.Term, position: string): void => {
+            const processTerm = async (term: rdf.Term, position: string): Promise<void> => {
                 /* @@@ */ state.logger.push("hndq.3.1.1", "", { term: term.value });
                 if (term.termType === "BlankNode" && term.value !== identifier) {
                     // Step 3.1.1
-                    const hash = computeHashRelatedBlankNode(state, term.value, quad, issuer, position);
+                    const hash = await computeHashRelatedBlankNode(state, term.value, quad, issuer, position);
                     // Step 3.1.2
                     if (Hn[hash] === undefined) {
                         Hn[hash] = [term.value];
@@ -127,9 +130,9 @@ export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issu
                 }
                 state.logger.pop();
             };
-            processTerm(quad.subject, 's');
-            processTerm(quad.object, 'o');
-            processTerm(quad.graph, 'g');
+            await processTerm(quad.subject, 's');
+            await processTerm(quad.object, 'o');
+            await processTerm(quad.graph, 'g');
             /* @@@ */ state.logger.pop();
         }
 
@@ -226,7 +229,7 @@ export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issu
                 /* @@@ */ if (recursion_list.length !== 0) state.logger.push("hndq.5.4.5.");
                 for (const related of recursion_list) {
                     // Step 5.4.5.1
-                    const result: NDegreeHashResult = computeNDegreeHash(state, related, issuer_copy);
+                    const result: NDegreeHashResult = await computeNDegreeHash(state, related, issuer_copy);
 
                     // Step 5.4.5.2
                     path = `${path}_:${issuer_copy.issueID(related)}`;
@@ -277,7 +280,7 @@ export function computeNDegreeHash(state: GlobalState, identifier: BNodeId, issu
 
     // Step 6
     const retval: NDegreeHashResult = {
-        hash: computeHash(state, data_to_hash),
+        hash: await computeHash(state, data_to_hash),
         issuer: issuer
     };
 

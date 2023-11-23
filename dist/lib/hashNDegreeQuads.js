@@ -26,8 +26,10 @@ const permutation = require('array-permutation');
  * @param issuer
  * @param position
  * @returns
+ *
+ * @async
  */
-function computeHashRelatedBlankNode(state, related, quad, issuer, position) {
+async function computeHashRelatedBlankNode(state, related, quad, issuer, position) {
     /* @@@ */
     state.logger.push("hrbn");
     state.logger.info("hrbn.1", "Entering Hash Related Blank Node function (4.7.3)", {
@@ -35,7 +37,7 @@ function computeHashRelatedBlankNode(state, related, quad, issuer, position) {
         "quad": (0, common_1.quadToNquad)(quad),
     });
     /* @@@ */
-    const getIdentifier = () => {
+    const getIdentifier = async () => {
         if (state.canonical_issuer.isSet(related)) {
             return `_:${state.canonical_issuer.issueID(related)}`;
         }
@@ -47,7 +49,7 @@ function computeHashRelatedBlankNode(state, related, quad, issuer, position) {
         }
     };
     // Step 1
-    const identifier = getIdentifier();
+    const identifier = await getIdentifier();
     // Step 2
     let input = position;
     // Step 3
@@ -57,7 +59,7 @@ function computeHashRelatedBlankNode(state, related, quad, issuer, position) {
     // Step 4
     input = `${input}${identifier}`;
     // Step 5
-    const hash = (0, common_1.computeHash)(state, input);
+    const hash = await (0, common_1.computeHash)(state, input);
     /* @@@ */
     state.logger.debug("hrbn.5", "Leaving Hash Related Blank Node function (4.7.3 (4))", {
         "input to hash": input,
@@ -77,8 +79,9 @@ function computeHashRelatedBlankNode(state, related, quad, issuer, position) {
  * @param identifier
  * @param issuer
  * @returns
+ * @async
  */
-function computeNDegreeHash(state, identifier, issuer) {
+async function computeNDegreeHash(state, identifier, issuer) {
     state.current_n_degree_call += 1;
     if (state.current_n_degree_call > state.maximum_n_degree_call) {
         const error_message = `Maximum number of to "computeNDegreeHash" has been reached. It must stay below ${state.maximum_n_degree_call}.`;
@@ -101,11 +104,11 @@ function computeNDegreeHash(state, identifier, issuer) {
         for (const quad of state.bnode_to_quads[identifier]) {
             /* @@@ */ state.logger.push("hndq.3.1", "", { quad: (0, common_1.quadToNquad)(quad) });
             // Step 3.1
-            const processTerm = (term, position) => {
+            const processTerm = async (term, position) => {
                 /* @@@ */ state.logger.push("hndq.3.1.1", "", { term: term.value });
                 if (term.termType === "BlankNode" && term.value !== identifier) {
                     // Step 3.1.1
-                    const hash = computeHashRelatedBlankNode(state, term.value, quad, issuer, position);
+                    const hash = await computeHashRelatedBlankNode(state, term.value, quad, issuer, position);
                     // Step 3.1.2
                     if (Hn[hash] === undefined) {
                         Hn[hash] = [term.value];
@@ -116,9 +119,9 @@ function computeNDegreeHash(state, identifier, issuer) {
                 }
                 state.logger.pop();
             };
-            processTerm(quad.subject, 's');
-            processTerm(quad.object, 'o');
-            processTerm(quad.graph, 'g');
+            await processTerm(quad.subject, 's');
+            await processTerm(quad.object, 'o');
+            await processTerm(quad.graph, 'g');
             /* @@@ */ state.logger.pop();
         }
         /* @@@ */
@@ -202,7 +205,7 @@ function computeNDegreeHash(state, identifier, issuer) {
                     state.logger.push("hndq.5.4.5.");
                 for (const related of recursion_list) {
                     // Step 5.4.5.1
-                    const result = computeNDegreeHash(state, related, issuer_copy);
+                    const result = await computeNDegreeHash(state, related, issuer_copy);
                     // Step 5.4.5.2
                     path = `${path}_:${issuer_copy.issueID(related)}`;
                     // Step 5.4.5.3
@@ -244,7 +247,7 @@ function computeNDegreeHash(state, identifier, issuer) {
     }
     // Step 6
     const retval = {
-        hash: (0, common_1.computeHash)(state, data_to_hash),
+        hash: await (0, common_1.computeHash)(state, data_to_hash),
         issuer: issuer
     };
     /* @@@ */

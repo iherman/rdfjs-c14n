@@ -39,8 +39,10 @@ const createBidMap = (graph) => {
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
  * @returns - A semantically identical set of Quads, with canonical BNode labels. The exact format of the output depends on the format of the input. If the input is a Set or an Array, so will be the return. If it is an N-Quads document (string) then the return is a Set of Quads.
+ *
+ * @async
  */
-function computeCanonicalDataset(state, input) {
+async function computeCanonicalDataset(state, input) {
     // Re-initialize the state information: canonicalization should always start with a clean state
     state.bnode_to_quads = {};
     state.hash_to_bnodes = {};
@@ -103,9 +105,12 @@ function computeCanonicalDataset(state, input) {
         // Compute a hash value for each bnode (depending on the quads it appear in)
         // In simple cases a hash value refers to one bnode only; in unlucky cases there
         // may be more. Hence the usage of the hash_to_bnodes map.
-        Object.keys(state.bnode_to_quads).forEach((n) => {
-            // Step 3.1
-            const hfn = (0, hash1DegreeQuads_1.computeFirstDegreeHash)(state, n);
+        // The code below serializes a series of Promise references which is not nice
+        // However, if I use a Promise.all, although that works, it messes up the log entries' order for some reasons
+        // Because, deep underneath all, the hash function operates on in-memory data in one block (as opposed to streaming),
+        // it probably does not really matter speed-wise...
+        for (const n of Object.keys(state.bnode_to_quads)) {
+            const hfn = await (0, hash1DegreeQuads_1.computeFirstDegreeHash)(state, n);
             // Step 3.2
             if (state.hash_to_bnodes[hfn] === undefined) {
                 state.hash_to_bnodes[hfn] = [n];
@@ -113,7 +118,7 @@ function computeCanonicalDataset(state, input) {
             else {
                 state.hash_to_bnodes[hfn].push(n);
             }
-        });
+        }
         /* @@@ */ state.logger.pop();
         /* @@@ */
         state.logger.info("ca.3.2", "Calculated first degree hashes (4.4.3. (3))", {
@@ -194,7 +199,7 @@ function computeCanonicalDataset(state, input) {
                     // to make eslint happy
                     /* const bn = */ temporary_issuer.issueID(n);
                     // Step 5.2.4
-                    const result = (0, hashNDegreeQuads_1.computeNDegreeHash)(state, n, temporary_issuer);
+                    const result = await (0, hashNDegreeQuads_1.computeNDegreeHash)(state, n, temporary_issuer);
                     hash_path_list.push(result);
                 }
             }

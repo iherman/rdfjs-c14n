@@ -19,8 +19,10 @@ const common_1 = require("./common");
  * @param state
  * @param identifier
  * @returns - hash value
+ *
+ * @async
  */
-function computeFirstDegreeHash(state, identifier) {
+async function computeFirstDegreeHash(state, identifier) {
     /* @@@ */
     state.logger.push("h1dg");
     state.logger.info("h1dg.1", "Entering Hash First Degree Quads function (4.6.3)", { identifier });
@@ -48,7 +50,7 @@ function computeFirstDegreeHash(state, identifier) {
     // Step 4 (hopefully javascript does the right thing in terms of unicode)
     nquads.sort();
     // Step 5
-    const the_hash = (0, common_1.hashNquads)(state, nquads);
+    const the_hash = await (0, common_1.hashNquads)(state, nquads);
     /* @@@ */
     state.logger.info("h1dg.5", "Leaving Hash First Degree Quads function (4.6.3).", {
         identifier,
@@ -57,6 +59,14 @@ function computeFirstDegreeHash(state, identifier) {
     });
     state.logger.pop();
     /* @@@ */
+    // const dummy = {
+    //     "log point": "Leaving Hash First Degree Quads function (4.6.3).",
+    //     identifier,
+    //     "quads": nquads,
+    //     "hash": the_hash
+    // }
+    // console.log(`Fake thing ${JSON.stringify(dummy,null,4)}`)
+    // console.log(`LOG? ${state.logger.log}`)
     return the_hash;
 }
 exports.computeFirstDegreeHash = computeFirstDegreeHash;

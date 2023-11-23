@@ -66,22 +66,30 @@ declare class RDFC10 {
 
 
     /**
-     * The Hash algorithm. The value can be anything that the underlying `npm/crypto-js` package accepts. The default is "sha256".
-     */
+    * Set the Hash algorithm. The default is "sha256".
+    * If the algorithm is available the value is ignored (and an exception is thrown).
+    * 
+    * The name is considered to be case insensitive. Also, both the formats including, or not, the '-' characters
+    * are accepted (i.e., "sha256" and "sha-256").
+    * 
+    * @param algorithm_in: the (case insensitive) name of the algorithm, 
+    */
     set hash_algorithm(algorithm: string);
     get hash_algorithm(): string;
     get available_hash_algorithms(): string[]
 
     /**
-     * Set the maximal level of recursion this canonicalization should use. Setting this number to a reasonably low number (say, 3),
+     * Set the maximal complexity number. This number, multiplied with the number of blank nodes in the dataset,
+     * sets a maximum level of calls the algorithm can do for the so called "hash n degree quads" function.
+     * Setting this number to a reasonably low number (say, 30),
      * ensures that some "poison graphs" would not result in an unreasonably long canonicalization process.
      * See the [security consideration section](https://www.w3.org/TR/rdf-canon/#security-considerations) in the specification.
      * 
      * The default value set by this implementation is 50; any number _greater_ then this number is ignored (and an exception is thrown).
      */
-    set maximum_recursion_level(level: number);
-    get maximum_recursion_level(): number;
-    get maximum_allowed_recursion_level(): number
+    set maximum_complexity_number(level: number);
+    get maximum_complexity_number(): number;
+    get maximum_allowed_complexity_number(): number
 
     /**
      * Canonicalize a Dataset into an N-Quads document.
@@ -92,11 +100,14 @@ declare class RDFC10 {
      * 
      * @remarks
      * Note that the N-Quads parser throws an exception in case of syntax error.
+     * @throws - RangeError, if the complexity of the graph goes beyond the set complexity number. See {@link maximum_complexity_number}
+     * 
      * 
      * @param input_dataset 
      * @returns - N-Quads document using the canonical ID-s.
+     * @async
      */
-    canonicalize(input_dataset: InputDataset): string;
+    canonicalize(input_dataset: InputDataset): Promise<string>;
 
     /**
      * Canonicalize a Dataset into a full set of information.
@@ -110,11 +121,13 @@ declare class RDFC10 {
      * 
      * @remarks
      * Note that the N-Quads parser throws an exception in case of syntax error.
+     * @throws - RangeError, if the complexity of the graph goes beyond the set complexity number. See {@link maximum_complexity_number}
      * 
      * @param input_dataset 
      * @returns - Detailed results of the canonicalization
+     * @async
      */
-    c14n(input_dataset: InputDataset): C14nResult ; 
+    c14n(input_dataset: InputDataset): Promise<C14nResult> ; 
 
     /**
      * Serialize the dataset into a (possibly sorted) Array of nquads.
@@ -135,11 +148,10 @@ declare class RDFC10 {
      * 
      * @param input_dataset 
      * @returns
+     * @async
      */
-    hash(input_dataset: InputDataset): Hash;
+    hash(input_dataset: InputDataset): Promise<Hash>;
 }
-
-declare class RDFCanon extends RDFC10 {}
 
 /*****************************************************************************
 Type and class declarations for logging; can be ignored if no logging is used
