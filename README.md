@@ -1,12 +1,22 @@
 # RDF Canonicalization in TypeScript
 
-This is an implementation of the [RDF Dataset Canonicalization](https://www.w3.org/TR/rdf-canon/) algorithm, also referred to as RDFC-1.0. (The algorithm is being specified by the W3C [RDF Dataset Canonicalization and Hash Working Group](https://www.w3.org/groups/wg/rch).)
+This is an implementation of the [RDF Dataset Canonicalization](https://www.w3.org/TR/rdf-canon/) algorithm, also referred to as RDFC-1.0. The algorithm has been published by the W3C [RDF Dataset Canonicalization and Hash Working Group](https://www.w3.org/groups/wg/rch).
 
 ## Requirements
+
+### RDF packages and references
 
 The implementation depends on the interfaces defined by the [RDF/JS Data model specification](http://rdf.js.org/data-model-spec/) for RDF terms, named and blank nodes, or quads. It also depends on an instance of an RDF Data Factory, specified by the aforementioned [specification](http://rdf.js.org/data-model-spec/#datafactory-interface). For TypeScript, the necessary type specifications are available through the [`@rdfjs/types` package](https://www.npmjs.com/package/@rdfjs/types); an implementation of the RDF Data Factory is provided by, for example, the [`n3` package](https://www.npmjs.com/package/n3) (but there are others), which also provides a Turtle/TriG parser and serializer to test the library.
 
 By default (i.e., if not explicitly specified) the Data Factory of the [`n3` package](https://www.npmjs.com/package/n3) is used.
+
+### Crypto
+
+The implementation relies on the [Web Cryptography API](https://www.w3.org/TR/WebCryptoAPI/) as implemented by modern browsers, `deno` (version 1.3.82 or higher), or `node.js` (version 21 or higher). A side effect of using Web Crypto is that the canonicalization and hashing interface entries are all asynchronous, and must be used, for example, through the `await` idiom of Javascript/Typescript.
+
+
+
+## Usage
 
 An input RDF Dataset may be represented by: 
 
@@ -26,11 +36,11 @@ The canonicalization process can be invoked by
 - A Set or an Array of Quad instances, if the input was a Set or an Array, respectively;
 - A Set of Quad instances if the input was an N-Quads document.
 
-The separate [testing folder](https://github.com/iherman/rdfjs-c14n/tree/main/testing) includes a tiny application that runs the official specification tests, and can be used as an example for the additional packages that are required. 
+The separate [testing folder](https://github.com/iherman/rdfjs-c14n/tree/main/testing) includes a tiny application that runs some specification tests, and can be used as an example for the additional packages that are required. 
 
 ## Installation
 
-The usual `npm` installation can be used:
+For `node.js`, the usual `npm` installation can be used:
 
 ```
 npm rdfjs-c14n
@@ -40,7 +50,15 @@ The package has been written in TypeScript but is distributed in JavaScript; the
 
 Also, using appropriate tools (e.g., [esbuild](https://esbuild.github.io/)) the package can be included into a module that can be loaded into a browser.
 
-## Usage
+For `deno` a simple
+
+```
+import { RDFC10, Quads } from "npm:rdfjs-c14n"
+```
+
+will do.
+
+## Usage Examples
 
 There is a more detailed documentation of the classes and types [on github](https://iherman.github.io/rdfjs-c14n/). The basic usage may be as follows:
 
@@ -62,10 +80,10 @@ main() {
 
     // "normalized" is a dataset of quads with "canonical" blank node labels
     // per the specification. 
-    const normalized: Quads = await rdfc10.c14n(input).canonicalized_dataset;
+    const normalized: Quads = (await rdfc10.c14n(input)).canonicalized_dataset;
 
     // If you care only of the N-Quads results only, you can make it simpler
-    const normalized_N_Quads: string = await rdfc10.c14n(input).canonical_form;
+    const normalized_N_Quads: string = (await rdfc10.c14n(input)).canonical_form;
 
     // Or even simpler, using a shortcut:
     const normalized_N_Quads_bis: string = await rdfc10.canonicalize(input);
@@ -178,7 +196,7 @@ Specific applications may want to add the possibility to let the user configure 
     …
 ```
 
-where `null` stands for a possible `DataFactory` instance (or `null` if the default is used) and `getConfigData` stands for a callback returning the configuration data. An example [callback](https://github.com/iherman/rdfjs-c14n/blob/main/extras/nodeConfiguration.ts) (using a combination of environment variables and configuration files and relying on the `node.js`` platform) is available, and can be easily adapted to other platforms (e.g., `deno``). (A [javascript version](https://github.com/iherman/rdfjs-c14n/blob/main/extras/nodeConfiguration.js) of the callback is also available.)
+where `null` stands for a possible `DataFactory` instance (or `null` if the default is used) and `getConfigData` stands for a callback returning the configuration data. An example [callback](https://github.com/iherman/rdfjs-c14n/blob/main/extras/nodeConfiguration.ts) (using a combination of environment variables and configuration files and relying on the `node.js` platform) is available, and can be easily adapted to other platforms (e.g., `deno`). (A [javascript version](https://github.com/iherman/rdfjs-c14n/blob/main/extras/nodeConfiguration.js) of the callback is also available.)
 
 ---
 
