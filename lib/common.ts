@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 
-import * as rdf from 'rdf-js';
+import * as rdf from '@rdfjs/types';
 import * as n3 from 'n3';
 
 import { IDIssuer }        from './issueIdentifier';
