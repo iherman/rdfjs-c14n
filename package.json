@@ -1,7 +1,7 @@
 {
   "name": "rdfjs-c14n",
-  "version": "3.0.0",
-  "date": "2023-11-23",
+  "version": "3.0.1",
+  "date": "2024-02-07",
   "description": "Implementation in Typescript of the RDF Canonicalization Algorithm RDFC-1.0, on top of the RDF/JS interfaces",
   "homepage": "https://github.com/iherman/rdfjs-c14n",
   "repository": {
@@ -36,13 +36,13 @@
   "license": "W3C-20150513",
   "dependencies": {
     "@tpluscode/rdf-string": "^0.2.27",
-    "@types/rdf-js": "^4.0.2",
     "array-permutation": "^0.2.0",
     "n3": "^1.16.3",
     "rdf-js": "^4.0.2",
     "yaml": "^2.2.1"
   },
   "devDependencies": {
+    "@rdfjs/types": "^1.1.0",
     "@types/commander": "^2.12.2",
     "@types/n3": "^1.10.4",
     "@types/node": "^20.2.5",
