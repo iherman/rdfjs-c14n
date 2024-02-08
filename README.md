@@ -17,11 +17,13 @@ The implementation relies on the [Web Cryptography API](https://www.w3.org/TR/We
 
 ## Usage
 
-An input RDF Dataset may be represented by: 
+An input RDF Dataset may be represented by any object that may be iterated through [Quad instances](https://rdf.js.org/data-model-spec/#quad-interface) (e.g., arrays of Quads, a Set of Quads, or any specialized objects around Quads), or a string representing an [N-Quads](http://www.w3.org/TR/n-quads/), [Turtle](https://www.w3.org/TR/turtle/), or [TriG](https://www.w3.org/TR/2014/REC-trig-20140225/) document. Formally, the input can be:
 
-- A Set of [Quad instances](https://rdf.js.org/data-model-spec/#quad-interface); or
-- An Array of [Quad instances](https://rdf.js.org/data-model-spec/#quad-interface); or
-- A string representing an [N-Quads](http://www.w3.org/TR/n-quads/) document.
+```js
+Iterable<rdf.Quad> | string
+```
+
+Note that it is ***expected***, but not checked, that the `Iterable<rdf.Qad>` instance does not have repeated Quads. If the input is Turtle, N-Quads etc, document that is parsed by the system, duplicate quads are filtered out.
 
 The canonicalization process can be invoked by
 
