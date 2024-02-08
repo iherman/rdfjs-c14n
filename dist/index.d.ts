@@ -1,7 +1,8 @@
 import * as rdf from 'rdf-js';
 
-export type Quads        = rdf.Quad[] | Set<rdf.Quad>;
-export type InputDataset = Quads | string;
+export type Quads        = Set<rdf.Quad>;
+export type InputQuads   = Iterable<rdf.Quad>;
+export type InputDataset = InputQuads | string;
 export type BNodeId      = string;
 export type Hash         = string;
 
@@ -136,7 +137,7 @@ declare class RDFC10 {
      * @param sort If `true` (the default) the array is lexicographically sorted
      * @returns 
      */
-    toNquads(input_dataset: Quads, sort?: boolean): string[];
+    toNquads(input_dataset: Iterable<rdf.Quad>, sort?: boolean): string[];
 
     /**
      * Hash a dataset:
