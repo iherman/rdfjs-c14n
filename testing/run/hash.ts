@@ -1,11 +1,11 @@
 /**
  * Help to debug: function to compute the hash of a string and display on the CLI line.
- * The function used to perform the hash is the one used in the algorithm.
+ * The function used to perform the hash is exactly the one used in the algorithm.
  */
-import { Hash } from '../../index';
-import { IDIssuer } from '../../lib/issueIdentifier';
+import { Hash }                   from '../../index';
+import { IDIssuer }               from '../../lib/issueIdentifier';
 import { C14nState, computeHash } from '../../lib/common';
-import * as config from '../../lib/config';
+import * as config                from '../../lib/config';
 
 
 async function main(alg: string, _data: string): Promise<void> {

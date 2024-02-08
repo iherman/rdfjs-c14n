@@ -15,7 +15,6 @@ By default (i.e., if not explicitly specified) the Data Factory of the [`n3` pac
 The implementation relies on the [Web Cryptography API](https://www.w3.org/TR/WebCryptoAPI/) as implemented by modern browsers, `deno` (version 1.3.82 or higher), or `node.js` (version 21 or higher). A side effect of using Web Crypto is that the canonicalization and hashing interface entries are all asynchronous, and must be used, for example, through the `await` idiom of Javascript/Typescript.
 
 
-
 ## Usage
 
 An input RDF Dataset may be represented by: 
@@ -28,13 +27,10 @@ The canonicalization process can be invoked by
 
 - the `canonicalize` method, that returns an N-Quads document containing the (sorted) quads of the dataset, and using the canonical blank node ids
 - the `canonicalizeDetailed` method, that returns an Object of the form:
-  - `canonicalized_dataset`: a Set or Array of Quad instances, using the canonical blank node ids
+  - `canonicalized_dataset`: a Set of Quad instances, using the canonical blank node ids
   - `canonical_form`: an N-Quads document containing the (sorted) quads of the dataset, using the canonical blank node ids
   - `issued_identifier_map`: a `Map` object, mapping the original blank node ids (as used in the input) to their canonical equivalents
   - `bnode_identifier_map`: `Map` object, mapping a blank node to its (canonical) blank node id
-
-- A Set or an Array of Quad instances, if the input was a Set or an Array, respectively;
-- A Set of Quad instances if the input was an N-Quads document.
 
 The separate [testing folder](https://github.com/iherman/rdfjs-c14n/tree/main/testing) includes a tiny application that runs some specification tests, and can be used as an example for the additional packages that are required. 
 
@@ -53,7 +49,7 @@ Also, using appropriate tools (e.g., [esbuild](https://esbuild.github.io/)) the 
 For `deno` a simple
 
 ```
-import { RDFC10, Quads } from "npm:rdfjs-c14n"
+import { RDFC10, Quads, InputQuads } from "npm:rdfjs-c14n"
 ```
 
 will do.
@@ -64,19 +60,19 @@ There is a more detailed documentation of the classes and types [on github](http
 
 ```js
 import * as n3  from 'n3';
-import * as rdf from 'rdf-js';
-// The definition of "Quads" is:
-// export type Quads = rdf.Quad[] | Set<rdf.Quad>; 
-import {RDFC10, Quads } from 'rdf-c14n';
+import * as rdf from '@rdfjs/types';;
+// The definition that are used here:
+// export type Quads = Set<rdf.Quad>; 
+// export type InputQuads = Iterable<rdf.Quad>; 
+import {RDFC10, Quads, InputQuads } from 'rdf-c14n';
 
-main() {
+async main() {
     // Any implementation of the data factory will do in the call below.
     // By default, the Data Factory of the `n3` package (i.e., the argument in the call
     // below is not strictly necessary).
-    // Optionally, an instance of a Dataset Core Factory may be added as a second argument.
     const rdfc10 = new RDFC10(n3.DataFactory);  
 
-    const input: Quads = createYourQuads();
+    const input: InputQuads = createYourQuads();
 
     // "normalized" is a dataset of quads with "canonical" blank node labels
     // per the specification. 
@@ -97,10 +93,11 @@ Alternatively, the canonicalization can rely on N-Quads documents only, with all
 
 ```js
 import * as n3  from 'n3';
-import * as rdf from 'rdf-js';
-// The definition of "Quads" is:
-// export type Quads = rdf.Quad[] | Set<rdf.Quad>; 
-import {RDFC10, Quads, quadsToNquads } from 'rdf-c14n';
+import * as rdf from '@rdfjs/types';;
+// The definition that are used here:
+// export type Quads = Set<rdf.Quad>; 
+// export type InputQuads = Iterable<rdf.Quad>; 
+import {RDFC10, Quads, InputQuads, quadsToNquads } from 'rdf-c14n';
 
 main() {
     // Any implementation of the data factory will do in the call below.
@@ -142,13 +139,13 @@ namely 'sha1', 'sha256', 'sha384', and 'sha512'.
 On rare occasion, the [RDFC 1.0](https://www.w3.org/TR/rdf-canon/) algorithm has to go through complex
 cycles that may also involve a recursive steps. On even more extreme situations, the running of the algorithm could result in an unreasonably long canonicalization process. Although this practically never occurs in practice, attackers may use some "poison graphs" to create such situations (see the [security consideration section](https://www.w3.org/TR/rdf-canon/#security-considerations) in the specification).
 
-This implementation sets a maximum level; this level can be accessed by the
+This implementation sets a maximum complexity level (usually set to 50); this level can be accessed by the
 
 ```js
     rdfc10.maximum_allowed_complexity_number;
 ```
 
-(read-only) attribute. This number can be lowered by setting the 
+(read-only) attribute. This number can be ***lowered*** by setting the 
 
 ```js
     rdfc10.maximum_complexity_number

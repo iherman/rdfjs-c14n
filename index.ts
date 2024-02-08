@@ -10,17 +10,16 @@
 import * as rdf from 'rdf-js';
 import * as n3 from 'n3';
 
-import { GlobalState, Quads, hashDataset, Hash, quadsToNquads, InputDataset, computeHash } from './lib/common';
+import { GlobalState, hashDataset, Hash, quadsToNquads, InputDataset, computeHash, C14nResult }                from './lib/common';
 import { AVAILABLE_HASH_ALGORITHMS, DEFAULT_MAXIMUM_COMPLEXITY, ConfigData, GetConfigData, defaultConfigData } from './lib/config';
-import { C14nResult } from './lib/common';
-import { IDIssuer } from './lib/issueIdentifier';
-import { computeCanonicalDataset } from './lib/canonicalization';
+import { IDIssuer }                         from './lib/issueIdentifier';
+import { computeCanonicalDataset }          from './lib/canonicalization';
 import { LoggerFactory, LogLevels, Logger } from './lib/logging';
 
-export { Quads, InputDataset, C14nResult } from './lib/common';
-export { Hash, BNodeId } from './lib/common';
-export { LogLevels, Logger } from './lib/logging';
-export { ConfigData, GetConfigData } from './lib/config';
+export { Quads, InputDataset, C14nResult, InputQuads } from './lib/common';
+export { Hash, BNodeId }                               from './lib/common';
+export { LogLevels, Logger }                           from './lib/logging';
+export { ConfigData, GetConfigData }                   from './lib/config';
 
 /**
  * Just a shell around the algorithm, consisting of a state, and the call for the real implementation.
@@ -200,7 +199,7 @@ export class RDFC10 {
      * @param sort If `true` (the default) the array is lexicographically sorted
      * @returns 
      */
-    toNquads(input_dataset: Quads, sort: boolean = true): string[] {
+    toNquads(input_dataset: Iterable<rdf.Quad>, sort: boolean = true): string[] {
         return quadsToNquads(input_dataset, sort);
     }
 

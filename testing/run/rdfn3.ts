@@ -6,10 +6,10 @@
  * @packageDocumentation
  */
 
-import * as n3 from 'n3';
-import * as rdf from '@rdfjs/types';
+import * as n3            from 'n3';
+import * as rdf           from '@rdfjs/types';
 import { promises as fs } from 'fs';
-import { nquads } from '@tpluscode/rdf-string';
+import { nquads }         from '@tpluscode/rdf-string';
 
 /**
  * Convert the graph into NQuads, more exactly into an array of individual NQuad statement
@@ -38,18 +38,14 @@ export function dataset_to_nquads(quads: Iterable<rdf.Quad>): string[] {
  * @param fname - file name
  * @returns 
  */
-export async function get_quads(fname: string): Promise<Set<rdf.Quad>> {
+export async function get_quads(fname: string): Promise<Iterable<rdf.Quad>> {
     const trig: string = await fs.readFile(fname, 'utf-8');
     const parser = new n3.Parser({ blankNodePrefix: '' });
     const quads: rdf.Quad[] = parser.parse(trig);
-    // This is necessary to ensure the uniqueness of quads; 
+    // Usage of a Store is necessary to ensure the uniqueness of quads; 
     // "Set" members are unique per Javascript, but a Store members
     // are unique as quads.
-    const store: rdf.DatasetCore = new n3.Store();
-    for (const q of quads) {
-        store.add(q);
-    }
-    return new Set<rdf.Quad>(store) ;
-}
+    return new n3.Store(quads);
+ }
 
 export const DataFactory: rdf.DataFactory = n3.DataFactory;

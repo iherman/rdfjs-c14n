@@ -9,9 +9,9 @@
 import * as rdf from '@rdfjs/types';
 import * as n3 from 'n3';
 
-import { IDIssuer }        from './issueIdentifier';
-import { nquads }          from '@tpluscode/rdf-string';
-import { Logger }          from './logging';
+import { IDIssuer }                  from './issueIdentifier';
+import { nquads }                    from '@tpluscode/rdf-string';
+import { Logger }                    from './logging';
 import { AVAILABLE_HASH_ALGORITHMS } from './config';
 
 export namespace Constants {
@@ -25,14 +25,20 @@ export namespace Constants {
 }
 
 /** 
- * According to the RDF semantics, the correct representation of a dataset is a Set of Quads.
+ * According to the RDF semantics, the correct representation of a dataset is a Set of Quads. That is
+ * the structure used internally in the algorithm.
  */
 export type Quads = Set<rdf.Quad>;
+
+/**
+ * This is the external, "input" view of the dataset
+ */
+export type InputQuads = Iterable<rdf.Quad>;
 
 /*
  * Per spec, the input can be an abstract dataset (ie, Quads, either as a set or an array) or an N-Quads document (ie, a string)
  */
-export type InputDataset = Quads | rdf.Quad[] | string;
+export type InputDataset = InputQuads | string;
 export type BNodeId      = string;
 export type Hash         = string;
 export type QuadToNquad  = (quad: rdf.Quad) => string;
@@ -60,8 +66,8 @@ export interface C14nResult {
     /** N-Quads serialization of the dataset */
     canonical_form: string;
 
-    /** Dataset as Set or Array of rdf Quads */
-    canonicalized_dataset: Quads | rdf.Quad[];
+    /** Dataset as Set of rdf Quads */
+    canonicalized_dataset: Quads;
 
     /** Mapping of a blank node to its identifier */
     bnode_identifier_map: ReadonlyMap<rdf.BlankNode, BNodeId>;
@@ -206,7 +212,7 @@ export function quadToNquad(quad: rdf.Quad): string {
  * @param sort - whether the quads must be sorted before hash. Defaults to `true`.
  * @returns - array of nquads
  */
-export function quadsToNquads(quads: Iterable<rdf.Quad>, sort: boolean = true): string[] {
+export function quadsToNquads(quads: InputQuads, sort: boolean = true): string[] {
     const retval: string[] = [];
     for (const quad of quads) {
         retval.push(quadToNquad(quad));
@@ -225,7 +231,7 @@ export function quadsToNquads(quads: Iterable<rdf.Quad>, sort: boolean = true): 
  * 
  * @async
  */
-export async function hashDataset(state: C14nState, quads: Iterable<rdf.Quad>, sort: boolean = true): Promise<Hash> {
+export async function hashDataset(state: C14nState, quads: InputQuads, sort: boolean = true): Promise<Hash> {
     const nquads: string[] = quadsToNquads(quads, sort);
     return hashNquads(state, nquads);
 }
@@ -236,8 +242,8 @@ export async function hashDataset(state: C14nState, quads: Iterable<rdf.Quad>, s
  * @param nquads 
  * @returns parsed dataset
  */
-export function parseNquads(nquads: string): Quads {
+export function parseNquads(nquads: string): InputQuads {
     const parser = new n3.Parser({ blankNodePrefix: '' });
     const quads: rdf.Quad[] = parser.parse(nquads);
-    return new Set<rdf.Quad>(quads);
+    return new n3.Store(quads);
 }
