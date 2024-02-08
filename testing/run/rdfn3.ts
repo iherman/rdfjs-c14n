@@ -42,8 +42,14 @@ export async function get_quads(fname: string): Promise<Set<rdf.Quad>> {
     const trig: string = await fs.readFile(fname, 'utf-8');
     const parser = new n3.Parser({ blankNodePrefix: '' });
     const quads: rdf.Quad[] = parser.parse(trig);
-    return new Set<rdf.Quad>(quads);
+    // This is necessary to ensure the uniqueness of quads; 
+    // "Set" members are unique per Javascript, but a Store members
+    // are unique as quads.
+    const store: rdf.DatasetCore = new n3.Store();
+    for (const q of quads) {
+        store.add(q);
+    }
+    return new Set<rdf.Quad>(store) ;
 }
-
 
 export const DataFactory: rdf.DataFactory = n3.DataFactory;
