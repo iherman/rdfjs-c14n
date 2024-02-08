@@ -1,3 +1,8 @@
+# Version 3.0.1
+
+- There was a bug in the config file; the key SHA-512 was mapped on SHA-256.
+- Updated the dependency to `@types/rdfjs`
+
 # Version 3.0.0
 
 - As `crypto-js` package has been discontinued, switching to the WebCrypto API for hashing (available in `node.js` for versions 21 and upwards). ***This is a backward incompatible change***, because hashing in WebCrypto is an asynchronous function, and this "bubbles up" to the generic interface as well. 

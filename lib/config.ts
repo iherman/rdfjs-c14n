@@ -55,12 +55,12 @@ export const AVAILABLE_HASH_ALGORITHMS: Record<string, string> = {
     "sha1"      : "SHA-1",
     "sha256"    : "SHA-256",
     "sha384"    : "SHA-384",
-    "sha512"    : "SHA-256",
+    "sha512"    : "SHA-512",
     "sha-1"     : "SHA-1",
     "sha-256"   : "SHA-256",
     "sha-384"   : "SHA-384",
-    "sha-512"   : "SHA-256",
-};
+    "sha-512"   : "SHA-512",
+ };
 
 /**
  * Environment variable to set/change the maximum complexity
