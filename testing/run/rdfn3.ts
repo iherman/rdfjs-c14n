@@ -7,7 +7,7 @@
  */
 
 import * as n3 from 'n3';
-import * as rdf from 'rdf-js';
+import * as rdf from '@rdfjs/types';
 import { promises as fs } from 'fs';
 import { nquads } from '@tpluscode/rdf-string';
 

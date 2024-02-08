@@ -6,9 +6,8 @@
  * @packageDocumentation
  */
 
-import * as rdf from 'rdf-js';
+import * as rdf from '@rdfjs/types';
 import * as n3 from 'n3';
-import * as CryptoJS from 'crypto-js';
 
 import { IDIssuer }        from './issueIdentifier';
 import { nquads }          from '@tpluscode/rdf-string';

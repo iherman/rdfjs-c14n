@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 
-import * as rdf from 'rdf-js';
+import * as rdf from '@rdfjs/types';
 import { BNodeId, Hash, GlobalState, quadToNquad, hashNquads } from './common';
 
 /**

@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 
-import * as rdf from 'rdf-js';
+import * as rdf from '@rdfjs/types';
 import {
     GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, concatNquads,
     quadsToNquads, parseNquads, InputDataset, C14nResult
