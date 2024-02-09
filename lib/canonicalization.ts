@@ -17,6 +17,8 @@ import { computeNDegreeHash }                                   from './hashNDeg
 import { IDIssuer }                                             from './issueIdentifier';
 import { bntqToLogItem, ndhrToLogItem, htbnToLogItem, LogItem } from './logging';
 import { BnodeSet }                                             from './common';
+import * as n3                                                  from 'n3';
+
 
 /**
  * A trivial mapping from blank nodes to their IDs; the return value is used
@@ -31,11 +33,12 @@ const createBidMap = (graph: Quads): ReadonlyMap<rdf.BlankNode, BNodeId> => {
             bnodes.add(term);
         }
     };
-    graph.forEach((quad: rdf.Quad): void => {
+
+    for (const quad of graph) {
         addBnode(quad.subject);
         addBnode(quad.object);
         addBnode(quad.graph);
-    });
+    };
 
     return new Map(Array.from(bnodes).map((node: rdf.BlankNode): [rdf.BlankNode, BNodeId] => [node, node.value]));
 };
@@ -60,7 +63,7 @@ export async function computeCanonicalDataset(state: GlobalState, input: InputDa
     // representation with Quads. This function makes the nQuad document "disappear" from
     // the rest of the processing.
     const input_dataset: InputQuads = (typeof input === 'string') ? parseNquads(input as string) : input;
-    const retval: Quads = new Set();
+    const retval: Quads = new n3.Store();
 
     // Step 2
     // All quads are 'classified' depending on what bnodes they contain

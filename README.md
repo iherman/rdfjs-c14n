@@ -64,7 +64,7 @@ There is a more detailed documentation of the classes and types [on github](http
 import * as n3  from 'n3';
 import * as rdf from '@rdfjs/types';;
 // The definition that are used here:
-// export type Quads = Set<rdf.Quad>; 
+// export type Quads = rdf.DatasetCore; 
 // export type InputQuads = Iterable<rdf.Quad>; 
 import {RDFC10, Quads, InputQuads } from 'rdf-c14n';
 
@@ -97,7 +97,7 @@ Alternatively, the canonicalization can rely on N-Quads documents only, with all
 import * as n3  from 'n3';
 import * as rdf from '@rdfjs/types';;
 // The definition that are used here:
-// export type Quads = Set<rdf.Quad>; 
+// export type Quads = rdf.DatasetCore; 
 // export type InputQuads = Iterable<rdf.Quad>; 
 import {RDFC10, Quads, InputQuads, quadsToNquads } from 'rdf-c14n';
 

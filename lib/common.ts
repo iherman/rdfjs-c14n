@@ -28,7 +28,7 @@ export namespace Constants {
  * According to the RDF semantics, the correct representation of a dataset is a Set of Quads. That is
  * the structure used internally in the algorithm.
  */
-export type Quads = Set<rdf.Quad>;
+export type Quads = rdf.DatasetCore;
 
 /**
  * This is the external, "input" view of the dataset

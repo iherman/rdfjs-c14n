@@ -1,6 +1,6 @@
 import * as rdf from 'rdf-js';
 
-export type Quads        = Set<rdf.Quad>;
+export type Quads        = rdf.DatasetCore;
 export type InputQuads   = Iterable<rdf.Quad>;
 export type InputDataset = InputQuads | string;
 export type BNodeId      = string;
