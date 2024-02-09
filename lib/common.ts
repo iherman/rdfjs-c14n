@@ -281,6 +281,6 @@ export class BnodeSet {
     }
 
     [Symbol.iterator]() {
-        return this.values()[Symbol.iterator]();
+        return this.index.values();
     }
 }
