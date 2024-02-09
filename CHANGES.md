@@ -1,3 +1,8 @@
+# Version 3.1.0
+
+- The type of input to the algorithm has been changed to `Iterable<rdf.Quad> | string`. This provides extra flexibility and makes the code clearer. (Proposed by @tpluscode, see [github comment](https://github.com/iherman/rdfjs-c14n/issues/10#issuecomment-1932262536))
+- The turtle/nquads parsers have been modified to ensure uniqueness of terms. See [github issue](https://github.com/iherman/rdfjs-c14n/issues/10).
+
 # Version 3.0.1
 
 - There was a bug in the config file; the key SHA-512 was mapped on SHA-256.

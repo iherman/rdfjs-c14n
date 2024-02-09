@@ -7,7 +7,7 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseNquads = exports.hashDataset = exports.quadsToNquads = exports.quadToNquad = exports.hashNquads = exports.concatNquads = exports.computeHash = exports.Constants = void 0;
+exports.BnodeSet = exports.parseNquads = exports.hashDataset = exports.quadsToNquads = exports.quadToNquad = exports.hashNquads = exports.concatNquads = exports.computeHash = exports.Constants = void 0;
 const n3 = require("n3");
 const rdf_string_1 = require("@tpluscode/rdf-string");
 const config_1 = require("./config");
@@ -126,6 +126,33 @@ exports.hashDataset = hashDataset;
 function parseNquads(nquads) {
     const parser = new n3.Parser({ blankNodePrefix: '' });
     const quads = parser.parse(nquads);
-    return new Set(quads);
+    return new n3.Store(quads);
 }
 exports.parseNquads = parseNquads;
+/** TypeScript version of the TermSet class found in @rdfjs/term-set  */
+class BnodeSet {
+    index;
+    constructor() {
+        this.index = new Map();
+    }
+    get size() {
+        return this.index.size;
+    }
+    add(term) {
+        const key = term.value;
+        if (!this.index.has(key)) {
+            this.index.set(key, term);
+        }
+        return this;
+    }
+    values() {
+        return new Set(this.index.values());
+    }
+    keys() {
+        return this.values();
+    }
+    [Symbol.iterator]() {
+        return this.index.values();
+    }
+}
+exports.BnodeSet = BnodeSet;

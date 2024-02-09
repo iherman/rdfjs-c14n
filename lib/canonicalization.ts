@@ -9,13 +9,16 @@
 import * as rdf from '@rdfjs/types';
 import {
     GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, concatNquads,
-    quadsToNquads, parseNquads, InputDataset, C14nResult
+    quadsToNquads, parseNquads, InputDataset, C14nResult, InputQuads
 } from './common';
 
-import { computeFirstDegreeHash } from './hash1DegreeQuads';
-import { computeNDegreeHash } from './hashNDegreeQuads';
-import { IDIssuer } from './issueIdentifier';
+import { computeFirstDegreeHash }                               from './hash1DegreeQuads';
+import { computeNDegreeHash }                                   from './hashNDegreeQuads';
+import { IDIssuer }                                             from './issueIdentifier';
 import { bntqToLogItem, ndhrToLogItem, htbnToLogItem, LogItem } from './logging';
+import { BnodeSet }                                             from './common';
+import * as n3                                                  from 'n3';
+
 
 /**
  * A trivial mapping from blank nodes to their IDs; the return value is used
@@ -23,18 +26,19 @@ import { bntqToLogItem, ndhrToLogItem, htbnToLogItem, LogItem } from './logging'
  */
 const createBidMap = (graph: Quads): ReadonlyMap<rdf.BlankNode, BNodeId> => {
     // We collect the bnodes from the graph in one place,
-    // using a Set will automatically remove duplicates
-    const bnodes: Set<rdf.BlankNode> = new Set();
+    // using a TermSet will automatically remove duplicates
+    const bnodes: BnodeSet = new BnodeSet();
     const addBnode = (term: rdf.Term): void => {
         if (term.termType === "BlankNode") {
             bnodes.add(term);
         }
     };
-    graph.forEach((quad: rdf.Quad): void => {
+
+    for (const quad of graph) {
         addBnode(quad.subject);
         addBnode(quad.object);
         addBnode(quad.graph);
-    });
+    };
 
     return new Map(Array.from(bnodes).map((node: rdf.BlankNode): [rdf.BlankNode, BNodeId] => [node, node.value]));
 };
@@ -44,7 +48,7 @@ const createBidMap = (graph: Quads): ReadonlyMap<rdf.BlankNode, BNodeId> => {
  * 
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
- * @returns - A semantically identical set of Quads, with canonical BNode labels. The exact format of the output depends on the format of the input. If the input is a Set or an Array, so will be the return. If it is an N-Quads document (string) then the return is a Set of Quads.
+ * @returns - A semantically identical set of Quads, with canonical BNode labels. The output format is a Set of quads.
  * 
  * @async
  */
@@ -58,18 +62,8 @@ export async function computeCanonicalDataset(state: GlobalState, input: InputDa
     // The input to the algorithm can be either an nQuads document, or a dataset
     // representation with Quads. This function makes the nQuad document "disappear" from
     // the rest of the processing.
-    const convertToQuads = (inp: InputDataset): Quads => {
-        if (typeof inp === 'string') {
-            return parseNquads(inp as string);
-        } else if (Array.isArray(inp)) {
-            return new Set<rdf.Quad>(inp as rdf.Quad[]);
-        } else {
-            return inp;
-        }
-    };
-
-    const input_dataset: Quads = convertToQuads(input);
-    const retval: Quads = new Set();
+    const input_dataset: InputQuads = (typeof input === 'string') ? parseNquads(input as string) : input;
+    const retval: Quads = new n3.Store();
 
     // Step 2
     // All quads are 'classified' depending on what bnodes they contain
@@ -274,7 +268,7 @@ export async function computeCanonicalDataset(state: GlobalState, input: InputDa
     // Step 7
     const return_value: C14nResult = {
         canonical_form: concatNquads(quadsToNquads(retval)),
-        canonicalized_dataset: Array.isArray(input) ? [...retval] : retval,
+        canonicalized_dataset: retval,
         bnode_identifier_map: createBidMap(retval),
         issued_identifier_map: state.canonical_issuer.issued_identifier_map as ReadonlyMap<BNodeId, BNodeId>,
     };
