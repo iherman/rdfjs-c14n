@@ -13,24 +13,27 @@ const hash1DegreeQuads_1 = require("./hash1DegreeQuads");
 const hashNDegreeQuads_1 = require("./hashNDegreeQuads");
 const issueIdentifier_1 = require("./issueIdentifier");
 const logging_1 = require("./logging");
+const common_2 = require("./common");
+const n3 = require("n3");
 /**
  * A trivial mapping from blank nodes to their IDs; the return value is used
  * as part of the canonicalization return structure
  */
 const createBidMap = (graph) => {
     // We collect the bnodes from the graph in one place,
-    // using a Set will automatically remove duplicates
-    const bnodes = new Set();
+    // using a TermSet will automatically remove duplicates
+    const bnodes = new common_2.BnodeSet();
     const addBnode = (term) => {
         if (term.termType === "BlankNode") {
             bnodes.add(term);
         }
     };
-    graph.forEach((quad) => {
+    for (const quad of graph) {
         addBnode(quad.subject);
         addBnode(quad.object);
         addBnode(quad.graph);
-    });
+    }
+    ;
     return new Map(Array.from(bnodes).map((node) => [node, node.value]));
 };
 /**
@@ -38,7 +41,7 @@ const createBidMap = (graph) => {
  *
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
- * @returns - A semantically identical set of Quads, with canonical BNode labels. The exact format of the output depends on the format of the input. If the input is a Set or an Array, so will be the return. If it is an N-Quads document (string) then the return is a Set of Quads.
+ * @returns - A semantically identical set of Quads, with canonical BNode labels. The output format is a Set of quads.
  *
  * @async
  */
@@ -51,19 +54,8 @@ async function computeCanonicalDataset(state, input) {
     // The input to the algorithm can be either an nQuads document, or a dataset
     // representation with Quads. This function makes the nQuad document "disappear" from
     // the rest of the processing.
-    const convertToQuads = (inp) => {
-        if (typeof inp === 'string') {
-            return (0, common_1.parseNquads)(inp);
-        }
-        else if (Array.isArray(inp)) {
-            return new Set(inp);
-        }
-        else {
-            return inp;
-        }
-    };
-    const input_dataset = convertToQuads(input);
-    const retval = new Set();
+    const input_dataset = (typeof input === 'string') ? (0, common_1.parseNquads)(input) : input;
+    const retval = new n3.Store();
     // Step 2
     // All quads are 'classified' depending on what bnodes they contain
     // Results in a mapping from bnodes to all quads that they are part of.
@@ -258,7 +250,7 @@ async function computeCanonicalDataset(state, input) {
     // Step 7
     const return_value = {
         canonical_form: (0, common_1.concatNquads)((0, common_1.quadsToNquads)(retval)),
-        canonicalized_dataset: Array.isArray(input) ? [...retval] : retval,
+        canonicalized_dataset: retval,
         bnode_identifier_map: createBidMap(retval),
         issued_identifier_map: state.canonical_issuer.issued_identifier_map,
     };
