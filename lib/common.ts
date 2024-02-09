@@ -247,3 +247,40 @@ export function parseNquads(nquads: string): InputQuads {
     const quads: rdf.Quad[] = parser.parse(nquads);
     return new n3.Store(quads);
 }
+
+
+/** TypeScript version of the TermSet class found in @rdfjs/term-set  */
+
+export class BnodeSet {
+    private index: Map<string, rdf.BlankNode>;
+
+    constructor() {
+        this.index = new Map();
+    }
+
+    get size() {
+        return this.index.size;
+    }
+
+    add(term: rdf.BlankNode) {
+        const key = term.value;
+
+        if (!this.index.has(key)) {
+            this.index.set(key, term);
+        }
+
+        return this;
+    }
+
+    values() {
+        return new Set(this.index.values());
+    }
+
+    keys() {
+        return this.values();
+    }
+
+    [Symbol.iterator]() {
+        return this.values()[Symbol.iterator]();
+    }
+}
