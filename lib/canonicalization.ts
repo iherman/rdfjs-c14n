@@ -62,7 +62,7 @@ export async function computeCanonicalDataset(state: GlobalState, input: InputDa
     // The input to the algorithm can be either an nQuads document, or a dataset
     // representation with Quads. This function makes the nQuad document "disappear" from
     // the rest of the processing.
-    const input_dataset: InputQuads = (typeof input === 'string') ? parseNquads(input as string) : input;
+    const input_dataset: InputQuads = (typeof input === 'string') ? await parseNquads(input as string) : input;
     const retval: Quads = new n3.Store();
 
     // Step 2

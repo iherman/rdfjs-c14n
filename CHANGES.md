@@ -1,3 +1,8 @@
+# Version 3.1.1
+
+- On the advice of @jeswr the turtle parser is now based on the streaming parser of n3, avoiding an unnecessary "buffer" like array.
+- N3's Writer object is used to generate an nquad, instead of relying on yet another external package (n3 is used anyway)
+
 # Version 3.1.0
 
 - The type of input to the algorithm has been changed to `Iterable<rdf.Quad> | string`. This provides extra flexibility and makes the code clearer. (Proposed by @tpluscode, see [github comment](https://github.com/iherman/rdfjs-c14n/issues/10#issuecomment-1932262536))

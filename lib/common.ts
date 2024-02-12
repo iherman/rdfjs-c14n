@@ -7,11 +7,11 @@
  */
 
 import * as rdf from '@rdfjs/types';
-import * as n3 from 'n3';
+import * as n3  from 'n3';
 
 import { IDIssuer }                  from './issueIdentifier';
-import { nquads }                    from '@tpluscode/rdf-string';
 import { Logger }                    from './logging';
+import { promisifyEventEmitter }     from 'event-emitter-promisify';
 import { AVAILABLE_HASH_ALGORITHMS } from './config';
 
 export namespace Constants {
@@ -200,9 +200,10 @@ export async function hashNquads(state: C14nState, nquads: string[]): Promise<Ha
  * @returns - nquad
  */
 export function quadToNquad(quad: rdf.Quad): string {
-    const retval = nquads`${quad}`.toString();
+    const retval = n3Writer.quadToString(quad.subject, quad.predicate, quad.object, quad.graph);;
     return retval.endsWith('  .') ? retval.replace(/  .$/, ' .') : retval;
 }
+const n3Writer = new n3.Writer();
 
 /**
  * Return a nquad serialization of a dataset. This is a utility that external user can use, the library
@@ -237,15 +238,24 @@ export async function hashDataset(state: C14nState, quads: InputQuads, sort: boo
 }
 
 /**
- * Parse an nQuads document into a set of Quads
+ * Parse an nQuads document into a set of Quads.
+ * 
+ * This version of the function, relying on the streaming parser, has been
+ * suggested by Jesse Wright (`@jeswr` on github).
  * 
  * @param nquads 
  * @returns parsed dataset
  */
-export function parseNquads(nquads: string): InputQuads {
-    const parser = new n3.Parser({ blankNodePrefix: '' });
-    const quads: rdf.Quad[] = parser.parse(nquads);
-    return new n3.Store(quads);
+export async function parseNquads(nquads: string): Promise<InputQuads> {
+    const store = new n3.Store();
+    const parser = new n3.StreamParser({ blankNodePrefix: '' });
+    const storeEventHandler = store.import(parser);
+
+    parser.write(nquads);
+    parser.end();
+
+    await promisifyEventEmitter(storeEventHandler);
+    return store;
 }
 
 
