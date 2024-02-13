@@ -48,11 +48,24 @@ const createBidMap = (graph: Quads): ReadonlyMap<rdf.BlankNode, BNodeId> => {
  * 
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
+ * @param deduplicate - whether duplicate quads should be removed from the input
  * @returns - A semantically identical set of Quads, with canonical BNode labels. The output format is a Set of quads.
  * 
  * @async
  */
-export async function computeCanonicalDataset(state: GlobalState, input: InputDataset): Promise<C14nResult> {
+export async function computeCanonicalDataset(state: GlobalState, input: InputDataset, deduplicate = false): Promise<C14nResult> {
+    const finalInput = async (): Promise<InputQuads> => {
+        if (typeof input === 'string') {
+            return await parseNquads(input as string);
+        } else if (deduplicate) {
+            const retval = new n3.Store();
+            for (const quad of input) retval.add(quad);
+            return retval;
+        } else {
+            return input;;
+        }
+    }
+
     // Re-initialize the state information: canonicalization should always start with a clean state
     state.bnode_to_quads = {};
     state.hash_to_bnodes = {};
@@ -62,7 +75,7 @@ export async function computeCanonicalDataset(state: GlobalState, input: InputDa
     // The input to the algorithm can be either an nQuads document, or a dataset
     // representation with Quads. This function makes the nQuad document "disappear" from
     // the rest of the processing.
-    const input_dataset: InputQuads = (typeof input === 'string') ? await parseNquads(input as string) : input;
+    const input_dataset: InputQuads = await finalInput();
     const retval: Quads = new n3.Store();
 
     // Step 2

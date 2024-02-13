@@ -41,11 +41,27 @@ const createBidMap = (graph) => {
  *
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
+ * @param deduplicate - whether duplicate quads should be removed from the input
  * @returns - A semantically identical set of Quads, with canonical BNode labels. The output format is a Set of quads.
  *
  * @async
  */
-async function computeCanonicalDataset(state, input) {
+async function computeCanonicalDataset(state, input, deduplicate = false) {
+    const finalInput = async () => {
+        if (typeof input === 'string') {
+            return await (0, common_1.parseNquads)(input);
+        }
+        else if (deduplicate) {
+            const retval = new n3.Store();
+            for (const quad of input)
+                retval.add(quad);
+            return retval;
+        }
+        else {
+            return input;
+            ;
+        }
+    };
     // Re-initialize the state information: canonicalization should always start with a clean state
     state.bnode_to_quads = {};
     state.hash_to_bnodes = {};
@@ -54,7 +70,7 @@ async function computeCanonicalDataset(state, input) {
     // The input to the algorithm can be either an nQuads document, or a dataset
     // representation with Quads. This function makes the nQuad document "disappear" from
     // the rest of the processing.
-    const input_dataset = (typeof input === 'string') ? await (0, common_1.parseNquads)(input) : input;
+    const input_dataset = await finalInput();
     const retval = new n3.Store();
     // Step 2
     // All quads are 'classified' depending on what bnodes they contain

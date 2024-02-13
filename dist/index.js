@@ -145,13 +145,14 @@ class RDFC10 {
      * @throws - RangeError, if the complexity of the graph goes beyond the set complexity number. See {@link maximum_complexity_number}
      *
      * @param input_dataset
+     * @param deduplicate - whether duplicate quads should be removed from the input (optional, defaults to `false`)
      * @returns - N-Quads document using the canonical ID-s.
      *
      * @async
      *
      */
-    async canonicalize(input_dataset) {
-        return (await this.c14n(input_dataset)).canonical_form;
+    async canonicalize(input_dataset, deduplicate = false) {
+        return (await this.c14n(input_dataset, deduplicate)).canonical_form;
     }
     /**
      * Canonicalize a Dataset producing the full set of information.
@@ -170,12 +171,13 @@ class RDFC10 {
      * @throws - RangeError, if the complexity of the graph goes beyond the set complexity number. See {@link maximum_complexity_number}
      *
      * @param input_dataset
+     * @param deduplicate - whether duplicate quads should be removed from the input (optional, defaults to `false`)
      * @returns - Detailed results of the canonicalization
      *
      * @async
      */
-    async c14n(input_dataset) {
-        return (0, canonicalization_1.computeCanonicalDataset)(this.state, input_dataset);
+    async c14n(input_dataset, deduplicate = false) {
+        return (0, canonicalization_1.computeCanonicalDataset)(this.state, input_dataset, deduplicate);
     }
     /**
      * Serialize a dataset into a (possibly sorted) Array of nquads.

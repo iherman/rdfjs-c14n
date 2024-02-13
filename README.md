@@ -17,31 +17,33 @@ The implementation relies on the [Web Cryptography API](https://www.w3.org/TR/We
 
 ## Usage
 
-An input RDF Dataset may be represented by any object that may be iterated through [Quad instances](https://rdf.js.org/data-model-spec/#quad-interface) (e.g., arrays of Quads, a Set of Quads, or any specialized objects around Quads), or a string representing an [N-Quads](http://www.w3.org/TR/n-quads/), [Turtle](https://www.w3.org/TR/turtle/), or [TriG](https://www.w3.org/TR/2014/REC-trig-20140225/) document. Formally, the input can be:
+An input RDF Dataset may be represented by any object that may be iterated through [quad instances](https://rdf.js.org/data-model-spec/#quad-interface) (e.g., arrays of quads, a set of quads, or any specialized objects storing quads like [RDF `DatasetCore`](https://rdf.js.org/dataset-spec/#datasetcore-interface) implementations), or a string representing an [N-Quads](http://www.w3.org/TR/n-quads/), [Turtle](https://www.w3.org/TR/turtle/), or [TriG](https://www.w3.org/TR/2014/REC-trig-20140225/) document. Formally, the input can be:
 
 ```js
 Iterable<rdf.Quad> | string
 ```
 
-Note that it is ***expected***, but not checked, that the `Iterable<rdf.Qad>` instance does not have repeated Quads. If the input is Turtle, N-Quads etc, document that is parsed by the system, duplicate quads are filtered out.
-
 The canonicalization process can be invoked by
 
-- the `canonicalize` method, that returns an N-Quads document containing the (sorted) quads of the dataset, and using the canonical blank node ids
+- the `canonicalize` method, that returns an N-Quads document containing the (sorted) quads of the dataset, using the canonical blank node ids;
 - the `canonicalizeDetailed` method, that returns an Object of the form:
-  - `canonicalized_dataset`: a Set of Quad instances, using the canonical blank node ids
+  - `canonicalized_dataset`: an [RDF `DatasetCore`](https://rdf.js.org/dataset-spec/#datasetcore-interface) instance, using the canonical blank node ids
   - `canonical_form`: an N-Quads document containing the (sorted) quads of the dataset, using the canonical blank node ids
   - `issued_identifier_map`: a `Map` object, mapping the original blank node ids (as used in the input) to their canonical equivalents
   - `bnode_identifier_map`: `Map` object, mapping a blank node to its (canonical) blank node id
 
-The separate [testing folder](https://github.com/iherman/rdfjs-c14n/tree/main/testing) includes a tiny application that runs some specification tests, and can be used as an example for the additional packages that are required. 
+> Note that the `Iterable<rdf.Qad>` instance in the input of these calls is expected to be a _set_ of quads, i.e., it should not have repeated entries. By default, this is not checked (this may be a costly operation for large RDF graphs), but the canonicalization methods can be invoked with an additional boolean flag instructing the system to "de-duplicate" (essentially, create a new dataset instance where duplicate quads are removed).
+> 
+> If the input is a document parsed by the system, duplicate quads are filtered out automatically.
+
+The separate [testing folder](https://github.com/iherman/rdfjs-c14n/tree/main/testing) includes a tiny application that runs some local tests, and can be used as an example for the additional packages that are required. 
 
 ## Installation
 
 For `node.js`, the usual `npm` installation can be used:
 
 ```
-npm rdfjs-c14n
+npm install rdfjs-c14n
 ```
 
 The package has been written in TypeScript but is distributed in JavaScript; the type definition (i.e., `index.d.ts`) is included in the distribution.
@@ -65,7 +67,7 @@ import * as n3  from 'n3';
 import * as rdf from '@rdfjs/types';;
 // The definition that are used here:
 // export type Quads = rdf.DatasetCore; 
-// export type InputQuads = Iterable<rdf.Quad>; 
+// export type InputQuads = Iterable<rdf.Quad>;
 import {RDFC10, Quads, InputQuads } from 'rdf-c14n';
 
 async main() {
@@ -78,9 +80,10 @@ async main() {
 
     // "normalized" is a dataset of quads with "canonical" blank node labels
     // per the specification. 
+    // Alternatively, "input" could also be a string for a Turtle/TriG document
     const normalized: Quads = (await rdfc10.c14n(input)).canonicalized_dataset;
 
-    // If you care only of the N-Quads results only, you can make it simpler
+    // If you care only of the N-Quads results, you can make it simpler
     const normalized_N_Quads: string = (await rdfc10.c14n(input)).canonical_form;
 
     // Or even simpler, using a shortcut:
@@ -94,24 +97,19 @@ async main() {
 Alternatively, the canonicalization can rely on N-Quads documents only, with all other details hidden:
 
 ```js
-import * as n3  from 'n3';
-import * as rdf from '@rdfjs/types';;
-// The definition that are used here:
-// export type Quads = rdf.DatasetCore; 
-// export type InputQuads = Iterable<rdf.Quad>; 
-import {RDFC10, Quads, InputQuads, quadsToNquads } from 'rdf-c14n';
+import { RDFC10 } from 'rdf-c14n';
 
-main() {
+async main() {
     // Any implementation of the data factory will do in the call below.
     const rdfc10 = new RDFC10();  
 
     const input: string = fetchYourNQuadsDocument();
 
     // "normalized" is an N-Quads document with all blank nodes canonicalized 
-    const normalized: string = await rdfc10.canonicalize(input);
-
+    const normalized_nquads: string = await rdfc10.canonicalize(input); 
+  
     // "hash" is the hash value of the canonical dataset, per specification
-    const hash = await rdfc10.hash(normalized);
+    const hash = await rdfc10.hash(normalized_quads);
 }
 ```
 
@@ -155,47 +153,6 @@ This implementation sets a maximum complexity level (usually set to 50); this le
 
 attribute. The value of this attribute cannot exceed the system wide maximum level.
 
-#### Logging
-
-The canonicalization algorithm has built-in logging points that can be followed via a logger. This is only of interest for debugging the algorithm itself; it can be safely ignored by the average user. By default, no logging happens.
-
-A built-in logger can be switched on which displays logging information in YAML. To use this YAML logger, do the following:
-
-```js
-import { LogLevels } from 'rdfjs-c14n';
-…
-main() {
-    …
-    const rdfc10 = new RDFC10();
-    // `logLevel` may be LogLevels.error, LogLevels.warn, LogLevels.info, LogLevels.debug  
-    const logger = rdfc10.setLogger("YamlLogger", logLevel);
-    …
-    // "logger.log" is a string containing the full log in YAML format
-    console.log(logger.log);
-}
-```
-
-Implementers may add their own loggers to the system by implementing a new Logger instance. See the [interface specification for Logger](https://iherman.github.io/rdfjs-c14n/interfaces/lib_logging.Logger.html) to possibly implement your own logger, and the general documentation on how to add this logger to the list of available loggers. In case there are more loggers, the list of available loggers is also available to the end user via:
-
-```js
-    rdfc10.available_logger_types;
-```
-
-that returns the loggers that are included in the distribution.
-
-#### Configurations
-
-The default complexity value and the hash algorithm are both set in the code, see the [configuration module](https://iherman.github.io/rdfjs-c14n/modules/lib_config.html).
-
-Specific applications may want to add the possibility to let the user configure these values, e.g., via environment variables or configuration files. This requires specific features (e.g., file access) depending on the platform used to run the algorithm (e.g., node.js, deno, or a browser platform), i.e., this requires some extra code that should not be included in the library. However, the library _is_ prepared to run such an external configuration setting via a callback when constructing the RDFC10 instance, as follows:
-
-```js
-    …
-    const rdfc10 = new RDFC10(null, getConfigData);
-    …
-```
-
-where `null` stands for a possible `DataFactory` instance (or `null` if the default is used) and `getConfigData` stands for a callback returning the configuration data. An example [callback](https://github.com/iherman/rdfjs-c14n/blob/main/extras/nodeConfiguration.ts) (using a combination of environment variables and configuration files and relying on the `node.js` platform) is available, and can be easily adapted to other platforms (e.g., `deno`). (A [javascript version](https://github.com/iherman/rdfjs-c14n/blob/main/extras/nodeConfiguration.js) of the callback is also available.)
 
 ---
 

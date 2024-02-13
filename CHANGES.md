@@ -1,7 +1,8 @@
 # Version 3.1.1
 
-- On the advice of @jeswr the turtle parser is now based on the streaming parser of n3, avoiding an unnecessary "buffer" like array.
-- N3's Writer object is used to generate an nquad, instead of relying on yet another external package (n3 is used anyway)
+- On the advice of @jeswr the turtle parser is now based on the streaming parser of n3, avoiding an unnecessary "buffer" like array. The same is true for the test runner
+- N3's Writer object is used to generate an nquad, instead of relying on yet another external package (n3 is used anyway, it is unnecessary to involve yet another module)
+- Added a `deduplicate` flag to the canonicalization arguments, to set whether duplicate quads should be removed from the input dataset. (This required some change on the documentation.)
 
 # Version 3.1.0
 

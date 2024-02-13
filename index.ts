@@ -158,13 +158,14 @@ export class RDFC10 {
      * @throws - RangeError, if the complexity of the graph goes beyond the set complexity number. See {@link maximum_complexity_number}
      * 
      * @param input_dataset 
+     * @param deduplicate - whether duplicate quads should be removed from the input (optional, defaults to `false`)
      * @returns - N-Quads document using the canonical ID-s.
      * 
      * @async
      * 
      */
-    async canonicalize(input_dataset: InputDataset): Promise<string> {
-        return (await this.c14n(input_dataset)).canonical_form;
+    async canonicalize(input_dataset: InputDataset, deduplicate = false): Promise<string> {
+        return (await this.c14n(input_dataset, deduplicate)).canonical_form;
     }
 
     /**
@@ -184,12 +185,13 @@ export class RDFC10 {
      * @throws - RangeError, if the complexity of the graph goes beyond the set complexity number. See {@link maximum_complexity_number}
      *
      * @param input_dataset 
+     * @param deduplicate - whether duplicate quads should be removed from the input (optional, defaults to `false`)
      * @returns - Detailed results of the canonicalization
      * 
      * @async
      */
-    async c14n(input_dataset: InputDataset): Promise<C14nResult> {
-        return computeCanonicalDataset(this.state, input_dataset);
+    async c14n(input_dataset: InputDataset, deduplicate = false): Promise<C14nResult> {
+        return computeCanonicalDataset(this.state, input_dataset, deduplicate);
     }
 
     /**

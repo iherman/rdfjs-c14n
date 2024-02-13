@@ -105,10 +105,11 @@ declare class RDFC10 {
      * 
      * 
      * @param input_dataset 
+     * @param deduplicate - whether duplicate quads should be removed from the input (optional, defaults to `false`)
      * @returns - N-Quads document using the canonical ID-s.
      * @async
      */
-    canonicalize(input_dataset: InputDataset): Promise<string>;
+    canonicalize(input_dataset: InputDataset, deduplicate?): Promise<string>;
 
     /**
      * Canonicalize a Dataset into a full set of information.
@@ -125,10 +126,11 @@ declare class RDFC10 {
      * @throws - RangeError, if the complexity of the graph goes beyond the set complexity number. See {@link maximum_complexity_number}
      * 
      * @param input_dataset 
+     * @param deduplicate - whether duplicate quads should be removed from the input (optional, defaults to `false`)
      * @returns - Detailed results of the canonicalization
      * @async
      */
-    c14n(input_dataset: InputDataset): Promise<C14nResult> ; 
+    c14n(input_dataset: InputDataset, deduplicate?): Promise<C14nResult> ; 
 
     /**
      * Serialize the dataset into a (possibly sorted) Array of nquads.
