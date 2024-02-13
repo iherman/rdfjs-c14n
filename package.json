@@ -15,7 +15,7 @@
     "test": "./node_modules/.bin/ts-node testing/run/main.ts",
     "hash": "./node_modules/.bin/ts-node testing/run/hash.ts",
     "docs": "./node_modules/.bin/typedoc index.ts lib/*",
-    "dist": "tsc; (cd extras; tsc nodeConfiguration.ts)"
+    "dist": "tsc; (cd extras; tsc nodeConfiguration.ts); (cd lib; /bin/rm config.js)"
   },
   "keywords": [
     "RDF",
