@@ -8,9 +8,8 @@
 
 import * as n3                   from 'n3';
 import * as rdf                  from '@rdfjs/types';
-import { promises as fs }        from 'fs';
-import { promisifyEventEmitter } from 'event-emitter-promisify';
-
+import * as fs                   from 'fs';
+import { pipeline }              from 'node:stream/promises';
 
 /**
  * Convert the graph into NQuads, more exactly into an array of individual NQuad statement
@@ -40,25 +39,16 @@ export function dataset_to_nquads(quads: Iterable<rdf.Quad>): string[] {
  * @param fname - file name
  * @returns 
  */
-// export async function get_quads(fname: string): Promise<Iterable<rdf.Quad>> {
-//     const trig: string = await fs.readFile(fname, 'utf-8');
-//     const parser = new n3.Parser({ blankNodePrefix: '' });
-//     const quads: rdf.Quad[] = parser.parse(trig);
-//     // Usage of a Store is necessary to ensure the uniqueness of quads; 
-//     // "Set" members are unique per Javascript, but a Store members
-//     // are unique as quads.
-//     return new n3.Store(quads);
-//  }
 export async function get_quads(fname: string): Promise<Iterable<rdf.Quad>> {
-    const trig: string = await fs.readFile(fname, 'utf-8');
+    const trigStream = fs.createReadStream(fname, 'utf-8');
     const store = new n3.Store();
     const parser = new n3.StreamParser({ blankNodePrefix: '' });
-    const storeEventHandler = store.import(parser);
-
-    parser.write(trig);
-    parser.end();
-
-    await promisifyEventEmitter(storeEventHandler);
+    store.import(parser);
+    // Note that this is very much node.js specific; this version of the pipeline call is
+    // not available in deno or in browsers. 
+    // This is o.k. for this test runner, though. These modules 
+    // are not part of the library distribution.
+    await pipeline(trigStream, parser)
     return store;
 }
 
