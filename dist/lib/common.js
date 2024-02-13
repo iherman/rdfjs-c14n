@@ -9,7 +9,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BnodeSet = exports.parseNquads = exports.hashDataset = exports.quadsToNquads = exports.quadToNquad = exports.hashNquads = exports.concatNquads = exports.computeHash = exports.Constants = void 0;
 const n3 = require("n3");
-const rdf_string_1 = require("@tpluscode/rdf-string");
+const event_emitter_promisify_1 = require("event-emitter-promisify");
 const config_1 = require("./config");
 var Constants;
 (function (Constants) {
@@ -80,10 +80,12 @@ exports.hashNquads = hashNquads;
  * @returns - nquad
  */
 function quadToNquad(quad) {
-    const retval = (0, rdf_string_1.nquads) `${quad}`.toString();
+    const retval = n3Writer.quadToString(quad.subject, quad.predicate, quad.object, quad.graph);
+    ;
     return retval.endsWith('  .') ? retval.replace(/  .$/, ' .') : retval;
 }
 exports.quadToNquad = quadToNquad;
+const n3Writer = new n3.Writer();
 /**
  * Return a nquad serialization of a dataset. This is a utility that external user can use, the library
  * doesn't rely on it.
@@ -118,15 +120,22 @@ async function hashDataset(state, quads, sort = true) {
 }
 exports.hashDataset = hashDataset;
 /**
- * Parse an nQuads document into a set of Quads
+ * Parse an nQuads document into a set of Quads.
+ *
+ * This version of the function, relying on the streaming parser, has been
+ * suggested by Jesse Wright (`@jeswr` on github).
  *
  * @param nquads
  * @returns parsed dataset
  */
-function parseNquads(nquads) {
-    const parser = new n3.Parser({ blankNodePrefix: '' });
-    const quads = parser.parse(nquads);
-    return new n3.Store(quads);
+async function parseNquads(nquads) {
+    const store = new n3.Store();
+    const parser = new n3.StreamParser({ blankNodePrefix: '' });
+    const storeEventHandler = store.import(parser);
+    parser.write(nquads);
+    parser.end();
+    await (0, event_emitter_promisify_1.promisifyEventEmitter)(storeEventHandler);
+    return store;
 }
 exports.parseNquads = parseNquads;
 /** TypeScript version of the TermSet class found in @rdfjs/term-set  */

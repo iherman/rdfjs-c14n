@@ -54,7 +54,7 @@ async function computeCanonicalDataset(state, input) {
     // The input to the algorithm can be either an nQuads document, or a dataset
     // representation with Quads. This function makes the nQuad document "disappear" from
     // the rest of the processing.
-    const input_dataset = (typeof input === 'string') ? (0, common_1.parseNquads)(input) : input;
+    const input_dataset = (typeof input === 'string') ? await (0, common_1.parseNquads)(input) : input;
     const retval = new n3.Store();
     // Step 2
     // All quads are 'classified' depending on what bnodes they contain
