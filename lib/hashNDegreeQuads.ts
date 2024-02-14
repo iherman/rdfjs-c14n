@@ -82,7 +82,7 @@ async function computeHashRelatedBlankNode(state: GlobalState, related: BNodeId,
 /**
  * Compute the n-degree hash. See the [specification](https://www.w3.org/TR/rdf-canon/#hash-nd-quads-algorithm) for the details.
  * 
- * @throws RangeError, if the maximum number of calls have been reached
+ * @throws RangeError - the maximum number of calls have been reached
  * 
  * @param state 
  * @param identifier 

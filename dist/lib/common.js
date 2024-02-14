@@ -25,7 +25,7 @@ var Constants;
 Various utility functions used by the rest of the code.
 ***********************************************************/
 /**
- * Return the hash of a string (encoded in UTF-8).
+ * Return the hash of a string.
  *
  * This is the core of the various hashing functions. It is the interface to the Web Crypto API,
  * which does the effective calculations.
@@ -45,12 +45,12 @@ async function computeHash(state, input) {
 }
 exports.computeHash = computeHash;
 /**
- * Return a single N-Quads document out of an array of nquad statements. Per specification,
+ * Convert an array of nquad statements into a single N-Quads document:
  * this means concatenating all nquads into a long string. Care should be taken that each
- * quad must end with a single `/n`.
+ * quad must end with a single `/n` character (see [Canonical N-Quads specification](https://www.w3.org/TR/rdf12-n-quads/#canonical-quads)).
  *
  * @param nquads
- * @returns - hash value
+ * @returns - N-Quads document as a string
  *
  */
 function concatNquads(nquads) {
@@ -58,9 +58,8 @@ function concatNquads(nquads) {
 }
 exports.concatNquads = concatNquads;
 /**
- * Return the hash of an array of nquad statements; per specification, this means
- * concatenating all nquads into a long string. Care should be taken that each
- * quad must end with a single `/n`.
+ * Return the hash of an array of N-Quads statements; per specification, this means
+ * concatenating all nquads into a long string before hashing.
  *
  * @param nquads
  * @returns - hash value
@@ -74,10 +73,10 @@ async function hashNquads(state, nquads) {
 }
 exports.hashNquads = hashNquads;
 /**
- * Return an nquad version for a single quad.
+ * Serialize an `rdf.Quad` object into single nquad.
  *
  * @param quad
- * @returns - nquad
+ * @returns - N-Quad string
  */
 function quadToNquad(quad) {
     const retval = n3Writer.quadToString(quad.subject, quad.predicate, quad.object, quad.graph);
@@ -106,7 +105,7 @@ function quadsToNquads(quads, sort = true) {
 exports.quadsToNquads = quadsToNquads;
 /**
  * Hash a dataset. This is done by turning each quad into a nquad, concatenate them, possibly
- * store them, and then hash the result.
+ * sort them, and then hash the result.
  *
  * @param quads
  * @param sort - whether the quads must be sorted before hash. Defaults to `true`.
@@ -122,13 +121,13 @@ exports.hashDataset = hashDataset;
 /**
  * Parse an nQuads document into a set of Quads.
  *
- * This version of the function, relying on the streaming parser, has been
- * suggested by Jesse Wright (`@jeswr` on github).
  *
  * @param nquads
  * @returns parsed dataset
  */
 async function parseNquads(nquads) {
+    // This version of the function, relying on the streaming parser, has been
+    // suggested by Jesse Wright(`@jeswr` on github).
     const store = new n3.Store();
     const parser = new n3.StreamParser({ blankNodePrefix: '' });
     const storeEventHandler = store.import(parser);

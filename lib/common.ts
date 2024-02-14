@@ -14,15 +14,10 @@ import { Logger }                    from './logging';
 import { promisifyEventEmitter }     from 'event-emitter-promisify';
 import { AVAILABLE_HASH_ALGORITHMS } from './config';
 
-export namespace Constants {
-    /** 
-     * The prefix used for all generated canonical bnode IDs 
-     * 
-     * @readonly
-     * 
-     */
-    export const BNODE_PREFIX = "c14n";
-}
+/** 
+ * The prefix used for all generated canonical bnode IDs  
+ */
+export const BNODE_PREFIX = "c14n";
 
 /** 
  * According to the RDF semantics, the correct representation of a dataset is a Set of Quads. That is
@@ -41,7 +36,7 @@ export type InputQuads = Iterable<rdf.Quad>;
 export type InputDataset = InputQuads | string;
 export type BNodeId      = string;
 export type Hash         = string;
-export type QuadToNquad  = (quad: rdf.Quad) => string;
+// export type QuadToNquad  = (quad: rdf.Quad) => string;
 
 /**
  * BNode labels to Quads mapping. Used in the canonicalization state as the blank node to quad map. See
@@ -60,27 +55,27 @@ export interface HashToBNodes {
 }
 
 /**
- * Canonicalization result, ie, the result structure of the algorithm. 
+ * Canonicalization result, i.e., the result structure of the algorithm. 
+ * See the [specification](https://www.w3.org/TR/rdf-canon/#ca.7)
  */
 export interface C14nResult {
-    /** N-Quads serialization of the dataset */
+    /** N-Quads serialization of the dataset. */
     canonical_form: string;
 
-    /** Dataset as Set of rdf Quads */
+    /** Dataset as Set of rdf Quads. */
     canonicalized_dataset: Quads;
 
-    /** Mapping of a blank node to its identifier */
+    /** Mapping of a blank node to its identifier. */
     bnode_identifier_map: ReadonlyMap<rdf.BlankNode, BNodeId>;
 
-    /** Mapping of an (original) blank node id to its canonical equivalent */
+    /** Mapping of an (original) blank node id to its canonical equivalent. */
     issued_identifier_map: ReadonlyMap<BNodeId, BNodeId>;
 }
 
 /**
  * Canonicalization state. See
- * the [specification](https://www.w3.org/TR/rdf-canon/#canon-state).
- * 
- * The "hash algorithm" field has been added to the state because the algorithm can be parametrized.
+ * the [specification](https://www.w3.org/TR/rdf-canon/#canon-state). (The "hash algorithm" field has been 
+ * added to the state because the it can be parametrized.)
  */
 export interface C14nState {
     bnode_to_quads: BNodeToQuads;
@@ -90,16 +85,14 @@ export interface C14nState {
 }
 
 /**
- * Extensions to the state. These extensions are not defined by the specification, but are necessary to
- * run the code
+ * Extensions to the canonicalization state. These extensions are not defined by the specification, but are necessary to
+ * run the code.
  * 
- * @remarks
- * The class instances in this extension are necessary to create/modify RDF terms, or to provide logging. These instances
- * reflect the underlying RDF environment that uses this module; the algorithm itself depends on standard RDF interfaces only.
  */
 export interface GlobalState extends C14nState {
     /** 
-     * [RDF data factory instance](http://rdf.js.org/data-model-spec/#datafactory-interface), to be used to create new terms and quads 
+     * [RDF data factory instance](http://rdf.js.org/data-model-spec/#datafactory-interface), to be used 
+     * to create new terms and quads.  
      */
     dataFactory: rdf.DataFactory;
 
@@ -142,7 +135,7 @@ Various utility functions used by the rest of the code.
 ***********************************************************/
 
 /**
- * Return the hash of a string (encoded in UTF-8).
+ * Return the hash of a string.
  * 
  * This is the core of the various hashing functions. It is the interface to the Web Crypto API,
  * which does the effective calculations.
@@ -165,12 +158,12 @@ export async function computeHash(state: C14nState, input: string): Promise<Hash
 }
 
 /**
- * Return a single N-Quads document out of an array of nquad statements. Per specification, 
+ * Convert an array of nquad statements into a single N-Quads document: 
  * this means concatenating all nquads into a long string. Care should be taken that each
- * quad must end with a single `/n`.
+ * quad must end with a single `/n` character (see [Canonical N-Quads specification](https://www.w3.org/TR/rdf12-n-quads/#canonical-quads)).
  * 
  * @param nquads
- * @returns - hash value
+ * @returns - N-Quads document as a string
  * 
  */
 export function concatNquads(nquads: string[]): string {
@@ -178,9 +171,8 @@ export function concatNquads(nquads: string[]): string {
 }
 
 /**
- * Return the hash of an array of nquad statements; per specification, this means
- * concatenating all nquads into a long string. Care should be taken that each
- * quad must end with a single `/n`.
+ * Return the hash of an array of N-Quads statements; per specification, this means
+ * concatenating all nquads into a long string before hashing.
  * 
  * @param nquads
  * @returns - hash value
@@ -194,10 +186,10 @@ export async function hashNquads(state: C14nState, nquads: string[]): Promise<Ha
 }
 
 /**
- * Return an nquad version for a single quad.
+ * Serialize an `rdf.Quad` object into single nquad.
  * 
  * @param quad 
- * @returns - nquad
+ * @returns - N-Quad string
  */
 export function quadToNquad(quad: rdf.Quad): string {
     const retval = n3Writer.quadToString(quad.subject, quad.predicate, quad.object, quad.graph);;
@@ -224,7 +216,7 @@ export function quadsToNquads(quads: InputQuads, sort: boolean = true): string[]
 
 /**
  * Hash a dataset. This is done by turning each quad into a nquad, concatenate them, possibly 
- * store them, and then hash the result.
+ * sort them, and then hash the result.
  * 
  * @param quads 
  * @param sort - whether the quads must be sorted before hash. Defaults to `true`.
@@ -240,13 +232,13 @@ export async function hashDataset(state: C14nState, quads: InputQuads, sort: boo
 /**
  * Parse an nQuads document into a set of Quads.
  * 
- * This version of the function, relying on the streaming parser, has been
- * suggested by Jesse Wright (`@jeswr` on github).
  * 
  * @param nquads 
  * @returns parsed dataset
  */
 export async function parseNquads(nquads: string): Promise<InputQuads> {
+    // This version of the function, relying on the streaming parser, has been
+    // suggested by Jesse Wright(`@jeswr` on github).
     const store = new n3.Store();
     const parser = new n3.StreamParser({ blankNodePrefix: '' });
     const storeEventHandler = store.import(parser);
@@ -259,8 +251,13 @@ export async function parseNquads(nquads: string): Promise<InputQuads> {
 }
 
 
-/** TypeScript version of the TermSet class found in @rdfjs/term-set  */
-
+/** 
+ * Replacement of a `Set<rdf.BlankNode>` object: the build-in Set structure does not compare the RDF terms,
+ * therefore does not filter out duplicate BNode instances.
+ * 
+ * (Inspired by the TermSet class from  @rdfjs/term-set, which could not be used directly due to some
+ * node.js+typescript issues. This version is stripped down to the strict minimum.)
+ */
 export class BnodeSet {
     private index: Map<string, rdf.BlankNode>;
 
@@ -274,11 +271,9 @@ export class BnodeSet {
 
     add(term: rdf.BlankNode) {
         const key = term.value;
-
         if (!this.index.has(key)) {
             this.index.set(key, term);
         }
-
         return this;
     }
 

@@ -20,10 +20,11 @@
 <ul class="tsd-signatures">
 <li class="tsd-signature tsd-anchor-link" id="computeFirstDegreeHash"><span class="tsd-kind-call-signature">compute<wbr/>First<wbr/>Degree<wbr/>Hash</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">state</span>, <span class="tsd-kind-parameter">identifier</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/lib_common.Hash.html" class="tsd-signature-type tsd-kind-type-alias">Hash</a><span class="tsd-signature-symbol">&gt;</span><a href="#computeFirstDegreeHash" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><g stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" id="icon-anchor"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></g></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Compute the first degree hash: a simple hash based on the immediate &quot;surrounding&quot; of a blank node, ie, quads that the
-blank node is part of. Ideally, the result uniquely characterizes the blank node (but not always...).</p>
+<div class="tsd-comment tsd-typography"><p>Compute the first degree hash: a simple hash based on the immediate &quot;environment&quot; of a blank node, i.e., 
+the quads that the blank node is part of. Ideally, the result uniquely characterizes the blank node 
+(but not always...).</p>
 <p>See <a href="https://www.w3.org/TR/rdf-canon/#hash-1d-quads-algorithm">algorithm details in the spec</a>, and
-the separate <a href="https://w3c.github.io/rdf-canon/spec/#hash-1d-quads-overview">overview</a>.</p>
+the separate <a href="https://www.w3.org/TR/rdf-canon/spec/#hash-1d-quads-overview">overview</a>.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -41,7 +42,7 @@ the separate <a href="https://w3c.github.io/rdf-canon/spec/#hash-1d-quads-overvi
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/ee3a7ae/lib/hash1DegreeQuads.ts#L25">lib/hash1DegreeQuads.ts:25</a></li></ul></aside></li></ul></section></div>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/1ee94aa/lib/hash1DegreeQuads.ts#L26">lib/hash1DegreeQuads.ts:26</a></li></ul></aside></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

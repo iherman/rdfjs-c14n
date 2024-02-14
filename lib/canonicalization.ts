@@ -49,7 +49,7 @@ const createBidMap = (graph: Quads): ReadonlyMap<rdf.BlankNode, BNodeId> => {
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
  * @param deduplicate - whether duplicate quads should be removed from the input
- * @returns - A semantically identical set of Quads, with canonical BNode labels. The output format is a Set of quads.
+ * @returns - A semantically identical set of Quads, with canonical BNode labels, plus other information.
  * 
  * @async
  */

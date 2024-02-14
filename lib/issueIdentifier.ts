@@ -1,12 +1,12 @@
 /**
- * Issue Identifier
+ * Issue Identifier class.
  * 
  * @copyright Ivan Herman 2023
  * 
  * @packageDocumentation
  */
 
-import { Constants, BNodeId } from './common';
+import { BNODE_PREFIX, BNodeId } from './common';
 import { LogItem } from './logging';
 
 /**
@@ -28,9 +28,9 @@ export class IDIssuer {
 
     /**
      * 
-     * @param prefix - the prefix used for the generated IDs
+     * @param prefix - the prefix used for the generated IDs.
      */
-    constructor(prefix: string = Constants.BNODE_PREFIX) {
+    constructor(prefix: string = BNODE_PREFIX) {
         this._id = IDIssuer._IDIssuerID++;
         this._identifier_prefix = prefix;
         this._identifier_counter = 0;
@@ -39,7 +39,7 @@ export class IDIssuer {
 
     /**
      * Accessor to the issued identifier map, to be returned as part of the return
-     * structure for the main algorithm
+     * structure for the main algorithm.
      */
     get issued_identifier_map(): Map<BNodeId, BNodeId> {
         return this._issued_identifiers_map;
@@ -68,7 +68,7 @@ export class IDIssuer {
     /**
      * Mapping from a blank node to its canonical equivalent; 
      * this method is necessary to use this instance as part
-     * of the return structure for the canonicalizer function
+     * of the return structure for the canonicalizer function.
      */
     map(id: BNodeId): BNodeId {
         if (this.isSet(id)) {

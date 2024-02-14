@@ -15,21 +15,21 @@
 <li><a href="../index.html">Implementation of the RDF Canonicalization algorithm RDFC-1.0</a></li>
 <li><a href="../modules/lib_config.html">lib/config</a></li>
 <li><a href="lib_config.DEFAULT_MAXIMUM_COMPLEXITY.html">DEFAULT_MAXIMUM_COMPLEXITY</a></li></ul>
-<h1>Variable DEFAULT_MAXIMUM_COMPLEXITY<code class="tsd-tag ts-flagConst">Const</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> </h1></div>
+<h1>Variable DEFAULT_MAXIMUM_COMPLEXITY<code class="tsd-tag ts-flagConst">Const</code> </h1></div>
 <div class="tsd-signature"><span class="tsd-kind-variable">DEFAULT_<wbr/>MAXIMUM_<wbr/>COMPLEXITY</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">50</span><span class="tsd-signature-symbol"> = 50</span></div>
 <div class="tsd-comment tsd-typography"><p>Default maximal complexity value. Algorithmically, this number is multiplied
 with the number of bnodes in a given dataset, thereby yielding the maximum times
 the <code>computeNDegreeHash</code> function can be called (this function is invoked
 in only a few cases when there two blank nodes get the same hash value in the
-first pass of the algorithm). </p>
-<p>Setting this number to a reasonably low number (say, 30),
+first pass of the algorithm but, then, the call may become recursive). </p>
+<p>Setting this number to a reasonably low number,
 ensures that some &quot;poison graphs&quot; would not result in an unreasonably long canonicalization process.
 See the [security consideration section](<a href="https://www.w3.org/TR/rdf-canon/">https://www.w3.org/TR/rdf-canon/</a> #security-considerations)
 in the specification.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/ee3a7ae/lib/config.ts#L28">lib/config.ts:28</a></li></ul></aside></div>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/1ee94aa/lib/config.ts#L27">lib/config.ts:27</a></li></ul></aside></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
