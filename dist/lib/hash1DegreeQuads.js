@@ -1,6 +1,6 @@
 "use strict";
 /**
- * Calculation of the 1st degree hash
+ * Calculation of the 1st degree hash.
  *
  * @copyright Ivan Herman 2023
  *
@@ -10,11 +10,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.computeFirstDegreeHash = void 0;
 const common_1 = require("./common");
 /**
- * Compute the first degree hash: a simple hash based on the immediate "surrounding" of a blank node, ie, quads that the
- * blank node is part of. Ideally, the result uniquely characterizes the blank node (but not always...).
+ * Compute the first degree hash: a simple hash based on the immediate "environment" of a blank node, i.e.,
+ * the quads that the blank node is part of. Ideally, the result uniquely characterizes the blank node
+ * (but not always...).
  *
  * See [algorithm details in the spec](https://www.w3.org/TR/rdf-canon/#hash-1d-quads-algorithm), and
- * the separate [overview](https://w3c.github.io/rdf-canon/spec/#hash-1d-quads-overview).
+ * the separate [overview](https://www.w3.org/TR/rdf-canon/spec/#hash-1d-quads-overview).
  *
  * @param state
  * @param identifier

@@ -7,20 +7,14 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BnodeSet = exports.parseNquads = exports.hashDataset = exports.quadsToNquads = exports.quadToNquad = exports.hashNquads = exports.concatNquads = exports.computeHash = exports.Constants = void 0;
+exports.BnodeSet = exports.parseNquads = exports.hashDataset = exports.quadsToNquads = exports.quadToNquad = exports.hashNquads = exports.concatNquads = exports.computeHash = exports.BNODE_PREFIX = void 0;
 const n3 = require("n3");
 const event_emitter_promisify_1 = require("event-emitter-promisify");
 const config_1 = require("./config");
-var Constants;
-(function (Constants) {
-    /**
-     * The prefix used for all generated canonical bnode IDs
-     *
-     * @readonly
-     *
-     */
-    Constants.BNODE_PREFIX = "c14n";
-})(Constants || (exports.Constants = Constants = {}));
+/**
+ * The prefix used for all generated canonical bnode IDs
+ */
+exports.BNODE_PREFIX = "c14n";
 /***********************************************************
 Various utility functions used by the rest of the code.
 ***********************************************************/
@@ -137,7 +131,13 @@ async function parseNquads(nquads) {
     return store;
 }
 exports.parseNquads = parseNquads;
-/** TypeScript version of the TermSet class found in @rdfjs/term-set  */
+/**
+ * Replacement of a `Set<rdf.BlankNode>` object: the build-in Set structure does not compare the RDF terms,
+ * therefore does not filter out duplicate BNode instances.
+ *
+ * (Inspired by the TermSet class from  @rdfjs/term-set, which could not be used directly due to some
+ * node.js+typescript issues. This version is stripped down to the strict minimum.)
+ */
 class BnodeSet {
     index;
     constructor() {

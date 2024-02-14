@@ -5,6 +5,11 @@ exports.htbnToLogItem = exports.ndhrToLogItem = exports.bntqToLogItem = exports.
  * Logging environment, used by the rest of the code. By default, no logging occurs; the user can set his/her own
  * logging environment. This module also includes a logger to create a recursive log in YAML.
  *
+ * The "breakpoints", and related logging information, follow the [suggestions](https://www.w3.org/TR/rdf-canon/#typo-conventions) in the RDFC-1.0 specification.
+ *
+ * This module was useful for the development of the code, and may become useful for future
+ * maintenance. For "everyday" usage this module can be safely ignored.
+ *
  * @copyright Ivan Herman 2023
  *
  * @packageDocumentation
