@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>RDFC10 | Implementation of the RDF Canonicalization algorithm RDFC-1.0 - v3.1.0</title><meta name="description" content="Documentation for Implementation of the RDF Canonicalization algorithm RDFC-1.0"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/search.js" id="tsd-search-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>RDFC10 | Implementation of the RDF Canonicalization algorithm RDFC-1.0 - v3.1.1</title><meta name="description" content="Documentation for Implementation of the RDF Canonicalization algorithm RDFC-1.0"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/search.js" id="tsd-search-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
 <div class="tsd-toolbar-contents container">
 <div class="table-cell" id="tsd-search" data-base="..">
 <div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M15.7824 13.833L12.6666 10.7177C12.5259 10.5771 12.3353 10.499 12.1353 10.499H11.6259C12.4884 9.39596 13.001 8.00859 13.001 6.49937C13.001 2.90909 10.0914 0 6.50048 0C2.90959 0 0 2.90909 0 6.49937C0 10.0896 2.90959 12.9987 6.50048 12.9987C8.00996 12.9987 9.39756 12.4863 10.5008 11.6239V12.1332C10.5008 12.3332 10.5789 12.5238 10.7195 12.6644L13.8354 15.7797C14.1292 16.0734 14.6042 16.0734 14.8948 15.7797L15.7793 14.8954C16.0731 14.6017 16.0731 14.1267 15.7824 13.833ZM6.50048 10.499C4.29094 10.499 2.50018 8.71165 2.50018 6.49937C2.50018 4.29021 4.28781 2.49976 6.50048 2.49976C8.71001 2.49976 10.5008 4.28708 10.5008 6.49937C10.5008 8.70852 8.71314 10.499 6.50048 10.499Z" fill="var(--color-text)"></path></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
@@ -6,7 +6,7 @@
 <div id="tsd-toolbar-links"></div></div>
 <ul class="results">
 <li class="state loading">Preparing search index...</li>
-<li class="state failure">The search index is not available</li></ul><a href="../index.html" class="title">Implementation of the RDF Canonicalization algorithm RDFC-1.0 - v3.1.0</a></div>
+<li class="state failure">The search index is not available</li></ul><a href="../index.html" class="title">Implementation of the RDF Canonicalization algorithm RDFC-1.0 - v3.1.1</a></div>
 <div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget tsd-toolbar-icon menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="7" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="11" width="14" height="2" fill="var(--color-text)"></rect></svg></a></div></div></header>
 <div class="container container-main">
 <div class="col-content">
@@ -17,9 +17,9 @@
 <li><a href="index.RDFC10.html">RDFC10</a></li></ul>
 <h1>Class RDFC10</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>Just a shell around the algorithm, consisting of a state, and the call for the real implementation.</p>
+<div class="tsd-comment tsd-typography"><p>Just a shell around the algorithm, consisting of a state, and the calls to the real implementation.</p>
 <p>The variable parts of the state, as <a href="https://www.w3.org/TR/rdf-canon/#dfn-canonicalization-state">defined in the spec</a>, 
-are re-initialized at a call to the canonicalize call. Ie, the same class instance can be reused to
+are re-initialized at the canonicalize call. Ie, the same class instance can therefore be reused to
 <a href="index.RDFC10.html#canonicalize" class="tsd-kind-method">canonicalize</a> for different graphs.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></section>
@@ -28,7 +28,7 @@ are re-initialized at a call to the canonicalize call. Ie, the same class instan
 <ul class="tsd-hierarchy">
 <li><span class="target">RDFC10</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/673edbc/index.ts#L31">index.ts:31</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/1ee94aa/index.ts#L31">index.ts:31</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -72,13 +72,13 @@ are re-initialized at a call to the canonicalize call. Ie, the same class instan
 <div class="tsd-comment tsd-typography"></div></li>
 <li>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">getConfigData</span>: <a href="../types/lib_config.GetConfigData.html" class="tsd-signature-type tsd-kind-type-alias">GetConfigData</a></h5>
-<div class="tsd-comment tsd-typography"><p>A function returning the configuration data, see <a href="../interfaces/lib_config.ConfigData.html" class="tsd-kind-interface">ConfigData</a>. By default, this return the constant values set in the code; the caller may provide a more complex function to handle environment variables and/or configuration files</p>
+<div class="tsd-comment tsd-typography"><p>A function returning the configuration data, see <a href="../interfaces/lib_config.ConfigData.html" class="tsd-kind-interface">ConfigData</a>. By default, this returns the constant values set in the code; the caller may provide a more complex function to handle environment variables and/or configuration files.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="index.RDFC10.html" class="tsd-signature-type tsd-kind-class">RDFC10</a></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/673edbc/index.ts#L38">index.ts:38</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/1ee94aa/index.ts#L38">index.ts:38</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Accessors</h2>
 <section class="tsd-panel tsd-member"><a id="logger_type" class="tsd-anchor"></a>
@@ -86,12 +86,12 @@ are re-initialized at a call to the canonicalize call. Ie, the same class instan
 <ul class="tsd-signatures">
 <li class="tsd-signature" id="logger_type.logger_type-1"><span class="tsd-signature-symbol">get</span> logger_type<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Current logger type</p>
+<div class="tsd-comment tsd-typography"><p>Current logger type.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/673edbc/index.ts#L77">index.ts:77</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/1ee94aa/index.ts#L77">index.ts:77</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="available_logger_types" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>available_<wbr/>logger_<wbr/>types</span><a href="#available_logger_types" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -102,7 +102,7 @@ are re-initialized at a call to the canonicalize call. Ie, the same class instan
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/673edbc/index.ts#L84">index.ts:84</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/1ee94aa/index.ts#L84">index.ts:84</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="hash_algorithm" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>hash_<wbr/>algorithm</span><a href="#hash_algorithm" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -110,13 +110,13 @@ are re-initialized at a call to the canonicalize call. Ie, the same class instan
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/673edbc/index.ts#L108">index.ts:108</a></li></ul></aside></li>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/1ee94aa/index.ts#L108">index.ts:108</a></li></ul></aside></li>
 <li class="tsd-signature" id="hash_algorithm.hash_algorithm-2"><span class="tsd-signature-symbol">set</span> hash_algorithm<span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">algorithm_in</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Set the Hash algorithm. The default is &quot;sha256&quot;.
-If the algorithm is available the value is ignored (and an exception is thrown).</p>
-<p>The name is considered to be case insensitive. Also, both the formats including, or not, the &#39;-&#39; characters
-are accepted (i.e., &quot;sha256&quot; and &quot;sha-256&quot;).</p>
+<div class="tsd-comment tsd-typography"><p>Set the Hash algorithm (default is &quot;sha256&quot;).
+If the algorithm isn&#39;t available the value is ignored (and an exception is thrown).</p>
+<p>The name is considered to be case insensitive. Also, both the format including a &#39;-&#39; dash character or not
+are accepted (i.e., &quot;sha256&quot; and &quot;sha-256&quot; are both fine).</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -126,7 +126,7 @@ are accepted (i.e., &quot;sha256&quot; and &quot;sha-256&quot;).</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/673edbc/index.ts#L97">index.ts:97</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/1ee94aa/index.ts#L97">index.ts:97</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="available_hash_algorithms" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>available_<wbr/>hash_<wbr/>algorithms</span><a href="#available_hash_algorithms" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -137,7 +137,7 @@ are accepted (i.e., &quot;sha256&quot; and &quot;sha-256&quot;).</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/673edbc/index.ts#L115">index.ts:115</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/1ee94aa/index.ts#L115">index.ts:115</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="maximum_complexity_number" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>maximum_<wbr/>complexity_<wbr/>number</span><a href="#maximum_complexity_number" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -145,13 +145,13 @@ are accepted (i.e., &quot;sha256&quot; and &quot;sha-256&quot;).</p>
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/673edbc/index.ts#L136">index.ts:136</a></li></ul></aside></li>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/1ee94aa/index.ts#L136">index.ts:136</a></li></ul></aside></li>
 <li class="tsd-signature" id="maximum_complexity_number.maximum_complexity_number-2"><span class="tsd-signature-symbol">set</span> maximum_complexity_number<span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">level</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Set the maximal complexity number. This number, multiplied with the number of blank nodes in the dataset,
-sets a maximum level of calls the algorithm can do for the so called &quot;hash n degree quads&quot; function.
-Setting this number to a reasonably low number (say, 30),
-ensures that some &quot;poison graphs&quot; would not result in an unreasonably long canonicalization process.
+sets a maximum number of calls the algorithm can do for the so called &quot;hash n degree quads&quot; function.
+Setting this number to a reasonably low number (say, 30), ensures that some &quot;poison graphs&quot; would not result in
+an unreasonably long canonicalization process.
 See the <a href="https://www.w3.org/TR/rdf-canon/#security-considerations">security consideration section</a> in the specification.</p>
 <p>The default value set by this implementation is 50; any number <em>greater</em> then this number is ignored (and an exception is thrown).</p>
 </div>
@@ -163,18 +163,18 @@ See the <a href="https://www.w3.org/TR/rdf-canon/#security-considerations">secur
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/673edbc/index.ts#L128">index.ts:128</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/1ee94aa/index.ts#L128">index.ts:128</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="maximum_allowed_complexity_number" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>maximum_<wbr/>allowed_<wbr/>complexity_<wbr/>number</span><a href="#maximum_allowed_complexity_number" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="tsd-signature" id="maximum_allowed_complexity_number.maximum_allowed_complexity_number-1"><span class="tsd-signature-symbol">get</span> maximum_allowed_complexity_number<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>The system-wide maximum value for the recursion level. The current maximum recursion level cannot exceed this value.</p>
+<div class="tsd-comment tsd-typography"><p>The system-wide maximum value for the complexity level. The current maximum complexity level cannot exceed this value.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/673edbc/index.ts#L143">index.ts:143</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/1ee94aa/index.ts#L143">index.ts:143</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member"><a id="setLogger" class="tsd-anchor"></a>
@@ -182,7 +182,7 @@ See the <a href="https://www.w3.org/TR/rdf-canon/#security-considerations">secur
 <ul class="tsd-signatures">
 <li class="tsd-signature tsd-anchor-link" id="setLogger.setLogger-1"><span class="tsd-kind-call-signature">set<wbr/>Logger</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">id</span><span class="tsd-signature-symbol">?</span>, <span class="tsd-kind-parameter">level</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/lib_logging.Logger.html" class="tsd-signature-type tsd-kind-interface">Logger</a><a href="#setLogger.setLogger-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Create and set a logger instance</p>
+<div class="tsd-comment tsd-typography"><p>Create and set a logger instance. By default it is an &quot;empty&quot; logger, ie, no logging happens.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -194,14 +194,14 @@ See the <a href="https://www.w3.org/TR/rdf-canon/#security-considerations">secur
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/lib_logging.Logger.html" class="tsd-signature-type tsd-kind-interface">Logger</a></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/673edbc/index.ts#L63">index.ts:63</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/1ee94aa/index.ts#L63">index.ts:63</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="canonicalize" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>canonicalize</span><a href="#canonicalize" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="canonicalize.canonicalize-1"><span class="tsd-kind-call-signature">canonicalize</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">input_dataset</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><a href="#canonicalize.canonicalize-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="canonicalize.canonicalize-1"><span class="tsd-kind-call-signature">canonicalize</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">input_dataset</span>, <span class="tsd-kind-parameter">deduplicate</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><a href="#canonicalize.canonicalize-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Canonicalize a Dataset into an N-Quads document.</p>
-<p>Implementation of the main algorithmic steps, see
+<p>Implementation of the main algorithm, see the
 <a href="https://www.w3.org/TR/rdf-canon/#canon-algo-overview">separate overview in the spec</a>. </p>
 <p>(The real work is done in the <a href="../functions/lib_canonicalization.computeCanonicalDataset.html">separate function</a>).</p>
 </div>
@@ -210,6 +210,11 @@ See the <a href="https://www.w3.org/TR/rdf-canon/#security-considerations">secur
 <ul class="tsd-parameter-list">
 <li>
 <h5><span class="tsd-kind-parameter">input_dataset</span>: <a href="../types/lib_common.InputDataset.html" class="tsd-signature-type tsd-kind-type-alias">InputDataset</a></h5>
+<div class="tsd-comment tsd-typography"></div></li>
+<li>
+<h5><span class="tsd-kind-parameter">deduplicate</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+<div class="tsd-comment tsd-typography"><p>whether duplicate quads should be removed from the input (optional, defaults to <code>false</code>)</p>
+</div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4><ul>
 <li>N-Quads document using the canonical ID-s.</li>
@@ -219,29 +224,34 @@ See the <a href="https://www.w3.org/TR/rdf-canon/#security-considerations">secur
 <h4>Remarks</h4><p>Note that the N-Quads parser throws an exception in case of syntax error.</p>
 
 <h4>Throws</h4><ul>
-<li>RangeError, if the complexity of the graph goes beyond the set complexity number. See <a href="index.RDFC10.html#maximum_complexity_number" class="tsd-kind-accessor">maximum_complexity_number</a></li>
+<li>RangeError, if the complexity of the graph goes beyond the set complexity number. See <a href="index.RDFC10.html#maximum_complexity_number" class="tsd-kind-accessor">maximum_complexity_number</a>.</li>
 </ul>
 
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/673edbc/index.ts#L166">index.ts:166</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/1ee94aa/index.ts#L167">index.ts:167</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="c14n" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>c14n</span><a href="#c14n" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="c14n.c14n-1"><span class="tsd-kind-call-signature">c14n</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">input_dataset</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/lib_common.C14nResult.html" class="tsd-signature-type tsd-kind-interface">C14nResult</a><span class="tsd-signature-symbol">&gt;</span><a href="#c14n.c14n-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="c14n.c14n-1"><span class="tsd-kind-call-signature">c14n</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">input_dataset</span>, <span class="tsd-kind-parameter">deduplicate</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/lib_common.C14nResult.html" class="tsd-signature-type tsd-kind-interface">C14nResult</a><span class="tsd-signature-symbol">&gt;</span><a href="#c14n.c14n-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Canonicalize a Dataset producing the full set of information.</p>
 <p>Implementation of the main algorithmic steps, see
 <a href="https://www.w3.org/TR/rdf-canon/#canon-algo-overview">separate overview in the spec</a>. </p>
 <p>(The real work is done in the <a href="../functions/lib_canonicalization.computeCanonicalDataset.html">separate function</a>).</p>
 <p>The result is an Object containing the serialized version and the Quads version of the canonicalization result, 
-as well as a bnode mapping from the original to the canonical equivalents</p>
+as well as a bnode mapping from the original to the canonical equivalents.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
 <h5><span class="tsd-kind-parameter">input_dataset</span>: <a href="../types/lib_common.InputDataset.html" class="tsd-signature-type tsd-kind-type-alias">InputDataset</a></h5>
+<div class="tsd-comment tsd-typography"></div></li>
+<li>
+<h5><span class="tsd-kind-parameter">deduplicate</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+<div class="tsd-comment tsd-typography"><p>whether duplicate quads should be removed from the input (optional, defaults to <code>false</code>)</p>
+</div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/lib_common.C14nResult.html" class="tsd-signature-type tsd-kind-interface">C14nResult</a><span class="tsd-signature-symbol">&gt;</span></h4><ul>
 <li>Detailed results of the canonicalization</li>
@@ -251,12 +261,12 @@ as well as a bnode mapping from the original to the canonical equivalents</p>
 <h4>Remarks</h4><p>Note that the N-Quads parser throws an exception in case of syntax error.</p>
 
 <h4>Throws</h4><ul>
-<li>RangeError, if the complexity of the graph goes beyond the set complexity number. See <a href="index.RDFC10.html#maximum_complexity_number" class="tsd-kind-accessor">maximum_complexity_number</a></li>
+<li>RangeError, if the complexity of the graph goes beyond the set complexity number. See <a href="index.RDFC10.html#maximum_complexity_number" class="tsd-kind-accessor">maximum_complexity_number</a>.</li>
 </ul>
 
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/673edbc/index.ts#L191">index.ts:191</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/1ee94aa/index.ts#L193">index.ts:193</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="toNquads" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>to<wbr/>Nquads</span><a href="#toNquads" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -278,7 +288,7 @@ as well as a bnode mapping from the original to the canonical equivalents</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/673edbc/index.ts#L202">index.ts:202</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/1ee94aa/index.ts#L204">index.ts:204</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="hash" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>hash</span><a href="#hash" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -286,8 +296,8 @@ as well as a bnode mapping from the original to the canonical equivalents</p>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Hash a dataset:</p>
 <ol>
-<li>Serialize the dataset into nquads and sort the result (unless the input is an N-Quads document)</li>
-<li>Compute the hash of the concatenated nquads.</li>
+<li>serialize the dataset into nquads and sort the result (unless the input is an N-Quads document);</li>
+<li>compute the hash of the concatenated nquads.</li>
 </ol>
 <p>This method is typically used on the result of the canonicalization to compute the canonical hash of a dataset.</p>
 </div>
@@ -300,7 +310,7 @@ as well as a bnode mapping from the original to the canonical equivalents</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/673edbc/index.ts#L217">index.ts:217</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/iherman/rdfjs-c14n/blob/1ee94aa/index.ts#L219">index.ts:219</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -331,7 +341,7 @@ as well as a bnode mapping from the original to the canonical equivalents</p>
 <li><a href="#toNquads" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>to<wbr/>Nquads</span></a></li>
 <li><a href="#hash" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>hash</span></a></li></ul></div></details></div>
 <div class="site-menu">
-<nav class="tsd-navigation"><a href="../index.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)"></path></g></svg><span>Implementation of the RDF <wbr/>Canonicalization algorithm RDFC-<wbr/>1.0 -<wbr/> v3.1.0</span></a>
+<nav class="tsd-navigation"><a href="../index.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)"></path></g></svg><span>Implementation of the RDF <wbr/>Canonicalization algorithm RDFC-<wbr/>1.0 -<wbr/> v3.1.1</span></a>
 <ul class="tsd-small-nested-navigation">
 <li>
 <details class="tsd-index-accordion" open data-key="index"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg><a href="../modules/index.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>index</span></a></summary>

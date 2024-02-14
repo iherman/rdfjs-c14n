@@ -2,6 +2,11 @@
  * Logging environment, used by the rest of the code. By default, no logging occurs; the user can set his/her own
  * logging environment. This module also includes a logger to create a recursive log in YAML.
  * 
+ * The "breakpoints", and related logging information, follow the [suggestions](https://www.w3.org/TR/rdf-canon/#typo-conventions) in the RDFC-1.0 specification.
+ * 
+ * This module was useful for the development of the code, and may become useful for future
+ * maintenance. For "everyday" usage this module can be safely ignored.
+ * 
  * @copyright Ivan Herman 2023
  * 
  * @packageDocumentation
@@ -37,9 +42,9 @@ export type Log = Map<string, LogItem>;
  * level is set to `LogLevels.warn`, then only warning and debugging messages should be recorded/displayed, etc.
  * 
  * For each call the arguments are:
- * - log_point: the identification of the log point, related to the spec (in practice, this should be identical to the `id` value of the respective HTML element)
+ * - log_point: the identification of the log point, related to the spec (in practice, this should be identical to the `id` value of the respective HTML element in the specification).
  * - position: short description of the position of the log. The string may be empty (i.e., ""), in which case it will be ignored.
- * - otherData: the 'real' log information
+ * - otherData: the 'real' log information.
  * 
  */
 export interface Logger {

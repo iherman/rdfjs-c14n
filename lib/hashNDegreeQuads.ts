@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 
-import * as rdf from 'rdf-js';
+import * as rdf from '@rdfjs/types';
 import { BNodeId, Hash, NDegreeHashResult, HashToBNodes, GlobalState, computeHash, quadToNquad } from './common';
 import { computeFirstDegreeHash } from './hash1DegreeQuads';
 import { IDIssuer } from './issueIdentifier';
@@ -82,7 +82,7 @@ async function computeHashRelatedBlankNode(state: GlobalState, related: BNodeId,
 /**
  * Compute the n-degree hash. See the [specification](https://www.w3.org/TR/rdf-canon/#hash-nd-quads-algorithm) for the details.
  * 
- * @throws RangeError, if the maximum number of calls have been reached
+ * @throws RangeError - the maximum number of calls have been reached
  * 
  * @param state 
  * @param identifier 

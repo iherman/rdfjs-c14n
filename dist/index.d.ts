@@ -1,4 +1,12 @@
-import * as rdf from 'rdf-js';
+/**
+ * Implementation of the RDF Canonicalization Algorithm, published by the W3C RCH Working Group. 
+ * See [specification](https://www.w3.org/TR/rdf-canon/) for the latest official version.
+ * 
+ * @copyright Ivan Herman 2023
+ * 
+ * @packageDocumentation
+ */
+import * as rdf from '@rdfjs/types';
 
 export type Quads        = rdf.DatasetCore;
 export type InputQuads   = Iterable<rdf.Quad>;
@@ -44,8 +52,8 @@ The main class encapsulating the library's functionalities
 declare class RDFC10 {
     /**
      * @constructor
-     * @param data_factory  An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface). If undefined, the DataFactory of the [`n3` package](https://www.npmjs.com/package/n3) is used.
-     * @param getConfigData A function returning the configuration data, see {@link ConfigData}. By default, this return the constant values set in the code; the caller may provide a more complex function to handle environment variables and/or configuration files
+     * @param data_factory  An implementation of the generic RDF DataFactory interface, see [the specification](http://rdf.js.org/data-model-spec/#datafactory-interface). If undefined, the DataFactory of the [n3 package](https://www.npmjs.com/package/n3) is used.
+     * @param getConfigData A function returning the configuration data, see {@link ConfigData}. By default, this returns the constant values set in the code; the caller may provide a more complex function to handle environment variables and/or configuration files.
      */
     constructor(data_factory?: rdf.DataFactory, getConfigData?: GetConfigData);
 
@@ -56,7 +64,7 @@ declare class RDFC10 {
     setLogger(id: string, level: LogLevels);
 
     /**
-     * Current logger type
+     * Current logger type.
      */
     get logger_type(): string;
 
@@ -67,11 +75,11 @@ declare class RDFC10 {
 
 
     /**
-    * Set the Hash algorithm. The default is "sha256".
-    * If the algorithm is available the value is ignored (and an exception is thrown).
-    * 
-    * The name is considered to be case insensitive. Also, both the formats including, or not, the '-' characters
-    * are accepted (i.e., "sha256" and "sha-256").
+     * Set the Hash algorithm (default is "sha256").
+     * If the algorithm isn't available the value is ignored (and an exception is thrown).
+     * 
+     * The name is considered to be case insensitive. Also, both the format including a '-' dash character or not
+     * are accepted (i.e., "sha256" and "sha-256" are both fine).
     * 
     * @param algorithm_in: the (case insensitive) name of the algorithm, 
     */
@@ -81,9 +89,9 @@ declare class RDFC10 {
 
     /**
      * Set the maximal complexity number. This number, multiplied with the number of blank nodes in the dataset,
-     * sets a maximum level of calls the algorithm can do for the so called "hash n degree quads" function.
-     * Setting this number to a reasonably low number (say, 30),
-     * ensures that some "poison graphs" would not result in an unreasonably long canonicalization process.
+     * sets a maximum number of calls the algorithm can do for the so called "hash n degree quads" function.
+     * Setting this number to a reasonably low number (say, 30), ensures that some "poison graphs" would not result in
+     * an unreasonably long canonicalization process.
      * See the [security consideration section](https://www.w3.org/TR/rdf-canon/#security-considerations) in the specification.
      * 
      * The default value set by this implementation is 50; any number _greater_ then this number is ignored (and an exception is thrown).
@@ -95,40 +103,44 @@ declare class RDFC10 {
     /**
      * Canonicalize a Dataset into an N-Quads document.
      * 
-     * Implementation of the main algorithmic steps, see
-     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
-     * real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html).
+     * Implementation of the main algorithm, see the
+     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). 
      * 
+     * (The real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html)).
+    * 
      * @remarks
      * Note that the N-Quads parser throws an exception in case of syntax error.
      * @throws - RangeError, if the complexity of the graph goes beyond the set complexity number. See {@link maximum_complexity_number}
      * 
      * 
      * @param input_dataset 
+     * @param deduplicate - whether duplicate quads should be removed from the input (optional, defaults to `false`)
      * @returns - N-Quads document using the canonical ID-s.
      * @async
      */
-    canonicalize(input_dataset: InputDataset): Promise<string>;
+    canonicalize(input_dataset: InputDataset, deduplicate?): Promise<string>;
 
     /**
-     * Canonicalize a Dataset into a full set of information.
+     * Canonicalize a Dataset producing the full set of information.
      * 
      * Implementation of the main algorithmic steps, see
-     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). The
-     * real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html).
+     * [separate overview in the spec](https://www.w3.org/TR/rdf-canon/#canon-algo-overview). 
+     * 
+     * (The real work is done in the [separate function](../functions/lib_canonicalization.computeCanonicalDataset.html)).
      * 
      * The result is an Object containing the serialized version and the Quads version of the canonicalization result, 
-     * as well as a bnode mapping from the original to the canonical equivalents
+     * as well as a bnode mapping from the original to the canonical equivalents.
      * 
      * @remarks
      * Note that the N-Quads parser throws an exception in case of syntax error.
      * @throws - RangeError, if the complexity of the graph goes beyond the set complexity number. See {@link maximum_complexity_number}
      * 
      * @param input_dataset 
+     * @param deduplicate - whether duplicate quads should be removed from the input (optional, defaults to `false`)
      * @returns - Detailed results of the canonicalization
      * @async
      */
-    c14n(input_dataset: InputDataset): Promise<C14nResult> ; 
+    c14n(input_dataset: InputDataset, deduplicate?): Promise<C14nResult> ; 
 
     /**
      * Serialize the dataset into a (possibly sorted) Array of nquads.
@@ -142,8 +154,8 @@ declare class RDFC10 {
     /**
      * Hash a dataset:
      * 
-     * 1. Serialize the dataset into nquads and sort the result (unless the input is an N-Quads document)
-     * 2. Compute the hash of the concatenated nquads.
+     * 1. serialize the dataset into nquads and sort the result (unless the input is an N-Quads document);
+     * 2. compute the hash of the concatenated nquads.
      * 
      * This method is typically used on the result of the canonicalization to compute the canonical hash of a dataset.
      * 
@@ -163,7 +175,7 @@ declare interface LogItem {
 }
 
 /**
- * Very simple Logger interface, to be used in the code. 
+ * Very simple Logger interface. 
  * 
  * Implementations should follow the usual interpretation of log severity levels. E.g., if 
  * the Logger is set up with severity level of, say, `LogLevels.info`, then the messages to `debug` should be ignored. If the 
