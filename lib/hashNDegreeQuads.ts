@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 
-import * as rdf from 'rdf-js';
+import * as rdf from '@rdfjs/types';
 import { BNodeId, Hash, NDegreeHashResult, HashToBNodes, GlobalState, computeHash, quadToNquad } from './common';
 import { computeFirstDegreeHash } from './hash1DegreeQuads';
 import { IDIssuer } from './issueIdentifier';

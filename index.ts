@@ -7,8 +7,8 @@
  * @packageDocumentation
  */
 
-import * as rdf from 'rdf-js';
-import * as n3 from 'n3';
+import * as rdf from '@rdfjs/types';
+import * as n3  from 'n3';
 
 import { GlobalState, hashDataset, Hash, quadsToNquads, InputDataset, computeHash, C14nResult }                from './lib/common';
 import { AVAILABLE_HASH_ALGORITHMS, DEFAULT_MAXIMUM_COMPLEXITY, ConfigData, GetConfigData, defaultConfigData } from './lib/config';
