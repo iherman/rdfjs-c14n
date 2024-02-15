@@ -44,10 +44,6 @@ export async function get_quads(fname: string): Promise<Iterable<rdf.Quad>> {
     const store = new n3.Store();
     const parser = new n3.StreamParser({ blankNodePrefix: '' });
     store.import(parser);
-    // Note that this is very much node.js specific; this version of the pipeline call is
-    // not available in deno or in browsers. 
-    // This is o.k. for this test runner, though. These modules 
-    // are not part of the library distribution.
     await pipeline(trigStream, parser)
     return store;
 }
