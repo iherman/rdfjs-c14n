@@ -61,7 +61,7 @@ declare class RDFC10 {
      * Set a logger instance. By default it is an "empty" logger, ie, no logging happens
      * @param logger 
      */
-    setLogger(id: string, level: LogLevels);
+    setLogger(id: string, level: LogLevels): Logger | undefined ;
 
     /**
      * Current logger type.
@@ -118,7 +118,7 @@ declare class RDFC10 {
      * @returns - N-Quads document using the canonical ID-s.
      * @async
      */
-    canonicalize(input_dataset: InputDataset, deduplicate?): Promise<string>;
+    canonicalize(input_dataset: InputDataset, deduplicate?: boolean): Promise<string>;
 
     /**
      * Canonicalize a Dataset producing the full set of information.
@@ -140,7 +140,7 @@ declare class RDFC10 {
      * @returns - Detailed results of the canonicalization
      * @async
      */
-    c14n(input_dataset: InputDataset, deduplicate?): Promise<C14nResult> ; 
+    c14n(input_dataset: InputDataset, deduplicate?: boolean): Promise<C14nResult> ; 
 
     /**
      * Serialize the dataset into a (possibly sorted) Array of nquads.
