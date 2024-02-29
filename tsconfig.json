@@ -23,11 +23,12 @@
     "include": ["lib/**/*", "index.ts"],
     "exclude": ["extras/**/*", "example/**/*", "tester/**/*", "Attic/**/*"],
     "typedocOptions": {
+        "plugin": ["typedoc-theme-hierarchy"],
         "excludeExternals": true,
         "excludePrivate": true,
         "excludeProtected": false,
         "out": "docs",
-        "theme": "default",
+        "theme": "hierarchy",
         "includeVersion": true,
         "categorizeByGroup": true,
         "gitRemote": "origin",
