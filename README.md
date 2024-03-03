@@ -1,4 +1,7 @@
-# RDF Canonicalization in TypeScript
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10775230.svg)](https://doi.org/10.5281/zenodo.10775230)
+
+
+# RDF Dataset Canonicalization in TypeScript
 
 This is an implementation of the [RDF Dataset Canonicalization](https://www.w3.org/TR/rdf-canon/) algorithm, also referred to as RDFC-1.0. The algorithm has been published by the W3C [RDF Dataset Canonicalization and Hash Working Group](https://www.w3.org/groups/wg/rch).
 
