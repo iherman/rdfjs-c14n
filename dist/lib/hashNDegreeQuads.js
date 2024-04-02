@@ -260,3 +260,4 @@ async function computeNDegreeHash(state, identifier, issuer) {
     return retval;
 }
 exports.computeNDegreeHash = computeNDegreeHash;
+//# sourceMappingURL=hashNDegreeQuads.js.map

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Configuration constants. System administrators may want to modify these parameters,
  * although they should do it with care.
@@ -10,8 +9,6 @@
  *
  * @packageDocumentation
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.defaultConfigData = exports.ENV_HASH_ALGORITHM = exports.ENV_COMPLEXITY = exports.AVAILABLE_HASH_ALGORITHMS = exports.HASH_ALGORITHM = exports.DEFAULT_MAXIMUM_COMPLEXITY = void 0;
 /**
  * Default maximal complexity value. Algorithmically, this number is multiplied
  * with the number of bnodes in a given dataset, thereby yielding the maximum times
@@ -26,7 +23,7 @@ exports.defaultConfigData = exports.ENV_HASH_ALGORITHM = exports.ENV_COMPLEXITY 
  *
  *
  */
-exports.DEFAULT_MAXIMUM_COMPLEXITY = 50;
+export declare const DEFAULT_MAXIMUM_COMPLEXITY = 50;
 /**
  * The default hash algorithm's name. If changed, it should be one of the keys in the
  * separate {@link AVAILABLE_HASH_ALGORITHMS} object.
@@ -37,7 +34,7 @@ exports.DEFAULT_MAXIMUM_COMPLEXITY = 50;
  *
  *
  */
-exports.HASH_ALGORITHM = "sha256";
+export declare const HASH_ALGORITHM = "sha256";
 /**
  * List of available hash algorithms defined by the WebCrypto API standard as of November 2021.
  * The user has the possibility to change the hash algorithm to be used instead of the
@@ -48,37 +45,37 @@ exports.HASH_ALGORITHM = "sha256";
  *
  *
  */
-exports.AVAILABLE_HASH_ALGORITHMS = {
-    "sha1": "SHA-1",
-    "sha256": "SHA-256",
-    "sha384": "SHA-384",
-    "sha512": "SHA-512",
-    "sha-1": "SHA-1",
-    "sha-256": "SHA-256",
-    "sha-384": "SHA-384",
-    "sha-512": "SHA-512",
-};
+export declare const AVAILABLE_HASH_ALGORITHMS: Record<string, string>;
 /**
  * Environment variable to set/change the maximum complexity
  *
  *
  */
-exports.ENV_COMPLEXITY = "c14n_complexity";
+export declare const ENV_COMPLEXITY = "c14n_complexity";
 /**
  * Environment variable to set/change the default hash algorithm
  */
-exports.ENV_HASH_ALGORITHM = "c14n_hash";
+export declare const ENV_HASH_ALGORITHM = "c14n_hash";
+/**
+ * Configuration data.
+ */
+export interface ConfigData {
+    /**
+     * Default (and maximal) complexity number. This will overwrite the value specified in
+     * {@link DEFAULT_MAXIMUM_COMPLEXITY}.
+     */
+    c14n_complexity?: number;
+    /** Hash algorithm. The value must be one of the algorithms listed in {@link AVAILABLE_HASH_ALGORITHMS}. */
+    c14n_hash?: string;
+}
+/**
+ * Function type to return config data
+ */
+export type GetConfigData = () => ConfigData;
 /**
  * A default callback, returning the built-in configuration data. Application developers may
  * create an alternative callback with a more user-friendly way to set the configuration values.
  *
  * @returns
  */
-function defaultConfigData() {
-    return {
-        c14n_complexity: exports.DEFAULT_MAXIMUM_COMPLEXITY,
-        c14n_hash: exports.HASH_ALGORITHM,
-    };
-}
-exports.defaultConfigData = defaultConfigData;
-//# sourceMappingURL=config.js.map
+export declare function defaultConfigData(): ConfigData;

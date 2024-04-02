@@ -113,3 +113,4 @@ class IDIssuer {
     }
 }
 exports.IDIssuer = IDIssuer;
+//# sourceMappingURL=issueIdentifier.js.map
