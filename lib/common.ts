@@ -62,7 +62,7 @@ export interface C14nResult {
     /** N-Quads serialization of the dataset. */
     canonical_form: string;
 
-    /** Dataset as Set of rdf Quads. */
+    /** Dataset as a DatasetCore */
     canonicalized_dataset: Quads;
 
     /** Mapping of a blank node to its identifier. */
