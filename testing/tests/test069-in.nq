@@ -1,6 +1,7 @@
-_:e2 <http://example.org/vocab#next> _:e1 .
-_:e2 <http://example.org/vocab#prev> _:e0 .
-_:e0 <http://example.org/vocab#next> _:e2 .
-_:e0 <http://example.org/vocab#prev> _:e1 .
-_:e1 <http://example.org/vocab#next> _:e0 .
-_:e1 <http://example.org/vocab#prev> _:e2 .
+<http://example.org/test> <http://example.org/vocab#A> _:e0 .
+<http://example.org/test> <http://example.org/vocab#B> _:e0 .
+<http://example.org/test> <http://example.org/vocab#embed> _:e0 .
+<http://example.org/test> <http://example.org/vocab#A> _:e0 <http://example.org/g1> .
+<http://example.org/test> <http://example.org/vocab#B> _:e0 <http://example.org/g1> .
+<http://example.org/test> <http://example.org/vocab#embed> _:e0 <http://example.org/g1> .
+

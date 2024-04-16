@@ -2,8 +2,10 @@ import { Command } from 'commander';
 import { RDFC10, LogLevels, Logger } from '../../index';
 import * as rdfn3 from './rdfn3';
 
-const number_of_tests: number = 63;
-const extra_tests: string[] = ['900', '901'];
+const number_of_tests: number = 74;
+const extra_tests: string[] = [];
+
+// Note that test 900 MUST fail with an exception (it is a poison graph...)
 
 // The format of all test numbers
 const test_number_format = RegExp('^[0-9][0-9][0-9]$');

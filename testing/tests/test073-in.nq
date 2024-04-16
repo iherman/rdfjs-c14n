@@ -1,9 +1,2 @@
-<http://example.org/test> <http://example.org/vocab#A> _:e0 .
-<http://example.org/test> <http://example.org/vocab#B> _:e0 .
-<http://example.org/test> <http://example.org/vocab#embed> _:e0 .
-<http://example.org/test> <http://example.org/vocab#graph> _:g1 .
-<http://example.org/test> <http://example.org/vocab#A> _:e0  _:g1 .
-<http://example.org/test> <http://example.org/vocab#B> _:e0 _:g1 .
-<http://example.org/test> <http://example.org/vocab#embed> _:e0 _:g1 .
-
-
+<https://www.example.org/s> <https://www.example.org/p> <https://www.example.org/o> .
+<https://www.example.org/s> <https://www.example.org/p> <https://www.example.org/o> .

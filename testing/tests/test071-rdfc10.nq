@@ -1,6 +1,4 @@
-<http://example.org/test> <http://example.org/vocab#A> _:c14n0 .
-<http://example.org/test> <http://example.org/vocab#A> _:c14n2 _:c14n1 .
-<http://example.org/test> <http://example.org/vocab#B> _:c14n0 .
-<http://example.org/test> <http://example.org/vocab#B> _:c14n2 _:c14n1 .
-<http://example.org/test> <http://example.org/vocab#embed> _:c14n0 .
-<http://example.org/test> <http://example.org/vocab#embed> _:c14n2 _:c14n1 .
+<http://example.com/#p> <http://example.com/#q> _:c14n0 .
+<http://example.com/#p> <http://example.com/#r> _:c14n1 .
+_:c14n0 <http://example.com/#s> <http://example.com/#u> .
+_:c14n1 <http://example.com/#t> <http://example.com/#u> .
