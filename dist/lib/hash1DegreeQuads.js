@@ -71,3 +71,4 @@ async function computeFirstDegreeHash(state, identifier) {
     return the_hash;
 }
 exports.computeFirstDegreeHash = computeFirstDegreeHash;
+//# sourceMappingURL=hash1DegreeQuads.js.map

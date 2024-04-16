@@ -164,3 +164,4 @@ class BnodeSet {
     }
 }
 exports.BnodeSet = BnodeSet;
+//# sourceMappingURL=common.js.map

@@ -16,8 +16,9 @@
             "*": ["node_modules/*"]
         },
         "resolveJsonModule": true,
-        "sourceMap": false,
-        "target": "esnext"
+        "sourceMap": true,
+        "target": "esnext",
+        "declaration": true
     },
     "typesRoots": ["node_modules/@types"],
     "include": ["lib/**/*", "index.ts"],
