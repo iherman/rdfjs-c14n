@@ -1,6 +1,6 @@
 {
   "name": "rdfjs-c14n",
-  "version": "3.1.2",
+  "version": "3.1.3",
   "date": "2024-02-27",
   "description": "Implementation in Typescript of the RDF Canonicalization Algorithm RDFC-1.0, on top of the RDF/JS interfaces",
   "homepage": "https://github.com/iherman/rdfjs-c14n",
