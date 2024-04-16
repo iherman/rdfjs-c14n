@@ -9,7 +9,8 @@
 import * as rdf from '@rdfjs/types';
 import {
     GlobalState, BNodeId, Hash, Quads, NDegreeHashResult, concatNquads,
-    quadsToNquads, parseNquads, InputDataset, C14nResult, InputQuads
+    quadsToNquads, parseNquads, InputDataset, C14nResult, InputQuads,
+    isQuads
 } from './common';
 
 import { computeFirstDegreeHash }                               from './hash1DegreeQuads';
@@ -48,21 +49,32 @@ const createBidMap = (graph: Quads): ReadonlyMap<rdf.BlankNode, BNodeId> => {
  * 
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
- * @param deduplicate - whether duplicate quads should be removed from the input
+ * @param copy - whether the input should be copied to a local store (e.g., if the input is a generator, or the uniqueness of quads are not guaranteed). If this
+ * parameter is not used (i.e., value is `undefined`) the copy is always done _unless_ the input is an `rdf.DatasetCore` instance.
  * @returns - A semantically identical set of Quads, with canonical BNode labels, plus other information.
  * 
  * @async
  */
-export async function computeCanonicalDataset(state: GlobalState, input: InputDataset, deduplicate = false): Promise<C14nResult> {
+export async function computeCanonicalDataset(state: GlobalState, input: InputDataset, copy: boolean | undefined = undefined): Promise<C14nResult> {
     const finalInput = async (): Promise<InputQuads> => {
         if (typeof input === 'string') {
             return await parseNquads(input as string);
-        } else if (deduplicate) {
-            const retval = new n3.Store();
-            for (const quad of input) retval.add(quad);
-            return retval;
+        } if (copy === undefined) {
+            if (isQuads(input)) {
+                return input;
+            } else {
+                const retval = new n3.Store();
+                for (const quad of input) retval.add(quad);
+                return retval;
+            }
         } else {
-            return input;;
+            if (copy) {
+                const retval = new n3.Store();
+                for (const quad of input) retval.add(quad);
+                return retval;
+            } else {
+                return input;
+            }
         }
     }
 
