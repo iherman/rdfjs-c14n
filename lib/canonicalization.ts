@@ -51,7 +51,7 @@ const createBidMap = (graph: Quads): ReadonlyMap<rdf.BlankNode, BNodeId> => {
  * @param input
  * @param copy - whether the input should be copied to a local store (e.g., if the input is a generator, or the uniqueness of quads are not guaranteed). If this
  * parameter is not used (i.e., value is `undefined`) the copy is always done _unless_ the input is an `rdf.DatasetCore` instance.
- * @returns - A semantically identical set of Quads, with canonical BNode labels, plus other information.
+ * @returns - A semantically identical set of Quads using canonical BNode labels, plus other information.
  * 
  * @async
  */
