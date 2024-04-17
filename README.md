@@ -35,18 +35,22 @@ The canonicalization process can be invoked by
   - issued_identifier_map: a Map object, mapping the original blank node id-s (as used in the input) to their canonical equivalents
   - bnode_identifier_map: Map object, mapping a blank node to its (canonical) blank node id
 
-> Note that the Iterable<rdf.Qad> instance, in the input of these calls, is expected to be a _set_ of quads, i.e., it should not have repeated entries. This is not directly checked by 
-> the system but, in some cases, the input graph is copied into an internal store, thereby de-duplicating tests. Because this can be a costly operation for large Graph, this can be
-> controlled by the user through the optional usage of a boolean parameter `copy`. The effects are as follows:
->
-> - If the value of `copy` is set, then the input is copied or not to an internal store if the value is `true`, respectively `false`.
-> - If the value of `copy` is not set, the input is copied ***unless*** the object implements the [rdf Dataset Core interface](https://rdf.js.org/dataset-spec/#datasetcore-interface). 
-> 
-> What it means in practice is that if the user uses a standard RDF Data store, the quads are considered to be unique, and no copy occurs. Otherwise (if for example, and array of quads is used) the quads are copied.
-> 
-> If the input is a document is to parsed by the system, duplicate quads are filtered out automatically.
+### Copying the input quads
+
+The `Iterable<rdf.Qad>` input instance is expected to be a _set_ of quads, i.e., it should not include repeated entries. This is not checked by 
+the process. Usually, the input quads are copied into an internal store, thereby de-duplicating them. Because this can be a costly operation
+for large dataset, it can be controlled through an additional, optional, boolean parameter `copy`. The effects are as follows:
+
+- If the value of `copy` is set, and its value is `true`, the input quads are copied to an internal store. If the value is `false`, the quads are used directly.
+- If the value of `copy` is not set, the input is copied to an internal store ***unless*** the object implements the [RDF DatasetCore interface](https://rdf.js.org/dataset-spec/#datasetcore-interface).
+
+If the input is a string serializing a Dataset in Turtle/TriG format, the input is parsed, and duplicate quads are filtered out automatically.
+
+Note that the value of `copy` ***must not*** be set to `false` if the input is a generator function (even if the generator function avoids duplicate quads).
 
 The separate [testing folder](https://github.com/iherman/rdfjs-c14n/tree/main/testing) includes a tiny application that runs some local tests, and can be used as an example for the additional packages that are required. See also the separate [tester repository](https://github.com/iherman/rdfjs-c14n-tester) that runs the official test suite set up by the W3C Working Group.
+
+All the examples below ignore the `copy` argument.
 
 ## Installation
 
@@ -80,7 +84,7 @@ import * as rdf from '@rdfjs/types';;
 // export type InputQuads = Iterable<rdf.Quad>;
 import {RDFC10, Quads, InputQuads } from 'rdf-c14n';
 
-async main() {
+async function main(): Promise<void> {
     // Any implementation of the data factory will do in the call below.
     // By default, the Data Factory of the n3 package (i.e., the argument in the call
     // below is not strictly necessary).
