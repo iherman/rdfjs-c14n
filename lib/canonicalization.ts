@@ -60,16 +60,12 @@ export async function computeCanonicalDataset(state: GlobalState, input: InputDa
         if (typeof input === 'string') {
             return await parseNquads(input as string);
         } else {
-            const createCopy = (): InputQuads => {
+            if (copy ?? !isQuads(input)) {
                 const retval = new n3.Store();
                 for (const quad of input) retval.add(quad);
                 return retval;
-            };
-            if (copy === undefined) {
-                return isQuads(input) ? input : createCopy();
-            } else {
-                return copy ? createCopy() : input;
-            }
+            }  
+            return input;
         }
     }
 
