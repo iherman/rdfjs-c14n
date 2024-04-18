@@ -41,25 +41,25 @@ const createBidMap = (graph) => {
  *
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
- * @param deduplicate - whether duplicate quads should be removed from the input
- * @returns - A semantically identical set of Quads, with canonical BNode labels, plus other information.
+ * @param copy - whether the input should be copied to a local store (e.g., if the input is a generator, or the uniqueness of quads are not guaranteed). If this
+ * parameter is not used (i.e., value is `undefined`) the copy is always done _unless_ the input is an `rdf.DatasetCore` instance.
+ * @returns - A semantically identical set of Quads using canonical BNode labels, plus other information.
  *
  * @async
  */
-async function computeCanonicalDataset(state, input, deduplicate = false) {
+async function computeCanonicalDataset(state, input, copy = undefined) {
     const finalInput = async () => {
         if (typeof input === 'string') {
             return await (0, common_1.parseNquads)(input);
         }
-        else if (deduplicate) {
-            const retval = new n3.Store();
-            for (const quad of input)
-                retval.add(quad);
-            return retval;
-        }
         else {
+            if (copy ?? !(0, common_1.isQuads)(input)) {
+                const retval = new n3.Store();
+                for (const quad of input)
+                    retval.add(quad);
+                return retval;
+            }
             return input;
-            ;
         }
     };
     // Re-initialize the state information: canonicalization should always start with a clean state

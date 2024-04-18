@@ -11,9 +11,10 @@ import { GlobalState, InputDataset, C14nResult } from './common';
  *
  * @param state - the overall canonicalization state + interface to the underlying RDF environment
  * @param input
- * @param deduplicate - whether duplicate quads should be removed from the input
- * @returns - A semantically identical set of Quads, with canonical BNode labels, plus other information.
+ * @param copy - whether the input should be copied to a local store (e.g., if the input is a generator, or the uniqueness of quads are not guaranteed). If this
+ * parameter is not used (i.e., value is `undefined`) the copy is always done _unless_ the input is an `rdf.DatasetCore` instance.
+ * @returns - A semantically identical set of Quads using canonical BNode labels, plus other information.
  *
  * @async
  */
-export declare function computeCanonicalDataset(state: GlobalState, input: InputDataset, deduplicate?: boolean): Promise<C14nResult>;
+export declare function computeCanonicalDataset(state: GlobalState, input: InputDataset, copy?: boolean | undefined): Promise<C14nResult>;

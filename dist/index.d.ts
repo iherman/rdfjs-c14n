@@ -87,13 +87,14 @@ export declare class RDFC10 {
      * @throws - RangeError, if the complexity of the graph goes beyond the set complexity number. See {@link maximum_complexity_number}.
      *
      * @param input_dataset
-     * @param deduplicate - whether duplicate quads should be removed from the input (optional, defaults to `false`)
+     * @param copy - whether the input should be copied to a local store (e.g., if the input is a generator, or the uniqueness of quads are not guaranteed). If this
+     * parameter is not used (i.e., value is `undefined`) the copy is always done _unless_ the input is an `rdf.DatasetCore` instance.
      * @returns - N-Quads document using the canonical ID-s.
      *
      * @async
      *
      */
-    canonicalize(input_dataset: InputDataset, deduplicate?: boolean): Promise<string>;
+    canonicalize(input_dataset: InputDataset, copy?: boolean | undefined): Promise<string>;
     /**
      * Canonicalize a Dataset producing the full set of information.
      *
@@ -111,12 +112,13 @@ export declare class RDFC10 {
      * @throws - RangeError, if the complexity of the graph goes beyond the set complexity number. See {@link maximum_complexity_number}.
      *
      * @param input_dataset
-     * @param deduplicate - whether duplicate quads should be removed from the input (optional, defaults to `false`)
+     * @param copy - whether the input should be copied to a local store (e.g., if the input is a generator, or the uniqueness of quads are not guaranteed). If this
+     * parameter is not used (i.e., value is `undefined`) the copy is always done _unless_ the input is an `rdf.DatasetCore` instance.
      * @returns - Detailed results of the canonicalization
      *
      * @async
      */
-    c14n(input_dataset: InputDataset, deduplicate?: boolean): Promise<C14nResult>;
+    c14n(input_dataset: InputDataset, copy?: boolean | undefined): Promise<C14nResult>;
     /**
      * Serialize a dataset into a (possibly sorted) Array of nquads.
      *

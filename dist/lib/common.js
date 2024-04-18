@@ -7,7 +7,7 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BnodeSet = exports.parseNquads = exports.hashDataset = exports.quadsToNquads = exports.quadToNquad = exports.hashNquads = exports.concatNquads = exports.computeHash = exports.BNODE_PREFIX = void 0;
+exports.BnodeSet = exports.isQuads = exports.parseNquads = exports.hashDataset = exports.quadsToNquads = exports.quadToNquad = exports.hashNquads = exports.concatNquads = exports.computeHash = exports.BNODE_PREFIX = void 0;
 const n3 = require("n3");
 const event_emitter_promisify_1 = require("event-emitter-promisify");
 const config_1 = require("./config");
@@ -131,6 +131,19 @@ async function parseNquads(nquads) {
     return store;
 }
 exports.parseNquads = parseNquads;
+/**
+ * Type guard to see if an object implements the rdf.DatasetCore interface (a.k.a. Quads). If that is
+ * indeed the case, then the object is considered as "safe": there are no repeated terms, and it is not
+ * a generator, ie, it can be iterated on several times.
+ *
+ * Used at the very beginning of the algorithm, part of a function that stores the quads in a local (n3) data store. By
+ * checking this, we can avoid unnecessary duplication of a dataset.
+ */
+function isQuads(obj) {
+    // Having match is important, because all the other terms are also valid for a Set...
+    return 'has' in obj && 'match' in obj && 'add' in obj && 'delete' in obj && 'size' in obj;
+}
+exports.isQuads = isQuads;
 /**
  * Replacement of a `Set<rdf.BlankNode>` object: the build-in Set structure does not compare the RDF terms,
  * therefore does not filter out duplicate BNode instances.
