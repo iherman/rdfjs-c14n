@@ -1,3 +1,8 @@
+# Version 3.1.3
+
+- More careful with the initial choice on whether the input dataset must be copied to an internal store or not (triggered by a bug whereby a dataset through a generator function would not have worked)
+
+
 # Version 3.1.1
 
 - On the advice of @jeswr the turtle parser is now based on the streaming parser of n3, avoiding an unnecessary "buffer" like array. The same is true for the test runner.

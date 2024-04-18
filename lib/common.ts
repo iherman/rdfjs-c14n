@@ -251,6 +251,19 @@ export async function parseNquads(nquads: string): Promise<InputQuads> {
 }
 
 
+/**
+ * Type guard to see if an object implements the rdf.DatasetCore interface (a.k.a. Quads). If that is
+ * indeed the case, then the object is considered as "safe": there are no repeated terms, and it is not
+ * a generator, ie, it can be iterated on several times.
+ * 
+ * Used at the very beginning of the algorithm, part of a function that stores the quads in a local (n3) data store. By
+ * checking this, we can avoid unnecessary duplication of a dataset.
+ */
+export function isQuads(obj: any): obj is Quads {
+    // Having match is important, because all the other terms are also valid for a Set...
+    return 'has' in obj && 'match' in obj && 'add' in obj && 'delete' in obj && 'size' in obj;
+}
+
 /** 
  * Replacement of a `Set<rdf.BlankNode>` object: the build-in Set structure does not compare the RDF terms,
  * therefore does not filter out duplicate BNode instances.

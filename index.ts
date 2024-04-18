@@ -158,14 +158,15 @@ export class RDFC10 {
      * @throws - RangeError, if the complexity of the graph goes beyond the set complexity number. See {@link maximum_complexity_number}.
      * 
      * @param input_dataset 
-     * @param deduplicate - whether duplicate quads should be removed from the input (optional, defaults to `false`)
+     * @param copy - whether the input should be copied to a local store (e.g., if the input is a generator, or the uniqueness of quads are not guaranteed). If this
+     * parameter is not used (i.e., value is `undefined`) the copy is always done _unless_ the input is an `rdf.DatasetCore` instance.
      * @returns - N-Quads document using the canonical ID-s.
      * 
      * @async
      * 
      */
-    async canonicalize(input_dataset: InputDataset, deduplicate = false): Promise<string> {
-        return (await this.c14n(input_dataset, deduplicate)).canonical_form;
+    async canonicalize(input_dataset: InputDataset, copy: boolean | undefined = undefined): Promise<string> {
+        return (await this.c14n(input_dataset, copy)).canonical_form;
     }
 
     /**
@@ -185,13 +186,14 @@ export class RDFC10 {
      * @throws - RangeError, if the complexity of the graph goes beyond the set complexity number. See {@link maximum_complexity_number}.
      *
      * @param input_dataset 
-     * @param deduplicate - whether duplicate quads should be removed from the input (optional, defaults to `false`)
+     * @param copy - whether the input should be copied to a local store (e.g., if the input is a generator, or the uniqueness of quads are not guaranteed). If this
+     * parameter is not used (i.e., value is `undefined`) the copy is always done _unless_ the input is an `rdf.DatasetCore` instance.
      * @returns - Detailed results of the canonicalization
      * 
      * @async
      */
-    async c14n(input_dataset: InputDataset, deduplicate = false): Promise<C14nResult> {
-        return computeCanonicalDataset(this.state, input_dataset, deduplicate);
+    async c14n(input_dataset: InputDataset, copy: boolean | undefined = undefined): Promise<C14nResult> {
+        return computeCanonicalDataset(this.state, input_dataset, copy);
     }
 
     /**
