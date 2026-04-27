@@ -7,7 +7,7 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.computeFirstDegreeHash = void 0;
+exports.computeFirstDegreeHash = computeFirstDegreeHash;
 const common_1 = require("./common");
 /**
  * Compute the first degree hash: a simple hash based on the immediate "environment" of a blank node, i.e.,
@@ -70,5 +70,4 @@ async function computeFirstDegreeHash(state, identifier) {
     // console.log(`LOG? ${state.logger.log}`)
     return the_hash;
 }
-exports.computeFirstDegreeHash = computeFirstDegreeHash;
 //# sourceMappingURL=hash1DegreeQuads.js.map

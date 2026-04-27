@@ -2,19 +2,19 @@
     "compilerOptions": {
         "allowJs": true,
         "alwaysStrict": true,
-        "baseUrl": ".",
+        // Explicitly set to false to support namespace imports (import * as name)
         "esModuleInterop": false,
+        "ignoreDeprecations": "6.0",
         "lib": ["esnext", "dom"],
-        "module": "commonjs",
-        "moduleResolution": "node",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
         "noEmitHelpers": true,
         "noImplicitAny": true,
+        "useUnknownInCatchVariables": false,
+        "strictNullChecks": false,
         "noImplicitReturns": true,
         "noUnusedLocals": false,
         "outDir": "dist",
-        "paths": {
-            "*": ["node_modules/*"]
-        },
         "resolveJsonModule": true,
         "sourceMap": true,
         "target": "esnext",

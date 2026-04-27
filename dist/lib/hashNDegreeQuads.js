@@ -7,10 +7,42 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.computeNDegreeHash = void 0;
+exports.computeNDegreeHash = computeNDegreeHash;
 const common_1 = require("./common");
 const hash1DegreeQuads_1 = require("./hash1DegreeQuads");
-const permutation = require('array-permutation');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+//const permutation = require('array-permutation');
+/**
+ * Helper function:
+ *
+ * Generator for the permutation of an Array. Can be used as an iteration or to
+ * generate an array for all the permutations.
+ *
+ * @param arr
+ * @returns
+ */
+function* permutations(arr) {
+    // Edge case: a single element array is its own permutation
+    if (arr.length <= 1) {
+        yield arr;
+        return;
+    }
+    //
+    // Go through the array element by element,
+    // Create a subarray of all the other elements
+    // and create the permutation for those (recursively).
+    // For each of those entries create an array bu
+    // putting the chosen element in front to create the final
+    // entry.
+    for (let i = 0; i < arr.length; i++) {
+        // This is the main trick! Remove the i-th element...
+        const rest = [...arr.slice(0, i), ...arr.slice(i + 1)];
+        // ... and go recursively
+        for (const perm of permutations(rest)) {
+            yield [arr[i], ...perm];
+        }
+    }
+}
 /**
  * Hash Related Blank Node algorithm. Returns a unique hash value for a bnode that is in the same quad as the one
  * considered in the main loop. The value of 'position' is used to differentiate the situation when the
@@ -151,12 +183,8 @@ async function computeNDegreeHash(state, identifier, issuer) {
             // Step 5.3
             let chosen_issuer;
             // Step 5.4
-            // This is a bit unnecessarily complicated, because the
-            // 'permutation' package has a strange bug: if the array to be handled
-            // has, in fact, one element, then the result of permutations is empty...
-            //
             state.logger.push("hndq.5.4");
-            const perms = Hn[hash].length === 1 ? [Hn[hash]] : Array.from(permutation(Hn[hash]));
+            const perms = Array.from(permutations(Hn[hash]));
             perms: for (const p of perms) {
                 /* @@@ */
                 state.logger.info("hndq.5.4.1", "Hash N-Degree Quads function (4.8.3 (5.4)), entering loop", {
@@ -259,5 +287,4 @@ async function computeNDegreeHash(state, identifier, issuer) {
     /* @@@ */
     return retval;
 }
-exports.computeNDegreeHash = computeNDegreeHash;
 //# sourceMappingURL=hashNDegreeQuads.js.map

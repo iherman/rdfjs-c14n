@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "target": "esnext",
+        "skipLibCheck": true,
+        "types": ["node"]
+    },
+    "include": ["nodeConfiguration.ts"]
+}

@@ -1,8 +1,8 @@
 /**
  * Calculation of the n-degree hash.
- * 
+ *
  * @copyright Ivan Herman 2023
- * 
+ *
  * @packageDocumentation
  */
 
@@ -10,24 +10,61 @@ import * as rdf from '@rdfjs/types';
 import { BNodeId, Hash, NDegreeHashResult, HashToBNodes, GlobalState, computeHash, quadToNquad } from './common';
 import { computeFirstDegreeHash } from './hash1DegreeQuads';
 import { IDIssuer } from './issueIdentifier';
-const permutation = require('array-permutation');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+//const permutation = require('array-permutation');
+
+/**
+ * Helper function:
+ *
+ * Generator for the permutation of an Array. Can be used as an iteration or to
+ * generate an array for all the permutations.
+ *
+ * @param arr
+ * @returns
+ */
+function* permutations<T>(arr: T[]): Generator<T[]> {
+    // Edge case: a single element array is its own permutation
+    if (arr.length <= 1) {
+        yield arr;
+        return;
+    }
+    //
+    // Go through the array element by element,
+    // Create a subarray of all the other elements
+    // and create the permutation for those (recursively).
+    // For each of those entries create an array bu
+    // putting the chosen element in front to create the final
+    // entry.
+    for (let i = 0; i < arr.length; i++) {
+        // This is the main trick! Remove the i-th element...
+        const rest = [...arr.slice(0, i), ...arr.slice(i + 1)];
+        // ... and go recursively
+        for (const perm of permutations(rest)) {
+            yield [arr[i], ...perm];
+        }
+    }
+}
+
+
+
+
 
 /**
  * Hash Related Blank Node algorithm. Returns a unique hash value for a bnode that is in the same quad as the one
  * considered in the main loop. The value of 'position' is used to differentiate the situation when the
  * bnode here is in a subject, object, or graph position.
- * 
+ *
  * See the [specification](https://www.w3.org/TR/rdf-canon/#hash-related-algorithm) for the details.
- * 
+ *
  * @throws RangeError, if the maximum recursion level has been reached.
- * 
- * @param state 
- * @param related 
- * @param quad 
- * @param issuer 
- * @param position 
- * @returns 
- * 
+ *
+ * @param state
+ * @param related
+ * @param quad
+ * @param issuer
+ * @param position
+ * @returns
+ *
  * @async
  */
 async function computeHashRelatedBlankNode(state: GlobalState, related: BNodeId, quad: rdf.Quad, issuer: IDIssuer, position: string): Promise<Hash> {
@@ -81,12 +118,12 @@ async function computeHashRelatedBlankNode(state: GlobalState, related: BNodeId,
 
 /**
  * Compute the n-degree hash. See the [specification](https://www.w3.org/TR/rdf-canon/#hash-nd-quads-algorithm) for the details.
- * 
+ *
  * @throws RangeError - the maximum number of calls have been reached
- * 
- * @param state 
- * @param identifier 
- * @param issuer 
+ *
+ * @param state
+ * @param identifier
+ * @param issuer
  * @returns
  * @async
  */
@@ -170,12 +207,8 @@ export async function computeNDegreeHash(state: GlobalState, identifier: BNodeId
             let chosen_issuer: IDIssuer;
 
             // Step 5.4
-            // This is a bit unnecessarily complicated, because the
-            // 'permutation' package has a strange bug: if the array to be handled
-            // has, in fact, one element, then the result of permutations is empty...
-            //
             state.logger.push("hndq.5.4");
-            const perms: BNodeId[][] = Hn[hash].length === 1 ? [Hn[hash]] : Array.from(permutation(Hn[hash]));
+            const perms: BNodeId[][] = Array.from(permutations(Hn[hash]));
             perms: for (const p of perms) {
                 /* @@@ */
                 state.logger.info("hndq.5.4.1", "Hash N-Degree Quads function (4.8.3 (5.4)), entering loop", {

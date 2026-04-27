@@ -7,7 +7,7 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.computeCanonicalDataset = void 0;
+exports.computeCanonicalDataset = computeCanonicalDataset;
 const common_1 = require("./common");
 const hash1DegreeQuads_1 = require("./hash1DegreeQuads");
 const hashNDegreeQuads_1 = require("./hashNDegreeQuads");
@@ -272,5 +272,4 @@ async function computeCanonicalDataset(state, input, copy = undefined) {
     };
     return return_value;
 }
-exports.computeCanonicalDataset = computeCanonicalDataset;
 //# sourceMappingURL=canonicalization.js.map

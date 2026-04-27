@@ -194,5 +194,5 @@ export declare class BnodeSet {
     add(term: rdf.BlankNode): this;
     values(): Set<rdf.BlankNode>;
     keys(): Set<rdf.BlankNode>;
-    [Symbol.iterator](): IterableIterator<rdf.BlankNode>;
+    [Symbol.iterator](): MapIterator<rdf.BlankNode>;
 }

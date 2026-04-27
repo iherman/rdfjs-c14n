@@ -11,7 +11,8 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.defaultConfigData = exports.ENV_HASH_ALGORITHM = exports.ENV_COMPLEXITY = exports.AVAILABLE_HASH_ALGORITHMS = exports.HASH_ALGORITHM = exports.DEFAULT_MAXIMUM_COMPLEXITY = void 0;
+exports.ENV_HASH_ALGORITHM = exports.ENV_COMPLEXITY = exports.AVAILABLE_HASH_ALGORITHMS = exports.HASH_ALGORITHM = exports.DEFAULT_MAXIMUM_COMPLEXITY = void 0;
+exports.defaultConfigData = defaultConfigData;
 /**
  * Default maximal complexity value. Algorithmically, this number is multiplied
  * with the number of bnodes in a given dataset, thereby yielding the maximum times
@@ -80,5 +81,4 @@ function defaultConfigData() {
         c14n_hash: exports.HASH_ALGORITHM,
     };
 }
-exports.defaultConfigData = defaultConfigData;
 //# sourceMappingURL=config.js.map

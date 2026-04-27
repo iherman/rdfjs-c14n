@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.htbnToLogItem = exports.ndhrToLogItem = exports.bntqToLogItem = exports.LoggerFactory = exports.LogLevels = void 0;
+exports.LoggerFactory = exports.LogLevels = void 0;
+exports.bntqToLogItem = bntqToLogItem;
+exports.ndhrToLogItem = ndhrToLogItem;
+exports.htbnToLogItem = htbnToLogItem;
 /**
  * Logging environment, used by the rest of the code. By default, no logging occurs; the user can set his/her own
  * logging environment. This module also includes a logger to create a recursive log in YAML.
@@ -179,7 +182,6 @@ function bntqToLogItem(bntq) {
     }
     return bntnq;
 }
-exports.bntqToLogItem = bntqToLogItem;
 /**
  * Return a log item version of an `NDegreeHashResult` instance, used to build up a full log message.
  *
@@ -194,7 +196,6 @@ function ndhrToLogItem(ndhrs) {
         };
     });
 }
-exports.ndhrToLogItem = ndhrToLogItem;
 /**
  * Return a log item version of an `HashToBNodes` instance, used to build up a full log message.
  *
@@ -209,5 +210,4 @@ function htbnToLogItem(htbn) {
         };
     });
 }
-exports.htbnToLogItem = htbnToLogItem;
 //# sourceMappingURL=logging.js.map

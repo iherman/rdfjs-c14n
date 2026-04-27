@@ -35,7 +35,7 @@ function printQuads(nquads: string[], label: string): void {
 
 /**
  * Run a single test, optionally displaying the result
- * 
+ *
  * @param dump - whether the results should be printed on the screen
  */
 async function singleTest(canonicalizer: RDFC10, num: string, dump: boolean = true): Promise<boolean> {
@@ -82,7 +82,8 @@ async function singleTest(canonicalizer: RDFC10, num: string, dump: boolean = tr
         }
         return result;
     } catch(e) {
-        console.log(`Single test on ${num} aborted: "${e.name}: ${e.message}, see ${e.stack}"`);
+        const error = e instanceof Error ? e : new Error(String(e));
+        console.log(`Single test on ${num} aborted: "${error.name}: ${error.message}, see ${error.stack}"`);
         return false;
     }
 }
@@ -90,12 +91,12 @@ async function singleTest(canonicalizer: RDFC10, num: string, dump: boolean = tr
 
 /**
  * Main entry point.
- * 
+ *
  * ```
  * Usage: rdf_c14n [number] [options]
  *
  * Run a specific test from the test suite
- * 
+ *
  * Options:
  *   -f --full             Run the full tests suite, just return the list of fails
  *   -n --number [number]  Test number
@@ -103,7 +104,7 @@ async function singleTest(canonicalizer: RDFC10, num: string, dump: boolean = tr
  *   -t --trace            Display trace log
  *   -h, --help            display help for command
  * ```
- * 
+ *
  * @async
  */
 async function main(): Promise<void> {
@@ -172,7 +173,8 @@ async function main(): Promise<void> {
                 try {
                     await singleTest(canonicalizer, num, true);
                 } catch(e) {
-                    console.error(`Something went wrong in the canonicalization step: "${e.name}: ${e.message}"`);
+                    const error = e instanceof Error ? e : new Error(String(e));
+                    console.error(`Something went wrong in the canonicalization step: "${error.name}: ${error.message}"`);
                 }
                 if (logger) {
                     console.log("\n>> Log <<");
@@ -183,7 +185,8 @@ async function main(): Promise<void> {
             }
         }
     } catch (e) {
-        console.error(`Canonicalization algorithm aborted: "${e.name}: ${e.message}"`);
+        const error = e instanceof Error ? e : new Error(String(e));
+        console.error(`Canonicalization algorithm aborted: "${error.name}: ${error.message}"`);
     }
 }
 

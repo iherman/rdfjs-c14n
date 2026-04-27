@@ -7,7 +7,15 @@
  * @packageDocumentation
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BnodeSet = exports.isQuads = exports.parseNquads = exports.hashDataset = exports.quadsToNquads = exports.quadToNquad = exports.hashNquads = exports.concatNquads = exports.computeHash = exports.BNODE_PREFIX = void 0;
+exports.BnodeSet = exports.BNODE_PREFIX = void 0;
+exports.computeHash = computeHash;
+exports.concatNquads = concatNquads;
+exports.hashNquads = hashNquads;
+exports.quadToNquad = quadToNquad;
+exports.quadsToNquads = quadsToNquads;
+exports.hashDataset = hashDataset;
+exports.parseNquads = parseNquads;
+exports.isQuads = isQuads;
 const n3 = require("n3");
 const event_emitter_promisify_1 = require("event-emitter-promisify");
 const config_1 = require("./config");
@@ -37,7 +45,6 @@ async function computeHash(state, input) {
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     return hashHex;
 }
-exports.computeHash = computeHash;
 /**
  * Convert an array of nquad statements into a single N-Quads document:
  * this means concatenating all nquads into a long string. Care should be taken that each
@@ -50,7 +57,6 @@ exports.computeHash = computeHash;
 function concatNquads(nquads) {
     return nquads.map((q) => q.endsWith('\n') ? q : `${q}\n`).join('');
 }
-exports.concatNquads = concatNquads;
 /**
  * Return the hash of an array of N-Quads statements; per specification, this means
  * concatenating all nquads into a long string before hashing.
@@ -65,7 +71,6 @@ async function hashNquads(state, nquads) {
     // for every quad, before joining the quads into a string that must be hashed
     return computeHash(state, concatNquads(nquads));
 }
-exports.hashNquads = hashNquads;
 /**
  * Serialize an `rdf.Quad` object into single nquad.
  *
@@ -77,7 +82,6 @@ function quadToNquad(quad) {
     ;
     return retval.endsWith('  .') ? retval.replace(/  .$/, ' .') : retval;
 }
-exports.quadToNquad = quadToNquad;
 const n3Writer = new n3.Writer();
 /**
  * Return a nquad serialization of a dataset. This is a utility that external user can use, the library
@@ -96,7 +100,6 @@ function quadsToNquads(quads, sort = true) {
         retval.sort();
     return retval;
 }
-exports.quadsToNquads = quadsToNquads;
 /**
  * Hash a dataset. This is done by turning each quad into a nquad, concatenate them, possibly
  * sort them, and then hash the result.
@@ -111,7 +114,6 @@ async function hashDataset(state, quads, sort = true) {
     const nquads = quadsToNquads(quads, sort);
     return hashNquads(state, nquads);
 }
-exports.hashDataset = hashDataset;
 /**
  * Parse an nQuads document into a set of Quads.
  *
@@ -130,7 +132,6 @@ async function parseNquads(nquads) {
     await (0, event_emitter_promisify_1.promisifyEventEmitter)(storeEventHandler);
     return store;
 }
-exports.parseNquads = parseNquads;
 /**
  * Type guard to see if an object implements the rdf.DatasetCore interface (a.k.a. Quads). If that is
  * indeed the case, then the object is considered as "safe": there are no repeated terms, and it is not
@@ -143,7 +144,6 @@ function isQuads(obj) {
     // Having match is important, because all the other terms are also valid for a Set...
     return 'has' in obj && 'match' in obj && 'add' in obj && 'delete' in obj && 'size' in obj;
 }
-exports.isQuads = isQuads;
 /**
  * Replacement of a `Set<rdf.BlankNode>` object: the build-in Set structure does not compare the RDF terms,
  * therefore does not filter out duplicate BNode instances.

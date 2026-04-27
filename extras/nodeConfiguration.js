@@ -15,12 +15,45 @@
  *
  * @packageDocumentation
  */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.nodeConfigData = void 0;
-var node_process_1 = require("node:process");
-var fs = require("node:fs");
-var path = require("node:path");
-var config = require("../lib/config");
+exports.nodeConfigData = nodeConfigData;
+const node_process_1 = require("node:process");
+const fs = __importStar(require("node:fs"));
+const path = __importStar(require("node:path"));
+const config = __importStar(require("../lib/config"));
 /**
  * Handling the configuration data that the user can use, namely:
  *
@@ -36,9 +69,9 @@ var config = require("../lib/config");
 function nodeConfigData() {
     // Read the configuration file; the env_name gives the base for the file name
     // It is a very small file, sync file read is used to make it simple...
-    var get_config = function (env_name) {
+    const get_config = (env_name) => {
         if (env_name in node_process_1.env) {
-            var fname = path.join("".concat(node_process_1.env[env_name]), ".rdfjs_c14n.json");
+            const fname = path.join(`${node_process_1.env[env_name]}`, ".rdfjs_c14n.json");
             try {
                 return JSON.parse(fs.readFileSync(fname, 'utf-8'));
             }
@@ -51,22 +84,22 @@ function nodeConfigData() {
         }
     };
     // Create a configuration data for the environment variables (if any)
-    var get_env_data = function () {
-        var retval = {};
+    const get_env_data = () => {
+        const retval = {};
         if (config.ENV_COMPLEXITY in node_process_1.env)
             retval.c14n_complexity = Number(node_process_1.env[config.ENV_COMPLEXITY]);
         if (config.ENV_HASH_ALGORITHM in node_process_1.env)
             retval.c14n_hash = node_process_1.env[config.ENV_HASH_ALGORITHM];
         return retval;
     };
-    var home_data = get_config("HOME");
-    var local_data = get_config("PWD");
-    var env_data = get_env_data();
-    var sys_data = {
+    const home_data = get_config("HOME");
+    const local_data = get_config("PWD");
+    const env_data = get_env_data();
+    const sys_data = {
         c14n_complexity: config.DEFAULT_MAXIMUM_COMPLEXITY,
         c14n_hash: config.HASH_ALGORITHM,
     };
-    var retval = {};
+    let retval = {};
     // "Merge" all the configuration data in the right priority order
     Object.assign(retval, sys_data, home_data, local_data, env_data);
     // Sanity check of the data:
@@ -78,4 +111,3 @@ function nodeConfigData() {
     }
     return retval;
 }
-exports.nodeConfigData = nodeConfigData;

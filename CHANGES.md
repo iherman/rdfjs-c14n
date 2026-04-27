@@ -1,7 +1,10 @@
+# Version 3.1.4
+
+- Updated the configuration files for typescript 6. While doing so, the permutation library was thrown out in favor of an explicit function (proposed by Claude)
+
 # Version 3.1.3
 
 - More careful with the initial choice on whether the input dataset must be copied to an internal store or not (triggered by a bug whereby a dataset through a generator function would not have worked)
-
 
 # Version 3.1.1
 
@@ -21,7 +24,7 @@
 
 # Version 3.0.0
 
-- As `crypto-js` package has been discontinued, switching to the WebCrypto API for hashing (available in `node.js` for versions 21 and upwards). ***This is a backward incompatible change***, because hashing in WebCrypto is an asynchronous function, and this "bubbles up" to the generic interface as well. 
+- As `crypto-js` package has been discontinued, switching to the WebCrypto API for hashing (available in `node.js` for versions 21 and upwards). ***This is a backward incompatible change***, because hashing in WebCrypto is an asynchronous function, and this "bubbles up" to the generic interface as well.
 
 # Version 2.0.4
 
@@ -58,7 +61,7 @@
   - The simple output of the algorithm is an N-Quads document; alternatively, the detailed output is a structure containing the N-Quads and rdf.Quads versions of the data, as well as a mappings of blank nodes and their identifiers.
   - The hash function can use the same type of input as the core input.
   - The name of the algorithm is officially RDFC 1.0. As a consequence, the name of the main entry point has been changed from `RDFCanon` to `RDFC10`. The documentation and the tests have also been changed to reflect the new name.
-  - The maximum level of recursion in the "Hash N Degree Quads" has a default (currently 50), which can also be set to a lower level by the user. 
+  - The maximum level of recursion in the "Hash N Degree Quads" has a default (currently 50), which can also be set to a lower level by the user.
 
 
 # Version 1.0.4
